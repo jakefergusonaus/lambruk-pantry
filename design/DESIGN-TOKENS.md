@@ -82,7 +82,7 @@ A view uses at most two background colours: paper plus either the alt paper or n
 
 - **`--text-body` → `#4A5478` as-is.** Contrast against every surface it's used on: 7.11:1 on `--paper`, 6.58:1 on `--paper-2`, 7.42:1 on `--surface-card` — comfortably AAA for normal text. Adopted verbatim.
 - **`--text-muted` → `#686D84`, not `#8A8FA3` as-is.** The mockup's raw `#8A8FA3` fails WCAG AA for normal text on every surface (3.08:1 / 2.85:1 / 3.21:1 — all below the 4.5:1 threshold), and it's used at normal sizes (12–14px review counts, meta lines), not large text where the lower 3:1 bar would apply. `#686D84` is the nearest point along `#8A8FA3`'s same hue/saturation line that clears 4.5:1 on the tightest surface (`--paper-2`): **4.90:1 on `--paper`, 4.53:1 on `--paper-2`, 5.11:1 on `--surface-card`** — same cooler, lighter character the mockups moved toward, adjusted just enough to stay accessible.
-- `#8A6A32` (desktop-only gold icon-stroke variant, 3 uses) remains unresolved — low-frequency enough not to need a decision yet.
+- **`--icon-accent` → `#8A6A32`, resolved 2026-08-18.** Checked its usage: all 3 occurrences are `stroke="#8A6A32"` on SVG paths (`fill="none"`) in the "Sustainably sourced / Freshness secured / Low sugar" icon trio, desktop-only — never applied to text or fills anywhere in either mockup. The icon sits inside a `gold-200` (`#E3D6C5`) rounded badge, not directly on `--paper-2`, so the relevant check is the WCAG 1.4.11 non-text (graphics) threshold of 3:1 against that badge fill: `#8A6A32` on `#E3D6C5` measures **3.51:1** — clears it. Tokenised as-is (no adjustment needed, unlike `--text-muted`, since icon strokes only need 3:1, not the 4.5:1 text bar). Added to `tokens/colors.css`.
 
 ### Lines
 

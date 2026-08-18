@@ -23,6 +23,13 @@
   --accent:var(--gold-500);
   --accent-soft:var(--gold-400);
 
+  /* ADDED 2026-08-18 — icon-stroke-only accent from the desktop full-site mockup's
+     "Sustainably sourced / Freshness secured / Low sugar" trio. Used exclusively as
+     an SVG stroke inside a gold-200 icon badge, never on text: 3.51:1 against that
+     badge fill clears the WCAG 1.4.11 non-text (graphics) 3:1 threshold. Tokenised
+     as-is — see ../../DESIGN-TOKENS.md §1. */
+  --icon-accent:#8A6A32;
+
   /* ── Text ── */
   --text-strong:var(--blue-900);
   /* DEPRECATED 2026-08-18 — #1C2552 (blue-800) superseded by #4A5478, approved

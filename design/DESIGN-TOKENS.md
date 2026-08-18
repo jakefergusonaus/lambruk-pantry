@@ -133,7 +133,7 @@ Expressed as `clamp()` fluid type between a 390px (mobile) and 1240px (desktop) 
 | Display 2 · Title | 34px | 48px | `clamp(34px, 27.576px + 1.647vw, 48px)` | 1.06 |
 | Display 3 · Feature | 32px | 40px | `clamp(32px, 28.329px + 0.941vw, 40px)` | 1.08 |
 | Display 4 · Section | 28px | 32px | `clamp(28px, 26.165px + 0.471vw, 32px)` | 1.15 |
-| Display 5 · Card | 22px | 26px | `clamp(22px, 20.165px + 0.471vw, 26px)` | 1.2 |
+| Display 5 · Card | ~20px | **24px** ~~26px~~ | *(Horizon-native — see concession below)* | 1.2 |
 | Text 1 · Large | 16px | 17px | `clamp(16px, 15.541px + 0.118vw, 17px)` | 1.65 |
 | Text 2 · Body | 15px | 15px | **fixed 15px** — no interpolation, doesn't shrink on mobile | 1.6 |
 | Text 3 · Micro | 11px | 12px | `clamp(11px, 10.541px + 0.118vw, 12px)` | 1.5 (eyebrow variant: `0.22em` tracking) |
@@ -155,6 +155,8 @@ Expressed as `clamp()` fluid type between a 390px (mobile) and 1240px (desktop) 
 | Text 3 · Micro | 13, 12 | 11 |
 
 **Card/category H3 correction.** The raw 30px desktop size (Tea Collection / Sauces & Chutney / Pantry Staples category tiles, and similar card titles) was originally mapped to Display 5 · Card (26px) as the nearest step — collapsing it down. On review it moves to **Display 4 · Section (32px)** instead: rounding a card title up to match section headings reads better than rounding it down toward the smaller card-caption tier it shares with review-quote titles and confirmation messages. Its mobile companion moves with it, from Display 5's 22px to Display 4's 28px.
+
+**Concession, approved 2026-08-19 — Display 5 · Card moves to Horizon's native 24px, not our own 26px.** During the Horizon settings-mapping pass, `type_size_h5`'s fixed option list (10/12/14/16/18/20/24/32/…) turned out to have no 26px option — nearest is 24px. Rather than hand-rolling a CSS override 2px off Horizon's own value just to hit our number exactly, we're accepting Horizon's 24px as Display 5 outright. **Why:** a 2px difference on a card-caption-scale heading is not visually distinguishable, and taking it removes one more custom CSS rule from the build — every step we can express as a plain Horizon setting is one less thing to maintain against future Horizon updates (see the customisation hierarchy in `CLAUDE.md`). The mobile companion is no longer a value we hand-pick either: Horizon derives H5's fluid minimum from its own formula (based on the next-smaller preset in use), not our 390px-viewport target, so it will land close to but not exactly at 20px. See `ARCHITECTURE.md` for the full reasoning behind accepting Horizon values where close.
 
 **Two things intentionally excluded from the scale:**
 - The "4.8" rating-stat numeral (raw 52px desktop / 40px mobile) — a one-off oversized stat display, not running type. Its own mobile reduction (−23%) doesn't match any step's ratio, so it keeps a bespoke size rather than being forced onto the scale.
@@ -326,6 +328,8 @@ So there's a real mobile design now, but it exists as "how this looks at 390px" 
 
 **Update 2026-08-18 — type no longer uses this breakpoint.** The canonical type scale in section 2 replaces the implied 390px/720px-hard-switch with `clamp()` fluid interpolation across the same 390–1240px range, so tablet widths get real in-between sizes instead of jumping at 720px. The 720px breakpoint is unchanged for everything structural — grid columns, nav pattern, cart-drawer style (section 9) — only type size stopped using it.
 
+**Concession, approved 2026-08-19 — the *structural* breakpoint becomes Horizon's native 750px, not the mockups' 720px.** Horizon's own layout margin switch is a hardcoded `@media (min-width: 750px)` in `assets/base.css` — not a setting, not overridable without touching a Horizon file directly. **Why:** the gap is 30px, well inside normal device-width variance and imperceptible in practice; matching our JS-driven 720px would mean either editing Horizon's own CSS (against the customisation hierarchy) or running two slightly different breakpoints side by side for no visible benefit. Grid-column collapse, nav-drawer pattern, and cart-drawer style (section 9) should all key off 750px going forward, not 720px. See `ARCHITECTURE.md`.
+
 ---
 
 ## 9. Mobile vs. desktop deltas
@@ -336,7 +340,7 @@ Extracted by diffing the two `uploads/*.dc.html` mockups. These are the concrete
 |---|---|---|
 | Header height | 88px | 64px |
 | Header background | `rgba(251,250,247,.92)` + `--blur-header` | `rgba(251,250,247,.94)` + `--blur-header` (same blur, slightly less transparent) |
-| Container/gutter padding | 40px each side | 20px each side |
+| Container/gutter padding | 40px each side | ~~20px~~ **16px** each side (concession — see below) |
 | Section vertical padding | 96px (`--section-y`) | 44–56px (varies by section — not a single mobile token, e.g. Reviews/Occasions use 44px, Cafe/Wholesale panels use 56px) |
 | Category/product grid | 3–4 columns (`repeat(3,1fr)` / `repeat(4,1fr)`) | 2 columns (`1fr 1fr`) throughout |
 | Primary navigation | Inline nav links in header | Hamburger icon opens a **left-side slide-in drawer**, 330px wide |
@@ -346,6 +350,8 @@ Extracted by diffing the two `uploads/*.dc.html` mockups. These are the concrete
 | ~~Hero/heading sizes~~ | ~~Scale up to 56–58px~~ | ~~Compressed — no display size above ~40px was found on the mobile mockup's home screen~~ — **superseded by the canonical fluid scale in section 2** |
 
 **No bottom tab bar.** Despite the mobile-majority traffic note in `CLAUDE.md`, the mobile mockup doesn't add a persistent bottom navigation bar — cart and menu stay in the header, same pattern as desktop just at a smaller header height.
+
+**Concession, approved 2026-08-19 — mobile gutter becomes Horizon's native 16px, not the mockups' 20px.** Horizon's `--page-margin` is hardcoded to 16px below 750px in `assets/base.css` (desktop's 40px already matched ours exactly — see section 8). **Why:** 4px is below the threshold most people notice in a side margin, and 16px is the one mobile spacing value in this whole comparison that Horizon ships for free; overriding it would mean touching `base.css` directly (there's no setting for it) just to close a 4px gap. Not worth the maintenance cost against future Horizon updates. `--gutter` in `tokens/spacing.css` remains deprecated per the flagged inconsistency below regardless — this concession is about the *mobile* value specifically, not a reversal of that finding. See `ARCHITECTURE.md`.
 
 ---
 

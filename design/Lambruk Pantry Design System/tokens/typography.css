@@ -1,0 +1,32 @@
+:root{
+  /* DEPRECATED 2026-08-18 — this 5-step display / 4-step body scale predates the
+     mobile+desktop full-site mockups (uploads/LambrukPantry*.dc.html) and covers
+     only a fraction of the sizes actually used across them. Superseded by the
+     8-step canonical scale (with 390–1240px clamp() fluid sizing) documented in
+     ../../DESIGN-TOKENS.md §2. Left in place for existing references; do not
+     build new work against these values. */
+
+  /* Display — Instrument Serif */
+  --display-1-size:56px; --display-1-lh:1.02; /* @kind other */
+  --display-2-size:48px; --display-2-lh:1.05; /* @kind other */
+  --display-3-size:40px; --display-3-lh:1.1; /* @kind other */
+  --display-4-size:32px; --display-4-lh:1.15; /* @kind other */
+  --display-5-size:24px; --display-5-lh:1.25; /* @kind other */
+  --display-tracking:-0.01em; /* @kind other */
+
+  /* Text — Geist */
+  --body-lg-size:18px; --body-lg-lh:1.6; /* @kind other */
+  --body-size:16px;    --body-lh:1.6; /* @kind other */
+  --body-sm-size:14px; --body-sm-lh:1.55; /* @kind other */
+  --body-xs-size:12px; --body-xs-lh:1.5; /* @kind other */
+
+  /* Eyebrow / overline */
+  --eyebrow-size:12px; --eyebrow-tracking:.22em; /* @kind other */ --eyebrow-weight:500; /* @kind other */
+
+  /* Weights — Instrument Serif ships one weight; Geist carries the range */
+  --weight-regular:400; /* @kind other */ --weight-medium:500; /* @kind other */ --weight-semibold:600; /* @kind other */
+
+  /* Measures */
+  --measure-prose:820px; /* @kind spacing */
+  --container:1240px; /* @kind spacing */
+}

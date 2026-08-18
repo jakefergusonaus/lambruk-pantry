@@ -1,0 +1,15 @@
+.DS_Store
+node_modules/
+.shopify/
+.env
+.env.*
+!.env.example
+*.log
+
+# Reconciliation staging is reproducible and must not be committed.
+.theme-editor-reconcile/
+
+# Local design/QA working files may contain client material.
+qa-evidence/
+screenshots/
+backups/

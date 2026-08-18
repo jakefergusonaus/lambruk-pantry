@@ -1,0 +1,10 @@
+{
+  "projectLabel": "Lambruk Pantry",
+  "storeDomain": "37b2e5-fc.myshopify.com",
+  "themeRoot": ".",
+  "baseTheme": "Horizon",
+  "reviewTheme": {
+    "id": "182395437357",
+    "name": "Horizon"
+  }
+}

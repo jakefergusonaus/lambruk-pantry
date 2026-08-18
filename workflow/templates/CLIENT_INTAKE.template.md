@@ -1,0 +1,21 @@
+# Client Intake
+
+- Store domain: see `PROJECT_CONFIG.json`
+- Build mode: existing theme / new theme
+- Local theme root: see `PROJECT_CONFIG.json`
+- Already pulled:
+- Base theme and version:
+- Remote theme name / ID / status:
+- Design sources:
+- Source authority overrides:
+- Templates/pages in scope:
+- Required storefront functionality:
+- Apps/app blocks/embeds to preserve:
+- Markets/languages/currencies:
+- Customer-account mode:
+- Selling plans/pickup/other commerce features:
+- Metafields/metaobjects/dynamic sources:
+- Merchant content-management requirements:
+- Preview requirement:
+- Publication authorization: not granted
+- Open questions:

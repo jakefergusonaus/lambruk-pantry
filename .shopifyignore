@@ -1,0 +1,32 @@
+# Harness and agent files
+workflow/
+.claude/
+.codex/
+.agents/
+README.md
+START_HERE.md
+AGENTS.md
+CLAUDE.md
+PROJECT_CONFIG.json
+SHOPIFY-THEME-SYSTEM.md
+LICENSE
+.gitignore
+
+# Project working documents
+CLIENT_INTAKE.md
+STORE_THEME_INVENTORY.md
+DESIGN_SOURCE_MANIFEST.md
+DESIGN_BRIEF.md
+SHOPIFY_THEME_MAP.md
+PRESERVATION_CHECKLIST.md
+ASSET_MANIFEST.md
+QA_REPORT.md
+WORKFLOW_STATE.md
+
+# Sources and evidence
+.design-sources/
+.theme-editor-reconcile/
+resources/
+qa-evidence/
+screenshots/
+backups/

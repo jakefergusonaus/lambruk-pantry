@@ -1,8 +1,8 @@
 # Harness and agent files
-workflow/
-.claude/
-.codex/
-.agents/
+workflow/**
+.claude/**
+.codex/**
+.agents/**
 README.md
 START_HERE.md
 AGENTS.md
@@ -24,9 +24,9 @@ QA_REPORT.md
 WORKFLOW_STATE.md
 
 # Sources and evidence
-.design-sources/
-.theme-editor-reconcile/
-resources/
-qa-evidence/
-screenshots/
-backups/
+.design-sources/**
+.theme-editor-reconcile/**
+resources/**
+qa-evidence/**
+screenshots/**
+backups/**

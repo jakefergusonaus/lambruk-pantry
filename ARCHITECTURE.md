@@ -262,3 +262,9 @@ Every section built from Horizon's generic `text` block (the composable pattern 
 | Container, shadows, section rhythm, scrims, icon accent | New layered stylesheet, additive only |
 
 Next step, on approval: build the one worked block from §2 for real and confirm it renders as expected in the theme editor before extending the pattern to the rest of the surface list.
+
+---
+
+## Open questions
+
+- **Site and product photography is an outstanding client dependency, not a build task.** Confirmed 2026-08-20: only the logo (`Lambruk_Logo_Horizontal.svg` / `Lambruk_Logo_Horizontal_white.svg`) and the ten brand illustration icons (`Lambruk-Illustration[.png / -1 through -9.png]`) are uploaded to Shopify Files. None of the five `media-with-content` band photos (cafe, high tea, wholesale, story) exist yet — those slots are deliberately left on Horizon's placeholder graphic (`media_type: "image"` with no `image` value set) rather than pointed at a filename that doesn't exist. **Full visual QA against the design package is blocked on this arriving** — none of the five media-with-content bands, nor any future section needing real site/product photography, can be judged against the actual design intent until real images are uploaded and these settings are populated for real.

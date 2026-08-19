@@ -594,11 +594,32 @@
         "padding-block-start": 96,
         "padding-block-end": 96
       }
+    },
+    "section_why_lambruk": {
+      "type": "section",
+      "blocks": {
+        "quote_panel_why_lambruk": {
+          "type": "quote-panel",
+          "settings": {
+            "illustration": "shopify://shop_images/Lambruk-Illustration-9.png"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": ["quote_panel_why_lambruk"],
+      "settings": {
+        "content_direction": "column",
+        "section_width": "page-width",
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
     "hero_jVaWmY",
     "product_list_fa6P9H",
-    "media_with_content_cafe_intro"
+    "media_with_content_cafe_intro",
+    "section_why_lambruk"
   ]
 }

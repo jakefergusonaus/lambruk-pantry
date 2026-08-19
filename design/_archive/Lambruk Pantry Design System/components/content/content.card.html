@@ -1,0 +1,34 @@
+<!-- @dsCard group="Components" viewport="700x400" name="Content" subtitle="EyebrowLabel, SectionHeading, Tag, Badge" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<style>body{margin:0;font-family:var(--font-sans);background:var(--paper);color:var(--text-body)}</style></head><body>
+<div id="root" style="padding:24px"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script type="text/babel">
+const { EyebrowLabel, SectionHeading, Tag, Badge, Button } = window.LambrukPantryDesignSystem_7e297f;
+function App(){
+  return (<div style={{display:'flex',flexDirection:'column',gap:'26px'}}>
+    <div style={{display:'flex',gap:'28px',flexWrap:'wrap'}}>
+      <EyebrowLabel>Multi Award Winning</EyebrowLabel>
+      <EyebrowLabel tone="muted">Curated Occasions</EyebrowLabel>
+    </div>
+    <SectionHeading eyebrow="New Releases" title="The Seasonal Spotlight"
+      description="Every batch is crafted in small quantities and made with less sugar."
+      action={<Button variant="ghost">Shop all</Button>} />
+    <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
+      <Tag>Low FODMAP</Tag><Tag>Gluten-Free</Tag><Tag>Glyphosate-Free</Tag>
+      <Tag tone="accent">No Artificial Sweeteners</Tag><Tag tone="outline" size="sm">Top 9 Allergen-Free</Tag>
+    </div>
+    <div style={{display:'flex',gap:'10px',alignItems:'center'}}>
+      <Badge>New</Badge><Badge tone="navy">Award Winner</Badge><Badge tone="paper">Small Batch</Badge>
+      <span style={{marginLeft:'12px',display:'flex',gap:'8px',background:'var(--surface-dark)',padding:'10px 12px',borderRadius:'var(--radius-sm)'}}>
+        <Tag tone="onDark" size="sm">Made with real fruit</Tag>
+      </span>
+    </div>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script></body></html>

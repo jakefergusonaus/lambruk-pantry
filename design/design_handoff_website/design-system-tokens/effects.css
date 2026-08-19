@@ -1,0 +1,20 @@
+:root{
+  /* Shadows — warm-navy tinted, low opacity. Cards lean on borders. */
+  --shadow-whisper:0 1px 2px rgba(13,16,36,.04);
+  --shadow-card:0 8px 24px rgba(13,16,36,.08);
+  --shadow-lift:0 14px 34px rgba(13,16,36,.12);
+  --shadow-inset-hairline:inset 0 0 0 1px var(--border);
+
+  /* Motion — calm, editorial. No bounce. */
+  --ease-out:cubic-bezier(.22,.61,.36,1); /* @kind other */
+  --dur-fast:140ms; /* @kind other */ --dur-base:240ms; /* @kind other */ --dur-slow:420ms; /* @kind other */
+  --transition:all var(--dur-base) var(--ease-out); /* @kind other */
+
+  /* Interaction deltas */
+  --hover-lift:-2px; /* @kind spacing */
+  --press-scale:.98; /* @kind other */
+  --image-hover-scale:1.03; /* @kind other */
+
+  /* Blur */
+  --blur-header:saturate(140%) blur(10px); /* @kind other */
+}

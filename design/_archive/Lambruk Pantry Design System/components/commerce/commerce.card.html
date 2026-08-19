@@ -1,0 +1,25 @@
+<!-- @dsCard group="Components" viewport="700x400" name="Commerce" subtitle="ProductCard with photo, category, price and Add" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<style>body{margin:0;font-family:var(--font-sans);background:var(--paper);color:var(--text-body)}</style></head><body>
+<div id="root" style="padding:24px"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script type="text/babel">
+const { ProductCard } = window.LambrukPantryDesignSystem_7e297f;
+const A='../../assets/images/';
+function App(){
+  const [n,setN]=React.useState(0);
+  return (<div>
+    <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'20px'}}>
+      <ProductCard image={A+'product-marmalade.png'} category="Preserves" name="Blood Orange & Rosemary Marmalade" price="$18.00" badge="New" onAdd={()=>setN(n+1)} />
+      <ProductCard image={A+'product-olive-oil.png'} category="Oils" name="Pressed Wild Olive Oil" price="$34.00" onAdd={()=>setN(n+1)} />
+      <ProductCard image={A+'product-honey.png'} category="Honey" name="Raw Blue Gum Honey" price="$22.00" />
+    </div>
+    <p style={{fontSize:'12px',color:'var(--text-muted)',marginTop:'14px'}}>{n} in cart</p>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script></body></html>

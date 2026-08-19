@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Marketing Landing" description="Lambruk hero, proof chips and a seasonal product trio built from the design system." -->
+<helmet>
+<script src="./ds-base.js"></script>
+<style>body{margin:0;background:#FBFAF7;font-family:"Geist","Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}a{color:#BF8C45}a:hover{color:#A07037}</style>
+</helmet>
+<div style="min-height:100vh;background:#FBFAF7;color:#1C2552">
+<header style="height:88px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;max-width:1240px;margin:0 auto">
+<img src="../../assets/lambruk-logo-blue.svg" alt="Lambruk Pantry" style="height:38px">
+<nav style="display:flex;gap:34px;font-size:14px">
+<a href="#" style="color:#1C2552;text-decoration:none">Shop</a>
+<a href="#" style="color:#1C2552;text-decoration:none">Wholesale</a>
+<a href="#" style="color:#1C2552;text-decoration:none">Cafe</a>
+<a href="#" style="color:#1C2552;text-decoration:none">Our Story</a>
+</nav>
+</header>
+<section style="position:relative;min-height:600px;display:flex;align-items:center;overflow:hidden">
+<img src="../../assets/images/hero-cheeseboard.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+<div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,16,36,.74) 0%,rgba(13,16,36,.5) 48%,rgba(13,16,36,.16) 100%)"></div>
+<div style="position:relative;max-width:1240px;margin:0 auto;padding:0 40px;width:100%">
+<div style="max-width:620px">
+<p style="font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#C6A06C;font-weight:500;margin:0 0 22px">Multi Award Winning</p>
+<h1 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:56px;line-height:1.02;letter-spacing:-.01em;color:#F7F5F2;margin:0">Handcrafted pantry essentials from the Northern Rivers</h1>
+<p style="font-size:18px;line-height:1.6;color:rgba(247,245,242,.82);margin:24px 0 36px;max-width:520px">Discover handcrafted teas, sauces, chutneys, olive oils and gourmet pantry favourites made with Australian-grown ingredients, real fruit and direct partnerships with local farmers.</p>
+<div style="display:flex;gap:14px">
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.Button" variant="onDark" size="lg" hint-size="150px,52px">Shop Now</x-import>
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.Button" variant="secondary" size="lg" hint-size="170px,52px">Visit Our Cafe</x-import>
+</div>
+</div>
+</div>
+</section>
+<div style="background:#131A3E">
+<div style="max-width:1240px;margin:0 auto;padding:20px 40px;display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap">
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.Tag" tone="onDark" size="sm" hint-size="110px,26px">Low FODMAP</x-import>
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.Tag" tone="onDark" size="sm" hint-size="110px,26px">Gluten-Free</x-import>
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.Tag" tone="onDark" size="sm" hint-size="130px,26px">Glyphosate-Free</x-import>
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.Tag" tone="onDark" size="sm" hint-size="190px,26px">No Artificial Sweeteners</x-import>
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.Tag" tone="onDark" size="sm" hint-size="170px,26px">Top 9 Allergen-Free</x-import>
+</div>
+</div>
+<section style="padding:96px 0">
+<div style="max-width:1240px;margin:0 auto;padding:0 40px">
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.SectionHeading" eyebrow="New Releases" title="The Seasonal Spotlight" hint-size="100%,120px"></x-import>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:44px">
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.ProductCard" image="../../assets/images/product-marmalade.png" category="Preserves" name="Blood Orange &amp; Rosemary Marmalade" price="$18.00" badge="New" hint-size="100%,420px"></x-import>
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.ProductCard" image="../../assets/images/product-olive-oil.png" category="Oils" name="Pressed Wild Olive Oil" price="$34.00" hint-size="100%,420px"></x-import>
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.ProductCard" image="../../assets/images/product-honey.png" category="Honey" name="Raw Blue Gum Honey" price="$22.00" hint-size="100%,420px"></x-import>
+</div>
+</div>
+</section>
+<section style="background:#0D1024;padding:96px 40px">
+<x-import component-from-global-scope="LambrukPantryDesignSystem_7e297f.Newsletter" hint-size="100%,280px"></x-import>
+</section>
+</div>
+
+</x-dc>
+</body>
+</html>

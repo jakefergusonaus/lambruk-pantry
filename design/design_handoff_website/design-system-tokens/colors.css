@@ -1,0 +1,45 @@
+:root{
+  /* ── Lambruk Blue ── cool navy/ink ramp: text, deep panels, footer */
+  --blue-50:#F6F6F9; --blue-100:#E9EBF1; --blue-200:#D1D4E5; --blue-300:#AAB2D4;
+  --blue-400:#7A86C3; --blue-500:#4B5DB4; --blue-600:#394893; --blue-700:#2A3879;
+  --blue-800:#1C2552; --blue-900:#131A3E; --blue-950:#0D1024;
+
+  /* ── Lambruk Gold ── warm muted gold: accents, eyebrows, hairlines, CTAs on navy */
+  --gold-50:#F7F5F2; --gold-100:#EFE9E1; --gold-200:#E3D6C5; --gold-300:#D4BA9C;
+  --gold-400:#C6A06C; --gold-500:#BF8C45; --gold-600:#A07037; --gold-700:#83572A;
+  --gold-800:#5B3F1F; --gold-900:#3B2917; --gold-950:#231910;
+
+  /* ── Surfaces ── warm papers, never clinical white for large fields */
+  --paper:#FBFAF7;
+  --paper-2:#F4F1EA;
+  --surface-card:#FFFFFF;
+  --surface-sunken:var(--gold-50);
+  --surface-dark:var(--blue-900);
+  --surface-darker:var(--blue-950);
+
+  /* ── Brand ── */
+  --brand:var(--blue-900);
+  --brand-deep:var(--blue-950);
+  --accent:var(--gold-500);
+  --accent-soft:var(--gold-400);
+
+  /* ── Text ── */
+  --text-strong:var(--blue-900);
+  --text-body:var(--blue-800);
+  --text-muted:#6B7186;
+  --text-on-dark:var(--gold-50);
+  --text-on-dark-muted:rgba(247,245,242,.72);
+  --text-accent:var(--gold-600);
+  --text-accent-on-dark:var(--gold-400);
+
+  /* ── Lines ── */
+  --border:var(--gold-200);
+  --border-strong:var(--gold-300);
+  --border-on-dark:rgba(198,160,108,.28);
+  --divider:var(--gold-100);
+
+  /* ── Interaction ── */
+  --focus-ring:var(--gold-400);
+  --scrim:rgba(13,16,36,.46);
+  --scrim-soft:rgba(13,16,36,.22);
+}

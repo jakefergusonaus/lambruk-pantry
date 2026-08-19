@@ -1,0 +1,63 @@
+<!-- @dsCard group="Website" viewport="1440x900" name="Homepage" subtitle="Lambruk Pantry marketing site — hero, categories, seasonal rail, cafe, occasions, footer" -->
+<!DOCTYPE html><html lang="en-AU"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lambruk Pantry</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--text-body);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+a{color:var(--text-accent)}a:hover{color:var(--gold-600)}
+button{font-family:inherit}
+::-webkit-scrollbar{width:0;height:0}
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>window.LDS = window.LambrukPantryDesignSystem_7e297f;</script>
+<script src="responsive.js"></script>
+</head><body>
+<div id="root"></div>
+<script type="text/babel" src="Header.jsx"></script>
+<script type="text/babel" src="Hero.jsx"></script>
+<script type="text/babel" src="Categories.jsx"></script>
+<script type="text/babel" src="Promise.jsx"></script>
+<script type="text/babel" src="Cafe.jsx"></script>
+<script type="text/babel" src="Spotlight.jsx"></script>
+<script type="text/babel" src="WhyLambruk.jsx"></script>
+<script type="text/babel" src="Occasions.jsx"></script>
+<script type="text/babel" src="Reviews.jsx"></script>
+<script type="text/babel" src="Wholesale.jsx"></script>
+<script type="text/babel" src="Subscribe.jsx"></script>
+<script type="text/babel" src="Footer.jsx"></script>
+<script type="text/babel" src="CartDrawer.jsx"></script>
+<script type="text/babel">
+function App(){
+  const [cart, setCart] = React.useState([]);
+  const [open, setOpen] = React.useState(false);
+  const [active, setActive] = React.useState('Home');
+  const add = (p) => { setCart(c => { const f=c.find(i=>i.id===p.id); return f ? c.map(i=>i.id===p.id?{...i,qty:i.qty+1}:i) : [...c,{...p,qty:1}]; }); setOpen(true); };
+  const remove = (id) => setCart(c => c.filter(i=>i.id!==id));
+  const count = cart.reduce((s,i)=>s+i.qty,0);
+  const jump = (id) => { const el=document.getElementById(id); if(el) window.scrollTo({top:el.offsetTop-88, behavior:'smooth'}); };
+  React.useEffect(()=>{ lucide.createIcons({attrs:{width:18,height:18,'stroke-width':1.5}}); });
+  return (<React.Fragment>
+    <Header cartCount={count} onCart={()=>setOpen(true)} active={active}
+      onNav={(l)=>{ setActive(l); if(l==='Cafe')jump('cafe'); else if(l==='Shop')jump('spotlight'); else if(l==='Wholesale')jump('wholesale'); else window.scrollTo({top:0,behavior:'smooth'}); }} />
+    <Hero onShop={()=>jump('spotlight')} onCafe={()=>jump('cafe')} />
+    <Categories onCategory={()=>jump('spotlight')} />
+    <Promise_ />
+    <div id="cafe"><Cafe onReserve={()=>jump('cafe')} /></div>
+    <div id="spotlight"><Spotlight onAdd={add} /></div>
+    <WhyLambruk />
+    <Occasions />
+    <Reviews />
+    <div id="wholesale"><Wholesale /></div>
+    <Subscribe />
+    <Footer onNav={(key)=>{ if(key==='goCafe')jump('cafe'); else if(key==='goShop'||key==='goTea'||key==='goCondiments'||key==='goPantry'||key==='goHighTeaShop')jump('spotlight'); else if(key==='goWholesale')jump('wholesale'); }} />
+    <CartDrawer open={open} items={cart} onClose={()=>setOpen(false)} onRemove={remove} />
+  </React.Fragment>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body></html>

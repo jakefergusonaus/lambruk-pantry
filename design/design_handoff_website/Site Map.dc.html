@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/lambruk-pantry-design-system-7e297fd2-582f-4578-8c27-56b5eb850079/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/lambruk-pantry-design-system-7e297fd2-582f-4578-8c27-56b5eb850079/tokens/colors.css">
+<link rel="stylesheet" href="_ds/lambruk-pantry-design-system-7e297fd2-582f-4578-8c27-56b5eb850079/tokens/typography.css">
+<link rel="stylesheet" href="_ds/lambruk-pantry-design-system-7e297fd2-582f-4578-8c27-56b5eb850079/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/lambruk-pantry-design-system-7e297fd2-582f-4578-8c27-56b5eb850079/tokens/effects.css">
+<link rel="stylesheet" href="_ds/lambruk-pantry-design-system-7e297fd2-582f-4578-8c27-56b5eb850079/styles.css">
+<script src="_ds/lambruk-pantry-design-system-7e297fd2-582f-4578-8c27-56b5eb850079/_ds_bundle.js"></script>
+<style>
+body { margin:0; background:#FBFAF7; }
+a { color:#BF8C45; text-decoration:none; }
+a:hover { color:#8A6A32; }
+</style>
+</helmet>
+
+<div style="width:1680px;background:#FBFAF7;font-family:Geist,system-ui,sans-serif;color:#131A3E;padding:72px 64px 80px;box-sizing:border-box">
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:48px;border-bottom:1px solid #E3D6C5;padding-bottom:32px">
+<div>
+<p style="font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#BF8C45;font-weight:500;margin:0 0 18px">Information Architecture</p>
+<h1 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:52px;line-height:1.06;margin:0">Lambruk Pantry site map</h1>
+<p style="font-size:16px;line-height:1.65;color:#4A5478;margin:18px 0 0;max-width:620px">Eight pages in the current prototype. Primary navigation sits across the top; customer care is reached from the footer, and the cart drawer overlays every page.</p>
+</div>
+<img src="assets/illustrations/australia-ink.png" alt="" style="height:104px;width:auto;opacity:.9">
+</div>
+
+<div style="display:flex;flex-direction:column;align-items:center;margin-top:56px">
+<div style="width:360px;border:1px solid #E3D6C5;border-radius:16px;background:#131A3E;padding:24px 28px;box-shadow:0 1px 2px rgba(13,16,36,.04)">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px">
+<h2 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:30px;color:#F7F5F2;margin:0">Home</h2>
+<span style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#C6A06C">Landing</span>
+</div>
+<sc-if value="{{ withSections }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:7px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(191,140,69,.28)">
+<span style="font-size:13.5px;line-height:1.4;color:rgba(247,245,242,.82)">Hero · Multi award winning</span>
+<span style="font-size:13.5px;line-height:1.4;color:rgba(247,245,242,.82)">Proof bar</span>
+<span style="font-size:13.5px;line-height:1.4;color:rgba(247,245,242,.82)">Explore by category</span>
+<span style="font-size:13.5px;line-height:1.4;color:rgba(247,245,242,.82)">The Lambruk Promise</span>
+<span style="font-size:13.5px;line-height:1.4;color:rgba(247,245,242,.82)">Lambruk Pantry Cafe</span>
+<span style="font-size:13.5px;line-height:1.4;color:rgba(247,245,242,.82)">The Seasonal Spotlight</span>
+<span style="font-size:13.5px;line-height:1.4;color:rgba(247,245,242,.82)">Why Lambruk</span>
+<span style="font-size:13.5px;line-height:1.4;color:rgba(247,245,242,.82)">Curated for every occasion</span>
+<span style="font-size:13.5px;line-height:1.4;color:rgba(247,245,242,.82)">Loved at country tables</span>
+<span style="font-size:13.5px;line-height:1.4;color:rgba(247,245,242,.82)">Wholesale + High Tea pair</span>
+<span style="font-size:13.5px;line-height:1.4;color:rgba(247,245,242,.82)">Seasonal Dispatches signup</span>
+</div>
+</sc-if>
+</div>
+<div style="width:1px;height:36px;background:#E3D6C5"></div>
+<div style="width:calc(80% - 25.6px);height:1px;background:#E3D6C5"></div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:32px;align-items:start">
+<div style="display:flex;flex-direction:column;align-items:stretch">
+<div style="align-self:center;width:1px;height:36px;background:#E3D6C5"></div>
+<div style="border:1px solid #E3D6C5;border-radius:16px;background:#FFFFFF;padding:22px 24px;box-shadow:0 1px 2px rgba(13,16,36,.04)">
+<h3 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px;margin:0">Shop</h3>
+<p style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#BF8C45;margin:8px 0 0">Nav · Listing</p>
+<sc-if value="{{ withSections }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:7px;margin-top:16px;padding-top:14px;border-top:1px solid #E3D6C5">
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Category filters</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Product grid · Add to cart</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Sample box band</span>
+</div>
+</sc-if>
+</div>
+<div style="align-self:center;width:1px;height:28px;background:#E3D6C5"></div>
+<div style="border:1px solid #E3D6C5;border-radius:16px;background:#F4F1EA;padding:20px 22px">
+<h4 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:22px;margin:0">Occasion views</h4>
+<div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Slow Mornings</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Entertaining</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Sunday Roast</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">High Tea</span>
+<span style="font-size:13.5px;line-height:1.4;color:#8A8FA3">Set another table</span>
+</div>
+</div>
+<div style="align-self:center;width:1px;height:28px;background:#E3D6C5"></div>
+<div style="border:1px solid #E3D6C5;border-radius:16px;background:#FFFFFF;padding:20px 22px;box-shadow:0 1px 2px rgba(13,16,36,.04)">
+<h4 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:22px;margin:0">Product detail</h4>
+<sc-if value="{{ withSections }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:7px;margin-top:14px;padding-top:12px;border-top:1px solid #E3D6C5">
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Gallery · Price · Add</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Dietary claims · Pairing</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Sourcing trio</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Customer reviews</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">From the same shelf</span>
+</div>
+</sc-if>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;align-items:stretch">
+<div style="align-self:center;width:1px;height:36px;background:#E3D6C5"></div>
+<div style="border:1px solid #E3D6C5;border-radius:16px;background:#FFFFFF;padding:22px 24px;box-shadow:0 1px 2px rgba(13,16,36,.04)">
+<h3 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px;margin:0">Cafe &amp; High Tea</h3>
+<p style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#BF8C45;margin:8px 0 0">Nav · Ballina</p>
+<sc-if value="{{ withSections }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:7px;margin-top:16px;padding-top:14px;border-top:1px solid #E3D6C5">
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Hero</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Reserve your table</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">High Tea worth lingering over</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Pull Up a Chair</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Inside Lambruk Kitchen</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Bring the experience home</span>
+</div>
+</sc-if>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;align-items:stretch">
+<div style="align-self:center;width:1px;height:36px;background:#E3D6C5"></div>
+<div style="border:1px solid #E3D6C5;border-radius:16px;background:#FFFFFF;padding:22px 24px;box-shadow:0 1px 2px rgba(13,16,36,.04)">
+<h3 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px;margin:0">Wholesale</h3>
+<p style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#BF8C45;margin:8px 0 0">Nav · Stockists</p>
+<sc-if value="{{ withSections }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:7px;margin-top:16px;padding-top:14px;border-top:1px solid #E3D6C5">
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Become a stockist intro</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Traceable to the grower</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Who we supply</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Enquiry form</span>
+</div>
+</sc-if>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;align-items:stretch">
+<div style="align-self:center;width:1px;height:36px;background:#E3D6C5"></div>
+<div style="border:1px solid #E3D6C5;border-radius:16px;background:#FFFFFF;padding:22px 24px;box-shadow:0 1px 2px rgba(13,16,36,.04)">
+<h3 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px;margin:0">Our Story</h3>
+<p style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#BF8C45;margin:8px 0 0">Nav · About</p>
+<sc-if value="{{ withSections }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:7px;margin-top:16px;padding-top:14px;border-top:1px solid #E3D6C5">
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Sourced deep from Australian soil</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">How we make things</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Awards</span>
+</div>
+</sc-if>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;align-items:stretch">
+<div style="align-self:center;width:1px;height:36px;background:#E3D6C5"></div>
+<div style="border:1px solid #E3D6C5;border-radius:16px;background:#FFFFFF;padding:22px 24px;box-shadow:0 1px 2px rgba(13,16,36,.04)">
+<h3 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px;margin:0">Contact</h3>
+<p style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#BF8C45;margin:8px 0 0">Nav · Enquiries</p>
+<sc-if value="{{ withSections }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:7px;margin-top:16px;padding-top:14px;border-top:1px solid #E3D6C5">
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Contact form</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Cafe address · Hours</span>
+<span style="font-size:13.5px;line-height:1.4;color:#4A5478">Phone · Email · Social</span>
+</div>
+</sc-if>
+</div>
+</div>
+</div>
+
+<div style="margin-top:72px;border-top:1px solid #E3D6C5;padding-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:32px">
+<div style="border:1px solid #E3D6C5;border-radius:16px;background:#FFFFFF;padding:26px 28px">
+<p style="font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#BF8C45;font-weight:500;margin:0 0 14px">Reached From The Footer</p>
+<h3 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px;margin:0">Customer Care</h3>
+<div style="display:flex;gap:32px;margin-top:16px;padding-top:14px;border-top:1px solid #E3D6C5">
+<span style="font-size:13.5px;color:#4A5478">Shipping</span>
+<span style="font-size:13.5px;color:#4A5478">Refunds &amp; Returns</span>
+<span style="font-size:13.5px;color:#4A5478">Terms of Service</span>
+</div>
+<p style="font-size:13.5px;line-height:1.6;color:#8A8FA3;margin:16px 0 0">One page, three anchored sections. Footer links deep-link to each. No privacy policy exists live, so none is included.</p>
+</div>
+<div style="border:1px solid rgba(191,140,69,.28);border-radius:16px;background:#131A3E;padding:26px 28px">
+<p style="font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#C6A06C;font-weight:500;margin:0 0 14px">Present On Every Page</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+<div>
+<h4 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:22px;color:#F7F5F2;margin:0 0 10px">Header</h4>
+<span style="display:block;font-size:13.5px;line-height:1.55;color:rgba(247,245,242,.82)">Wordmark · Nav · Search · Account · Cart</span>
+</div>
+<div>
+<h4 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:22px;color:#F7F5F2;margin:0 0 10px">Cart drawer</h4>
+<span style="display:block;font-size:13.5px;line-height:1.55;color:rgba(247,245,242,.82)">Line items · Quantity · Subtotal · Checkout</span>
+</div>
+<div>
+<h4 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:22px;color:#F7F5F2;margin:0 0 10px">Footer</h4>
+<span style="display:block;font-size:13.5px;line-height:1.55;color:rgba(247,245,242,.82)">Shop · Visit · Care · Social · Acknowledgement</span>
+</div>
+<div>
+<h4 style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:22px;color:#F7F5F2;margin:0 0 10px">Viewports</h4>
+<span style="display:block;font-size:13.5px;line-height:1.55;color:rgba(247,245,242,.82)">Desktop and mobile builds, same map</span>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1680},&quot;withSections&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { withSections: this.props.withSections ?? true };
+  }
+}
+</script>
+</body>
+</html>

@@ -43,6 +43,8 @@ Shopify theme built by Akima Studio as their Shopify Partner.
 
 **Never run a `shopify theme` command without an explicit `--theme <id>`.** Without it the CLI wants to prompt interactively, and an agent that cannot answer a prompt will guess — the guess defaults to the live theme. This has already happened once on this project.
 
+**Before using any Shopify Admin MCP tool, call `get-shop-info` first and confirm the connected store is `37b2e5-fc.myshopify.com`.** If it's any other store, stop and tell the user — never read from or write to it. This session's Admin MCP connector was found pointed at an unrelated store ("Yippy Yayas") on 2026-08-20; caught before any of its data was used, but it can happen again on any given session.
+
 ## Customisation hierarchy
 
 Work down this list. Only move down a level when the one above genuinely can't do the job. This is what keeps the theme upgradable when Shopify ships Horizon updates.
@@ -88,3 +90,4 @@ Three installed, none of which constrain the theme build:
 - [ ] Does the Messaging chat widget need to appear on the new theme?
 - [ ] Does the client want the typo'd product handles fixed? Their call — each needs a redirect.
 - [ ] Is `/products/tomato-capsicum-relish-260g-1` a duplicate of `/products/tomato-capsicum-relish-260g`?
+- [ ] Footer's Shop-column links (`sections/footer-group.json`) point at `/collections/all` as a placeholder — revisit once the Shopify Admin MCP connector is repointed at the correct store and real Tea Collection/Sauces & Chutney/Pantry Staples/Gift Boxes handles can be verified.

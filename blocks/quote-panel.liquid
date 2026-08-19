@@ -40,7 +40,24 @@
       {{ block_settings.quote }}
     </div>
   {%- endif -%}
+
+  {%- if block_settings.illustration != blank -%}
+    {{
+      block_settings.illustration
+      | image_url: width: 200
+      | image_tag: widths: '104, 152', class: 'quote-panel__illustration', alt: '', loading: 'lazy'
+    }}
+  {%- endif -%}
 </div>
+
+{% stylesheet %}
+  .quote-panel__illustration {
+    display: inline-block;
+    height: clamp(52px, 40.988px + 2.824vw, 76px);
+    width: auto;
+    margin-block-start: 1.5rem;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -58,6 +75,11 @@
       "id": "quote",
       "label": "t:settings.quote",
       "default": "t:html_defaults.crafted_in_small_quantities_less_sugar"
+    },
+    {
+      "type": "image_picker",
+      "id": "illustration",
+      "label": "t:settings.illustration"
     },
     {
       "type": "header",

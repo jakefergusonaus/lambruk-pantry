@@ -179,6 +179,29 @@ Horizon-owned files we've had to touch directly, rather than layer over. Each en
 | File | Change | Risk | What to check after a Horizon update |
 |---|---|---|---|
 | `snippets/stylesheets.liquid` | Added one line loading `assets/lambruk-tokens.css`, after the existing `base.css` line | A Horizon update can replace this file wholesale, silently dropping our line — every block depending on `--display-*` tokens or `.text-display-*` utilities would lose their sizing with no visible error, just Horizon's own fallback values re-asserting themselves | Confirm the `lambruk-tokens.css` line is still present; re-add if the update overwrote it |
+| `sections/footer-utilities.liquid` | Added two entries to the section's `"blocks"` allowlist — see below | A Horizon update to this file's block list would either silently drop our two entries (if it replaces the array wholesale) or conflict cleanly (if it's a structural merge) — the footer's legal bar would fall back to Horizon's native `footer-copyright`/`footer-policy-list` with no visible error, just the wrong content/shape | Confirm `lambruk-copyright` and `lambruk-policy-links` are still present in the `"blocks"` array; re-add if the update overwrote them |
+
+**`footer-utilities.liquid`'s `"blocks"` array — pristine vs. current.** This is a closed allowlist of block *types* the section accepts, separate from and in addition to its `max_blocks: 3` count limit (see the QA note in §7 below on why neither surfaced through `theme check`). Neither the type restriction nor a way to add to it exists at a lower layer of the customisation hierarchy — a new block (layer 3) is the correct place for new footer content, but it still has to be named in this array before Horizon's own `footer-utilities.liquid` will accept it, which makes this a minimal, deliberate layer-4 edit rather than a full section override (the array is the only thing touched; the section's grid/layout/rendering logic is untouched).
+
+Pristine (confirmed against `git show b2d7c4b:sections/footer-utilities.liquid` — **not** `8df8a53`, which predates the Horizon theme files entirely; `b2d7c4b` "Add pristine Horizon theme baseline" is the actual baseline commit for diffing):
+```json
+"blocks": [
+  { "type": "footer-copyright" },
+  { "type": "footer-policy-list" },
+  { "type": "social-links" }
+],
+```
+Current — purely additive, the three original entries untouched, two new ones appended:
+```json
+"blocks": [
+  { "type": "footer-copyright" },
+  { "type": "footer-policy-list" },
+  { "type": "social-links" },
+  { "type": "lambruk-copyright" },
+  { "type": "lambruk-policy-links" }
+],
+```
+Both new types are `lambruk-`-prefixed deliberately, so anyone diffing this array against a future Horizon update can immediately see which entries are ours without cross-referencing this table. `footer-copyright` and `footer-policy-list` are left in the allowlist unused — removing them wasn't necessary to fit our content and would have turned this into a mixed add/remove diff instead of a clean, purely-additive one.
 
 ---
 

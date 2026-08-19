@@ -1,0 +1,139 @@
+{%- doc -%}
+  Extends Horizon's footer-copyright block (year + shop name) with the
+  client's Traditional Owners acknowledgement and design credit, neither of
+  which footer-copyright has any setting for — it only ever renders
+  "© year shopname[, powered by]".
+{%- enddoc -%}
+
+{% assign block_settings = block.settings %}
+<div
+  class="
+    lambruk-copyright
+    custom-typography
+    {% if block_settings.font_size != "" %}custom-font-size{% endif %}
+  "
+  style="
+    {% render 'typography-style', preset: 'custom', settings: block_settings %}
+    {% if block_settings.text_color != blank %}--color-utilities: {{ block_settings.text_color }};{% endif %}
+  "
+  {{ block.shopify_attributes }}
+>
+  <span class="footer-utilities__text">
+    &copy; {{ 'now' | date: '%Y' }}
+    {{ shop.name | link_to: routes.root_url -}}
+    {%- if block_settings.show_powered_by -%}
+      , {{ powered_by_link }}
+    {%- endif -%}
+    {%- if block_settings.acknowledgement != blank %}. {{ block_settings.acknowledgement }}{% endif -%}
+  </span>
+  {%- if block_settings.credit_name != blank -%}
+    <span class="footer-utilities__text lambruk-copyright__credit">
+      Designed by
+      <a href="https://akima.studio/" target="_blank" rel="noopener" class="lambruk-copyright__credit-link">{{ block_settings.credit_name }}</a>
+    </span>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .lambruk-copyright {
+    color: var(--color-utilities, var(--color-foreground-muted));
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .lambruk-copyright .lambruk-copyright__credit-link {
+    color: var(--text-accent-on-dark);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.lambruk_copyright",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_powered_by",
+      "label": "t:settings.show_powered_by_shopify",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "acknowledgement",
+      "label": "t:settings.acknowledgement",
+      "default": "t:text_defaults.bundjalung_acknowledgement"
+    },
+    {
+      "type": "header",
+      "content": "t:content.credit"
+    },
+    {
+      "type": "text",
+      "id": "credit_name",
+      "label": "t:settings.credit_name",
+      "default": "Akima Studio"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:settings.text_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "select",
+      "id": "font_size",
+      "label": "t:settings.size",
+      "options": [
+        {
+          "value": "0.625rem",
+          "label": "10px"
+        },
+        {
+          "value": "0.75rem",
+          "label": "12px"
+        },
+        {
+          "value": "0.875rem",
+          "label": "14px"
+        },
+        {
+          "value": "1rem",
+          "label": "16px"
+        },
+        {
+          "value": "1.125rem",
+          "label": "18px"
+        }
+      ],
+      "default": "0.75rem"
+    },
+    {
+      "type": "select",
+      "id": "case",
+      "label": "t:settings.case",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.default"
+        },
+        {
+          "value": "uppercase",
+          "label": "t:options.uppercase"
+        }
+      ],
+      "default": "none"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.lambruk_copyright",
+      "category": "t:categories.footer"
+    }
+  ]
+}
+{% endschema %}

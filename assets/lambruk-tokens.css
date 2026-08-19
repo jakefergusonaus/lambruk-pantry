@@ -17,6 +17,13 @@
      desktop target. */
   --display-3-size: clamp(32px, 28.329px + 0.941vw, 40px);
   --display-3-line-height: 1.08;
+
+  /* Accent/eyebrow text (DESIGN-TOKENS.md §1). design_handoff_website's raw
+     #A07037 fails WCAG AA on both surfaces it's used on (4.13:1 on paper,
+     3.91:1 on navy) — these are the nearest points on its own hue/
+     saturation line that clear 4.5:1 in each direction. */
+  --text-accent: #986A34;
+  --text-accent-on-dark: #AE7A3C;
 }
 
 /* ==========================================================================
@@ -26,4 +33,13 @@
 .text-display-3 {
   font-size: var(--display-3-size);
   line-height: var(--display-3-line-height);
+}
+
+/* Footer nav/legal links read as navigation, not prose — Horizon underlines
+   any <a> inside a bare <p> globally (base.css: "Add underline to text
+   using our paragraph styles only"), which the footer's link-list text
+   blocks pick up as a side effect of using richtext/custom text blocks. */
+.footer-content a,
+.utilities a {
+  text-decoration: none;
 }

@@ -54,7 +54,7 @@
             "text_blurb": {
               "type": "text",
               "settings": {
-                "text": "<p>Sourced deep from Australian soil. We curate life-affirming kitchen essentials made by small-batch farmers and passionate artisans.</p><p>We acknowledge the Bundjalung Nation, Traditional Owners of the country on which we live and work.</p>",
+                "text": "<p>Sourced deep from Australian soil. We curate life-affirming kitchen essentials made by small-batch farmers and passionate artisans.</p>",
                 "width": "100%",
                 "max_width": "narrow",
                 "alignment": "left",
@@ -111,6 +111,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Shop</p>",
+                "text_color": "#AE7A3C",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -191,6 +192,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>Explore</p>",
+                "text_color": "#AE7A3C",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -271,6 +273,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>General</p>",
+                "text_color": "#AE7A3C",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -336,9 +339,21 @@
     "footer_utilities_jLGE8U": {
       "type": "footer-utilities",
       "blocks": {
-        "footer_policy_list_VCdnpa": {
-          "type": "footer-policy-list",
+        "text_copyright": {
+          "type": "lambruk-copyright",
           "settings": {
+            "show_powered_by": false,
+            "font_size": "0.75rem",
+            "case": "none"
+          },
+          "blocks": {}
+        },
+        "footer_policy_links": {
+          "type": "lambruk-policy-links",
+          "settings": {
+            "shipping_label": "Shipping Policy",
+            "refund_label": "Refunds & Returns",
+            "terms_label": "Terms & Conditions",
             "font_size": "0.75rem",
             "case": "none"
           },
@@ -351,21 +366,12 @@
             "instagram_url": "https://www.instagram.com/lambrukpantry"
           },
           "blocks": {}
-        },
-        "footer_copyright_jweRK8": {
-          "type": "footer-copyright",
-          "settings": {
-            "show_powered_by": false,
-            "font_size": "0.75rem",
-            "case": "none"
-          },
-          "blocks": {}
         }
       },
       "block_order": [
-        "footer_policy_list_VCdnpa",
-        "social_links_Ew63Kq",
-        "footer_copyright_jweRK8"
+        "text_copyright",
+        "footer_policy_links",
+        "social_links_Ew63Kq"
       ],
       "name": "t:names.utilities",
       "settings": {

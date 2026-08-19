@@ -1,0 +1,140 @@
+{%- doc -%}
+  Renders Shopify's Shipping, Refund and Terms of Service policies as three
+  plain inline links — not Horizon's native footer-policy-list block, which
+  only renders as a single "Terms and Policies" popover trigger with no
+  setting to change that shape.
+
+  URLs come straight from shop.shipping_policy / shop.refund_policy /
+  shop.terms_of_service, so they stay correct if the client's policy setup
+  changes. Only the label text is a merchant-editable setting; a policy's
+  link is hidden entirely if that policy isn't set up on the shop.
+{%- enddoc -%}
+
+{% assign block_settings = block.settings %}
+<div
+  class="
+    lambruk-policy-links
+    custom-typography
+    {% if block_settings.font_size != "" %}custom-font-size{% endif %}
+  "
+  style="
+    {% render 'typography-style', preset: 'custom', settings: block_settings %}
+    {% if block_settings.text_color != blank %}--color-utilities: {{ block_settings.text_color }};{% endif %}
+  "
+  {{ block.shopify_attributes }}
+>
+  {%- if shop.shipping_policy -%}
+    <a href="{{ shop.shipping_policy.url }}" class="footer-utilities__text lambruk-policy-links__link">{{ block_settings.shipping_label }}</a>
+  {%- endif -%}
+  {%- if shop.refund_policy -%}
+    <a href="{{ shop.refund_policy.url }}" class="footer-utilities__text lambruk-policy-links__link">{{ block_settings.refund_label }}</a>
+  {%- endif -%}
+  {%- if shop.terms_of_service -%}
+    <a href="{{ shop.terms_of_service.url }}" class="footer-utilities__text lambruk-policy-links__link">{{ block_settings.terms_label }}</a>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .lambruk-policy-links {
+    color: var(--color-utilities, var(--color-foreground-muted));
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .lambruk-policy-links__link {
+    color: inherit;
+    text-decoration: none;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.lambruk_policy_links",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:content.manage_policies"
+    },
+    {
+      "type": "text",
+      "id": "shipping_label",
+      "label": "t:settings.shipping_policy_label",
+      "default": "Shipping Policy"
+    },
+    {
+      "type": "text",
+      "id": "refund_label",
+      "label": "t:settings.refund_policy_label",
+      "default": "Refunds & Returns"
+    },
+    {
+      "type": "text",
+      "id": "terms_label",
+      "label": "t:settings.terms_of_service_label",
+      "default": "Terms & Conditions"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:settings.text_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "select",
+      "id": "font_size",
+      "label": "t:settings.size",
+      "options": [
+        {
+          "value": "0.625rem",
+          "label": "10px"
+        },
+        {
+          "value": "0.75rem",
+          "label": "12px"
+        },
+        {
+          "value": "0.875rem",
+          "label": "14px"
+        },
+        {
+          "value": "1rem",
+          "label": "16px"
+        },
+        {
+          "value": "1.125rem",
+          "label": "18px"
+        }
+      ],
+      "default": "0.75rem"
+    },
+    {
+      "type": "select",
+      "id": "case",
+      "label": "t:settings.case",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.default"
+        },
+        {
+          "value": "uppercase",
+          "label": "t:options.uppercase"
+        }
+      ],
+      "default": "none"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.lambruk_policy_links",
+      "category": "t:categories.footer"
+    }
+  ]
+}
+{% endschema %}

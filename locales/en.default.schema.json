@@ -58,6 +58,7 @@
     "colors": "Colors",
     "page_text_color_contrast_info": "Sections with a custom background color will use this text color only when there is sufficient color contrast.",
     "collection_page": "Collection page",
+    "credit": "Design credit",
     "complementary_products": "Complementary products must be set up using the Search & Discovery app. [Learn more](https://help.shopify.com/manual/online-store/search-and-discovery)",
     "content_layout": "Content layout",
     "content_width": "Content width only applies when the section width is set to full width.",
@@ -352,6 +353,8 @@
     "page": "Page",
     // Theme block name for main page body content
     "page_content": "Content",
+    "lambruk_copyright": "Copyright (Lambruk)",
+    "lambruk_policy_links": "Policy links (Lambruk)",
     "page_layout": "Page",
     "password": "Password",
     "payment_icons": "Payment icons",
@@ -755,6 +758,8 @@
     "auto_load_products": "Auto load products on scroll",
     "autoplay": "Autoplay",
     "accent_color": "Accent color",
+    "acknowledgement": "Acknowledgement",
+    "credit_name": "Design credit name",
     "background": "Background",
     "background_color": "Background color",
     "background_overlay": "Background overlay",
@@ -1092,6 +1097,9 @@
     "show_second_image_on_hover": "Show second image on hover",
     "show_swatch_label": "Text labels for swatches",
     "show_tax_info": "Tax information",
+    "shipping_policy_label": "Shipping policy label",
+    "refund_policy_label": "Refund policy label",
+    "terms_of_service_label": "Terms of service label",
     // Font size or element dimensions setting
     "size": "Size",
     "skus": "SKUs",
@@ -1195,6 +1203,7 @@
   "text_defaults": {
     "accordion_heading": "Accordion heading",
     "the_lambruk_promise": "The Lambruk Promise",
+    "bundjalung_acknowledgement": "We acknowledge the Bundjalung Nation, Traditional Owners of the country on which we live and work.",
     "are_purchases_final_sale": "Are any purchases final sale?",
     "be_bold": "Be bold.",
     "bestsellers": "Bestsellers",

@@ -1,0 +1,29 @@
+/* ==========================================================================
+   LAMBRUK TOKENS
+
+   Design tokens layered over Horizon, per ARCHITECTURE.md §5 — additive only,
+   loaded after Horizon's own CSS (see snippets/stylesheets.liquid), never
+   edits to a Horizon file directly. Values sourced from design/DESIGN-TOKENS.md.
+
+   Add new steps/tokens here as blocks actually need them — don't pre-build
+   the full set before there's a consumer.
+   ========================================================================== */
+
+:root {
+  /* Display 3 · Feature (DESIGN-TOKENS.md §2). Horizon's own h3 preset can't
+     produce this: type_size_h3 is 32px, and Horizon's fluid algorithm
+     (theme-styles-variables.liquid) only goes fluid above a 48px cutoff, so
+     h3 renders flat at 32px on every viewport and never reaches our 40px
+     desktop target. */
+  --display-3-size: clamp(32px, 28.329px + 0.941vw, 40px);
+  --display-3-line-height: 1.08;
+}
+
+/* ==========================================================================
+   LAMBRUK UTILITIES
+   ========================================================================== */
+
+.text-display-3 {
+  font-size: var(--display-3-size);
+  line-height: var(--display-3-line-height);
+}

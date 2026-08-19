@@ -1,0 +1,69 @@
+{%- doc -%}
+  Fluid padding for the "surfaces" pattern (ARCHITECTURE.md §2/§5) — quote-panel
+  and future blocks built on the same background_color + contrast-override
+  shape. Interpolates each side between a fixed floor and the merchant's own
+  padding setting, using the same 390–1240px clamp() shape as the canonical
+  type scale in design/DESIGN-TOKENS.md §2, instead of a flat px value that
+  ignores viewport width.
+
+  Deliberately separate from snippets/spacing-padding.liquid, which ~80 other
+  blocks theme-wide render as-is — this snippet is scoped to the surfaces
+  pattern only, not a replacement for the shared one.
+
+  Floors: 40px block (top/bottom), 16px inline (left/right) — the inline floor
+  matches Horizon's own --page-margin concession already accepted in
+  ARCHITECTURE.md §3, so this fluid transition still lands on the same 16/40
+  values that concession settled on, just smoothed across the viewport instead
+  of a hard jump at 750px.
+
+  @param {object} settings - the block or section settings object, providing
+    padding-block-start, padding-block-end, padding-inline-start and
+    padding-inline-end
+
+  @example
+  <div class="spacing-style" style="{% render 'spacing-padding-surface', settings: block.settings %}">
+{%- enddoc -%}
+{%- liquid
+  assign viewport_min = 390
+  assign viewport_max = 1240
+  assign viewport_range = viewport_max | minus: viewport_min | times: 1.0
+
+  assign keys = 'padding-block-start,padding-block-end,padding-inline-start,padding-inline-end' | split: ','
+  assign floors = '40,40,16,16' | split: ','
+
+  for key in keys
+    assign floor = floors[forloop.index0] | times: 1
+    assign raw_value = settings[key]
+
+    if raw_value != blank
+      assign value = raw_value | times: 1
+
+      echo '--'
+      echo key
+      echo ': '
+
+      if value <= floor
+        echo value
+        echo 'px'
+      else
+        assign diff = value | minus: floor
+        assign slope = diff | divided_by: viewport_range
+        assign slope_vw = slope | times: 100 | round: 3
+        assign intercept = slope | times: viewport_min
+        assign intercept = floor | minus: intercept | round: 3
+
+        echo 'clamp('
+        echo floor
+        echo 'px, '
+        echo intercept
+        echo 'px + '
+        echo slope_vw
+        echo 'vw, '
+        echo value
+        echo 'px)'
+      endif
+
+      echo ';'
+    endif
+  endfor
+-%}

@@ -152,7 +152,7 @@ The common thread: each gap is small enough to be invisible or near-invisible, a
 
 ## 5. Everything else: one new stylesheet, layered over Horizon — never edits to Horizon's files
 
-Every remaining Category 3 item from the settings-mapping review becomes a CSS custom property in a **single new asset** (e.g. `assets/lambruk-tokens.css`), loaded after Horizon's own CSS in `theme.liquid`. Nothing here edits `base.css` or any Horizon-owned snippet.
+Every remaining Category 3 item from the settings-mapping review becomes a CSS custom property in a **single new asset** (`assets/lambruk-tokens.css`), loaded after Horizon's own CSS via `snippets/stylesheets.liquid` — not a direct edit to `layout/theme.liquid`, which never references stylesheets itself. One file, with clearly marked TOKENS and UTILITIES sections rather than splitting custom properties and classes across two assets, to avoid a second global request. Nothing here edits `base.css` or any other Horizon-owned snippet other than the one line noted in "Upgrade-tracked modifications" below.
 
 Confirmed contents so far:
 
@@ -168,6 +168,16 @@ Confirmed contents so far:
 **Still open, deliberately not decided here:**
 - Custom font upload for Instrument Serif and Geist — `font_picker` settings support uploading a custom font through the theme editor, which would be the native path, but that's an Admin action, not something resolvable from source. The font files are staged locally (`~/Downloads/Geist/`) and ready whenever that step happens; Instrument Serif isn't yet confirmed staged the same way.
 - Focus-ring colour — no dedicated setting found beyond the button-specific `--color-primary-button-focus-outline`; needs a decision once we're building actual interactive components, not before.
+
+---
+
+## 6. Upgrade-tracked modifications
+
+Horizon-owned files we've had to touch directly, rather than layer over. Each entry is a real upgrade burden: a future Horizon theme update can silently overwrite these and drop whatever we depended on, with no error — CSS custom properties that go missing just fall back to unset/initial rather than failing loudly. Check this list after every Horizon update.
+
+| File | Change | Risk | What to check after a Horizon update |
+|---|---|---|---|
+| `snippets/stylesheets.liquid` | Added one line loading `assets/lambruk-tokens.css`, after the existing `base.css` line | A Horizon update can replace this file wholesale, silently dropping our line — every block depending on `--display-*` tokens or `.text-display-*` utilities would lose their sizing with no visible error, just Horizon's own fallback values re-asserting themselves | Confirm the `lambruk-tokens.css` line is still present; re-add if the update overwrote it |
 
 ---
 

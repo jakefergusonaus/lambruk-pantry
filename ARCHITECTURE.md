@@ -182,6 +182,23 @@ Horizon-owned files we've had to touch directly, rather than layer over. Each en
 
 ---
 
+## 7. Verification gap: `theme check` doesn't validate JSON against a section's own schema
+
+Found 2026-08-20 when three edits to `sections/header-group.json`, `sections/footer-group.json`, and `templates/404.json` all passed `shopify theme check` clean, then were rejected outright on real upload to theme `182395437357` (surfaced via the local preview at `127.0.0.1:9292`, then reproduced independently against a second `shopify theme dev` session):
+
+- `footer_utilities_jLGE8U` had 4 blocks against `footer-utilities.liquid`'s declared `"max_blocks": 3`.
+- `header-group.json`'s `"order"` array referenced a section id no longer present in `"sections"` — a leftover from a prior edit.
+- `templates/404.json` set `padding-block-start`/`padding-block-end` past `main-404.liquid`'s declared range `max: 100`.
+- Two more of the same shape, only visible after re-verifying against the live theme rather than trusting a clean sync log: `divider_color`/`background_color_top` used `rgba(…, .28)` / `rgba(…, .92)` — Shopify's colour-setting validator rejects a decimal with no leading zero (`0.28`, not `.28`), even though it's valid CSS a browser parses fine.
+
+**Why `theme check` missed all five.** Checked its rule list (`shopify theme check --list`) — the closest candidates are `ValidSchema`, `ValidSettingsKey`, and `JSONMissingBlock`. What they actually validate: that a section's *own* `{% schema %}` block is syntactically well-formed, that setting IDs referenced in Liquid exist in that schema, and that a JSON template's block *types* are valid. None of them cross-reference **instance data** in a template or section-group JSON file (`sections/header-group.json`, `sections/footer-group.json`, `templates/404.json`, `config/settings_data.json`) against the *runtime constraints* declared in the section/block schema it's instantiating — `max_blocks`, a setting's `min`/`max` range, or platform-level value-format rules like valid CSS colour syntax. `theme check` lints Liquid and JSON *structure*; it doesn't simulate what Shopify's own admin-side schema validator does when a theme is actually synced. That validator is authoritative for this whole error class, and nothing local reproduces it.
+
+**The check that would have caught it: an actual sync.** `shopify theme dev --theme 182395437357` (or `theme push` to the same, unpublished, theme) performs the real server-side validation on every file it uploads — that's literally how these five were found. There is no local, offline equivalent; the checks that matter here only exist on Shopify's side.
+
+**Practice change.** `shopify theme check` remains necessary (it catches things a live sync doesn't — translations, deprecated tags, accessibility) but is no longer sufficient on its own for changes to section-group JSON (`header-group.json`, `footer-group.json`), template JSON, or any settings touching schema-declared ranges/max_blocks/colour values. Those changes need a real sync — `shopify theme dev` running, or a one-off `theme push` — checked for upload errors before considering the change done, not just a clean `theme check` run. Worth folding into the `/qa` skill and `workflow/PIPELINE.md` directly rather than relying on this note being remembered per-session.
+
+---
+
 ## Summary
 
 | Area | Path taken |

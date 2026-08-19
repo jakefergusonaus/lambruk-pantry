@@ -222,6 +222,16 @@ Found 2026-08-20 when three edits to `sections/header-group.json`, `sections/foo
 
 ---
 
+## 8. `.theme-check.yml`: `MatchingTranslations` disabled deliberately
+
+Lambruk Pantry is English-only. Horizon ships 21 other locale files (`ar`, `de`, `fr`, … — stock translations of Horizon's *default* strings, never authored or maintained by us) alongside `en.default(.schema).json`. `MatchingTranslations` requires every key in the English default files to also exist in all 21 others. Every key we add — including every `lambruk_*` setting from this session's footer work — permanently fails this check across ~21 files with no actual bug behind it: by the time footer work finished, this had inflated `theme check` to 352 errors, all of them this one check, none of them real.
+
+**Considered, not chosen: deleting the 21 unused locale files instead.** Would solve the same noise problem (nothing left to mismatch against) and more thoroughly, but is a real deletion — recoverable via git history since they're tracked from the pristine Horizon baseline, but not a config toggle — and throws away Shopify's own maintained translations of Horizon's *stock* strings as a starting point, if the client ever wants a second storefront language later. The `.theme-check.yml` override is smaller, fully reversible, and the standard idiom for English-only Shopify builds — chosen over the deletion for that reason, not because the tradeoff is one-sided.
+
+**`ValidSchemaTranslations` stays on, deliberately, and must not be disabled alongside this.** It's a different check — it validates that every `t:` reference in a block/section schema resolves to a real key in `en.default.schema.json`, which catches an actual bug class (a typo'd locale key). Nothing about the `MatchingTranslations` override affects it; confirmed separately that it's still active after the override was added. If `theme check` ever needs touching again here, disable only `MatchingTranslations` — don't reach for `theme-check:all`'s translation category as a whole.
+
+---
+
 ## Summary
 
 | Area | Path taken |

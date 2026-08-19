@@ -1,0 +1,16 @@
+extends: theme-check:recommended
+
+# MatchingTranslations disabled deliberately — Lambruk Pantry is an
+# English-only store. The theme ships 21 other locale files (stock Horizon
+# translations, never maintained by us), and MatchingTranslations requires
+# every key in en.default(.schema).json to also exist in all of them. Every
+# key we add — including our own lambruk_* settings — permanently fails
+# this check across ~21 files with no actual bug behind it: pure noise, not
+# a signal. See ARCHITECTURE.md for the full reasoning and the tradeoff
+# against the alternative (deleting the unused locale files).
+#
+# Do NOT disable ValidSchemaTranslations alongside this — it's a different
+# check that catches real bugs (a t: reference with no matching key in
+# en.default.schema.json) and must stay on.
+MatchingTranslations:
+  enabled: false

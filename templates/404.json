@@ -135,8 +135,8 @@
         "vertical_alignment_flex_direction_column": "center",
         "gap": 20,
         "background_color": "{{ settings.color_palette.background }}",
-        "padding-block-start": 128,
-        "padding-block-end": 136
+        "padding-block-start": 100,
+        "padding-block-end": 100
       }
     }
   },

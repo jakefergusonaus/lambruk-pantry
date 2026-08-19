@@ -232,6 +232,22 @@ Lambruk Pantry is English-only. Horizon ships 21 other locale files (`ar`, `de`,
 
 ---
 
+## 9. Design-system type on generic blocks: `font_size: var(--display-N-size)`
+
+Every section built from Horizon's generic `text` block (the composable pattern §5 and the media-with-content work both lean on) needs headings sized to our canonical scale, not Horizon's own `type_size_h1`–`h6` settings — those are a different, uncoordinated scale (see quote-panel's original h3 problem: flat 32px, no fluid step, because Horizon's own fluid algorithm only activates above a 48px cutoff). Rather than solve this per-section, or build a bespoke block every time a heading needs correct sizing, the fix is one setting value.
+
+**The technique:** on a `text` block, set `type_preset: "custom"` and `font_size: "var(--display-N-size)"` (or any raw CSS value, including a literal `clamp(...)` string) instead of one of the schema's enumerated px options.
+
+**Why this works, confirmed empirically, not just by reading the code — this session already had two cases where static reasoning missed a real server-side validation rule (`max_blocks` type allowlist, the `rgba()` leading-zero requirement), so this was tested against a live sync before relying on it:**
+- `font_size` is declared as a `select` in `text.liquid`'s schema, with a fixed list of px options — but that only constrains the theme-editor's dropdown UI. Confirmed the platform's schema validator does **not** reject a value outside that list when set directly in JSON, unlike `range`/`color`/`url` settings (both of which we've hit real rejections on this session).
+- `snippets/typography-style.liquid` tries to parse `settings.font_size` as a bare rem number (`split: 'rem' | first | times: 1.0`) to decide whether to build its own clamp. That parse fails silently on a non-numeric string like `"var(--display-3-size)"`, evaluates to `0`, falls under the fluid cutoff, and hits the plain `else` branch — which just echoes the raw setting value into `--font-size:` verbatim. A test block set this way and synced to the live theme measured **40px at desktop, 32px at mobile (375px)** — genuinely fluid, not a coincidence at one viewport.
+
+**The caveat: `line-height` does not get the same free ride, and this is deliberate, not an oversight to fix reflexively.** Unlike `font_size`'s passthrough, `typography-style.liquid` builds `--line-height` by *string-interpolating* your selection into a fixed variable name — `--line-height--{type}-{tight|normal|loose}` — never a raw echo. `type` here is inferred from the same (failed) font-size parse, defaulting to `body`, so a heading set this way gets `--line-height--body-normal` (1.4) rather than Display 3's actual 1.08. Visually looser than intended on any heading that wraps to multiple lines; a non-issue on ones that don't. Left unsolved deliberately on the five `media-with-content` headings (2026-08-20) — pending a look at the real preview, since which headings wrap and which don't determines whether this is even worth solving, not something to fix pre-emptively.
+
+**Adopt this as the standard.** Any generic `text` block needing correct heading size going forward should use `font_size: var(--display-N-size)` rather than Horizon's native presets or a fixed px value — solved once, here, rather than re-decided per section.
+
+---
+
 ## Summary
 
 | Area | Path taken |

@@ -4,6 +4,8 @@ Extracted from `design/Lambruk Pantry Design System/` (tokens/*.css, readme.md, 
 
 Where sources disagree, both variants are listed under **Flagged inconsistencies** at the end rather than silently resolved.
 
+**2026-08-20 update — superseded by `design/design_handoff_website/`.** The `uploads/*.dc.html` mockups this document was built from, and the rest of `design/Lambruk Pantry Design System/`, are archived at `design/_archive/Lambruk Pantry Design System/` — superseded by the complete 8-page client handoff at `design/design_handoff_website/`. Re-verified every section below against the new package the same day; results are recorded inline where something changed. **`design/design_handoff_website/design-system-tokens/colors.css` is a fresh export, not authoritative on its own** — it carries none of this document's resolutions (no `--icon-accent`, and `--text-accent` reverted to its raw, unresolved value). Treat this document, not that file, as canonical.
+
 **2026-08-18 update — mobile/desktop mockups added.** Two new full-site prototypes landed in `uploads/`: `LambrukPantry.dc.html` (desktop, 1240px container) and `LambrukPantry Mobile.dc.html` (mobile, fixed 390px viewport). Unlike the original `ui_kits/website/` recreation — which only builds the homepage — these two files simulate an entire client-side-routed site: Home, Shop (Tea/Condiments/Pantry category filters), Product detail, four Occasion pages (Slow Mornings, Entertaining, Sunday Roast, High Tea), Cafe (with a booking form and photo gallery), Wholesale enquiry, Our Story, Contact, and policy pages (Shipping, Refunds, Terms). This directly contradicts `readme.md`'s CAVEATS section, which still says "one surface only... Shop listing, product detail, checkout, Our Story, Contact and the wholesale application are not designed here" — that caveat is now stale and hasn't been updated to match. Sections 8–9 below and the new flagged items cover what changed. `ui_kits/website/` also gained two components not documented in `readme.md`'s component table: `Reviews.jsx` (star ratings + customer review cards) and `Subscribe.jsx` (inline newsletter capture, a leaner alternative to `Newsletter.jsx`) — both are the first components in the system built mobile-responsive from the start, via a shared `responsive.js` breakpoint hook.
 
 ---
@@ -52,10 +54,12 @@ Two ramps and nothing else. Gold is a seasoning, not a base — used sparingly f
 | `--paper-2` | `#F4F1EA` | alt section band |
 | `--surface-card` | `#FFFFFF` | card fill |
 | `--surface-sunken` | `var(--gold-50)` → `#F7F5F2` | recessed/empty-state fill |
-| `--surface-dark` | `var(--blue-900)` → `#131A3E` | navy band |
+| `--surface-dark` | `var(--blue-900)` → `#131A3E` | navy band, **footer included as of 2026-08-20** |
 | `--surface-darker` | `var(--blue-950)` → `#0D1024` | deepest band |
 
 A view uses at most two background colours: paper plus either the alt paper or navy. Full-bleed bands alternate paper → alt paper → navy → photography.
+
+**Changed 2026-08-20 — footer moved from ink to navy.** The old mockups used `--surface-darker` (`#0D1024`) for the footer; `design_handoff_website/` uses `--surface-dark` (`#131A3E`) instead, confirmed on both desktop and mobile and stated explicitly in that package's own `Site Map.dc.html` ("Footer (navy, `#131A3E`)"). No contrast concern either way — this is a background swap, not a text-color change.
 
 ### Brand & accent aliases
 
@@ -75,8 +79,10 @@ A view uses at most two background colours: paper plus either the alt paper or n
 | `--text-muted` | **`#686D84`** (was `#6B7186`) | secondary text |
 | `--text-on-dark` | `var(--gold-50)` → `#F7F5F2` | text on navy |
 | `--text-on-dark-muted` | `rgba(247,245,242,.72)` | secondary text on navy |
-| `--text-accent` | `var(--gold-500)` → `#BF8C45` | gold text/eyebrows on paper |
-| `--text-accent-on-dark` | `var(--gold-400)` → `#C6A06C` | gold text/eyebrows on navy |
+| `--text-accent` | **`#986A34`** (was `var(--gold-500)` → `#BF8C45`) | gold text/eyebrows on paper |
+| `--text-accent-on-dark` | **`#AE7A3C`** (was `var(--gold-400)` → `#C6A06C`) | gold text/eyebrows on navy |
+
+**Resolved 2026-08-20 — accent/eyebrow colour consolidated and corrected.** `design_handoff_website/` uses a single accent value, `#A07037` (gold-600), for every eyebrow and accent link on both desktop and mobile — confirmed by diffing the full old-vs-new HTML (~30 instances, no exceptions) — replacing what used to be two separate raw values depending on surface (`#BF8C45` on paper, `#C6A06C` on navy). Checked contrast on the raw `#A07037` before adopting it: **4.13:1 on `--paper`** (fails AA; the old `#BF8C45` was worse still, at 2.86:1) and **3.91:1 on navy** (fails AA; the old `#C6A06C` passed comfortably at 6.94:1 — this is a real regression, not just a rounding difference). Same treatment as `--text-muted`: took `#A07037` as design intent and found the nearest point on its own hue/saturation line (H≈32.6°, S≈48.8%) that clears 4.5:1 in each direction — darker for paper, lighter for navy, keeping both as separate tokens rather than collapsing to one value. **`--text-accent` → `#986A34`, 4.53:1 on `--paper`. `--text-accent-on-dark` → `#AE7A3C`, 4.54:1 on navy.** Both hold a small margin above 4.5, matching the precedent's approach.
 
 **Resolved 2026-08-18 — body-text palette updated.** The mobile/desktop full-site mockups (`uploads/LambrukPantry.dc.html`, `uploads/LambrukPantry Mobile.dc.html`) use `#4A5478` and `#8A8FA3` in place of the old `--text-body`/`--text-muted` values 181 and 32 times respectively, with **zero** remaining uses of the old `#1C2552`/`#6B7186` hex codes in either file — a complete, deliberate swap, not stray values.
 
@@ -104,7 +110,7 @@ A view uses at most two background colours: paper plus either the alt paper or n
 ### Image-protection scrims (not tokenised, used inline)
 
 - **Hero (left→right):** `linear-gradient(90deg, rgba(13,16,36,.72) 0%, rgba(13,16,36,.52) 46%, rgba(13,16,36,.18) 100%)`
-- **Cards/panels (bottom-up, three-stop):** `linear-gradient(180deg, rgba(13,16,36,0) 28%, rgba(13,16,36,.46) 56%, rgba(13,16,36,.86) 100%)`
+- **Cards/panels (bottom-up, three-stop):** `linear-gradient(0deg, rgba(0,0,0,.86) 0%, rgba(0,0,0,.46) 44%, rgba(0,0,0,0) 72%)` — **changed 2026-08-20**, was navy-tinted `rgba(13,16,36,…)`, now pure black. Confirmed scoped to card/tile-scale scrims only (category tiles, occasion cards) — the large hero-scale scrims (Cafe hero, Shop occasion-active hero) are unchanged, still navy-tinted `rgba(13,16,36,…)` in `design_handoff_website/`. Don't apply the pure-black recipe to hero scrims.
 
 Text over photography always sits on a scrim, never the bare image. Capsules/label chips are not used to protect text. These are the only gradients in the system — no decorative gradients elsewhere.
 
@@ -354,6 +360,16 @@ Extracted by diffing the two `uploads/*.dc.html` mockups. These are the concrete
 **Concession, approved 2026-08-19 — mobile gutter becomes Horizon's native 16px, not the mockups' 20px.** Horizon's `--page-margin` is hardcoded to 16px below 750px in `assets/base.css` (desktop's 40px already matched ours exactly — see section 8). **Why:** 4px is below the threshold most people notice in a side margin, and 16px is the one mobile spacing value in this whole comparison that Horizon ships for free; overriding it would mean touching `base.css` directly (there's no setting for it) just to close a 4px gap. Not worth the maintenance cost against future Horizon updates. `--gutter` in `tokens/spacing.css` remains deprecated per the flagged inconsistency below regardless — this concession is about the *mobile* value specifically, not a reversal of that finding. See `ARCHITECTURE.md`.
 
 ---
+
+## Minor UI refinements, 2026-08-20
+
+Noticed while diffing `design_handoff_website/` against the archived mockups — not token changes, but worth knowing when building against the new package:
+
+- "Shop all"-style CTA text links switched from gold-coloured plain text to navy + underline. Plain inline links (`a{color:…}`) still use the accent colour above — this is specific to that CTA-link pattern.
+- Header and the homepage proof bar lost their hairline borders (`border-bottom`/`border-top`/`border-bottom: 1px solid #E3D6C5`) — both now sit without a divider.
+- Hero image aspect ratio changed from 16/11 to 16/13.
+- Story page's "How we make things" trio swapped generic line icons for the brand's own ink illustrations (`seedling-ink.png`, `peach-ink.png`, `preserve-jar-ink.png`) at 48px.
+- `&nbsp;` added before each inline illustration in the quote text (Promise/Why Lambruk bands) — a wrap-safety fix. See the corresponding `ARCHITECTURE.md` open question: this also confirms illustrations sit *inside* the sentence, not trailing it.
 
 ## Flagged inconsistencies
 

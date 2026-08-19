@@ -31,6 +31,8 @@ Shopify theme built by Akima Studio as their Shopify Partner.
 - **Goal:** Complete rebuild. Nothing from the existing theme's design or content carries over. Treat it as a clean build, not a migration. Do not read from or replicate the old theme's markup, sections or settings.
 - **Design source:** `design/` — HTML mockups produced in Claude. Visual reference, not code to port.
 
+**`design/` is the single source of truth for all design decisions — colour, type, spacing, component shape, everything.** `design/DESIGN-TOKENS.md` is a derived summary of it, written by re-reading the source and recording what was found. It can be wrong, and has been asserted-but-unverified in places. When it and the source disagree — or when a claim in it is doubted — re-read the actual source files (the mockup HTML's inline styles, component `.jsx` files, `tokens/*.css`) and correct the summary to match, never the reverse. Don't take the summary's word over the source, and don't take a stated correction over the source either — verify independently before writing anything down.
+
 ## Theme IDs
 
 | Theme | ID | Status | Notes |

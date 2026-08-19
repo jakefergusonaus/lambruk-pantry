@@ -216,7 +216,7 @@
             "text_explore_links": {
               "type": "text",
               "settings": {
-                "text": "<p><a href=\"/pages/our-story\">Our Story</a></p><p><a href=\"/pages/cafe\">Ballina Cafe</a></p><p><a href=\"/pages/wholesale\">Wholesale</a></p><p><a href=\"/pages/contact\">Contact</a></p>",
+                "text": "<p><a href=\"/pages/lambruk-pantry-about-us\">Our Story</a></p><p><a href=\"/pages/cafe\">Ballina Cafe</a></p><p><a href=\"/pages/wholesale\">Wholesale</a></p><p><a href=\"/pages/contact\">Contact</a></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",

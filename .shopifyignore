@@ -11,6 +11,7 @@ PROJECT_CONFIG.json
 SHOPIFY-THEME-SYSTEM.md
 LICENSE
 .gitignore
+jake.md
 
 # Project working documents
 CLIENT_INTAKE.md
@@ -22,6 +23,13 @@ PRESERVATION_CHECKLIST.md
 ASSET_MANIFEST.md
 QA_REPORT.md
 WORKFLOW_STATE.md
+ARCHITECTURE.md
+COMPONENT-INVENTORY.md
+url-baseline.md
+redirects.md
+
+# Design source material -- reference only, never theme content (CLAUDE.md)
+design/**
 
 # Sources and evidence
 .design-sources/**

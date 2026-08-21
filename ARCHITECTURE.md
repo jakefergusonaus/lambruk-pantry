@@ -704,6 +704,26 @@ On Shop All, also re-confirmed the filtering itself still works post-edit (the c
 
 ---
 
+## 24. Seasonal Spotlight → Top Sellers — self-updating from sales data instead of a manual list (2026-08-21)
+
+**Why**: the client won't maintain a manually curated product list, so the homepage's product rail needed to source itself from Shopify's own sales data instead.
+
+**Verified before building, not assumed**:
+
+- **Best-selling sort's time window** — confirmed via [Shopify's own Help Center](https://help.shopify.com/en/manual/products/collections/collection-layout): it's the **all-time number of orders** that include the product, not a rolling window. A collection with zero sales falls back to newest-to-oldest ordering instead of a random/empty result.
+- **Order-history volume on this store** — not verifiable from the theme side; no Admin/order-data access exists (per this project's standing rule — see "Store data" above). Flagged to the user rather than assumed; genuinely their call whether current order volume is enough for a meaningful order.
+- **Graceful degradation** — read `sections/product-list.liquid` first: it's a plain `for product in section.settings.collection.products limit: max_items` loop, so fewer available products just means fewer cards, never forced empty placeholders (that fallback only fires when the collection is blank or the store has zero products at all). Then verified live, not just read: temporarily bound the section to the `pantry` collection (4 products, fewer than the section's `max_products: 8`) — exactly 4 cards rendered, no broken layout, no padding-out. Reverted the collection back to blank afterward; this was a verification step, not the real binding.
+
+**A material finding that changed the implementation, reported before building**: Horizon's `product-list` section has no sort setting of its own — "best-selling" is purely a property of whichever *collection* it's bound to (set via that collection's own Sort dropdown in Admin). Binding this rail to the actual all-products/Shop All collection would mean either changing Shop All's own default browsing order sitewide, or accepting that this rail can't be best-selling without doing so. Raised this with the user rather than picking silently — **decision: a separate, dedicated collection**, sorted Best Selling in Admin, used only for this rail, so Shop All's own sort stays untouched. That collection doesn't exist yet — `product-list`'s `collection` setting is left blank (`""`), the same "safe default, not a guess" pattern already used for the Curated Occasions links and this section's own prior Seasonal Spotlight binding. The client needs to create it, set its sort to Best Selling, and assign it in the theme editor.
+
+**Built**: two sections, not one — `section_top_sellers_header` (a `section`-type block, same eyebrow/heading/"Shop all"-link `group` pattern as "Explore by category") sits immediately above `section_top_sellers` (the `product-list` carousel itself). This was a deliberate choice, not the path of least resistance: `product-list`'s own native header slot (`_product-list-content`, rendered via a fixed `content_for` call) turns out to actually accept an extra `text` block alongside its dedicated heading/button block types — technically capable of a two-line eyebrow+heading, contrary to the "native header only takes one line" premise this started from. Flagging that correction here for the record, but the user's actual instruction was unconditional ("not with the native product-list header"), independent of that premise, so built to the instruction as given: the native header slot's blocks are left empty (`"block_order": []`) — confirmed live it collapses to `height: 0`, no stray gap — and the real header lives in its own section above, tuned tight against it (`padding-block-end: 0` on the header section, `padding-block-start: 32` on the carousel section) so the two read as one unit.
+
+**Copy** (confirmed with the user first, design had none — it was built around "Seasonal Spotlight"): eyebrow "Top Sellers", heading "What everyone's reaching for". Same product count as Seasonal Spotlight showed (`max_products: 8`), same carousel layout, same card design (`static-product-card`, unchanged).
+
+**Verified live**: eyebrow/heading text and colour confirmed via computed styles (`rgb(160, 112, 55)` = `#A07037`, exact match); native header's collapsed height confirmed via `getBoundingClientRect()`; degradation behaviour confirmed with a real 4-product collection as described above; checked at both 1280px and 375px widths. `shopify theme check --path .` clean — 371 files, no offenses.
+
+---
+
 ## Summary
 
 | Area | Path taken |

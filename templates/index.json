@@ -983,7 +983,135 @@
         "padding-block-end": 96
       }
     },
-    "section_seasonal_spotlight": {
+    "section_top_sellers_header": {
+      "type": "section",
+      "blocks": {
+        "header": {
+          "type": "group",
+          "name": "t:names.header",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "flex-end",
+            "align_baseline": true,
+            "gap": 24,
+            "width": "fill",
+            "height": "fit",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "text_group": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 14,
+                "width": "fit-content",
+                "height": "fit",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "eyebrow": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Top Sellers</p>",
+                    "text_color": "#A07037",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "var(--text-3-size)",
+                    "line_height": "normal",
+                    "letter_spacing": "eyebrow",
+                    "case": "uppercase",
+                    "wrap": "pretty",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "heading": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h2>What everyone's reaching for</h2>",
+                    "text_color": "#131A3E",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-heading--family)",
+                    "font_size": "var(--display-module-size)",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": ["eyebrow", "heading"]
+            },
+            "shop_all": {
+              "type": "button",
+              "settings": {
+                "label": "Shop all",
+                "link": "/collections/all",
+                "open_in_new_tab": false,
+                "style_class": "button-unstyled",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": ["text_group", "shop_all"]
+        }
+      },
+      "block_order": ["header"],
+      "settings": {
+        "content_direction": "column",
+        "section_width": "page-width",
+        "background_color": "#FBFAF7",
+        "padding-block-start": 88,
+        "padding-block-end": 0
+      }
+    },
+    "section_top_sellers": {
       "type": "product-list",
       "blocks": {
         "static-header": {
@@ -1016,47 +1144,8 @@
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
-          "blocks": {
-            "product_list_text": {
-              "type": "_product-list-text",
-              "settings": {
-                "text": "<h2>The Seasonal Spotlight</h2>",
-                "text_color": "#131A3E",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "custom",
-                "font": "var(--font-heading--family)",
-                "font_size": "var(--display-module-size)",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "product_list_button": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "Shop all",
-                "open_in_new_tab": false,
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": ["product_list_text", "product_list_button"]
+          "blocks": {},
+          "block_order": []
         },
         "static-product-card": {
           "type": "_product-card",
@@ -1154,7 +1243,7 @@
         "horizontal_alignment": "flex-start",
         "gap": 32,
         "background_color": "#FBFAF7",
-        "padding-block-start": 88,
+        "padding-block-start": 32,
         "padding-block-end": 88
       }
     },
@@ -1758,7 +1847,8 @@
     "section_explore_by_category",
     "section_lambruk_promise",
     "media_with_content_cafe_intro",
-    "section_seasonal_spotlight",
+    "section_top_sellers_header",
+    "section_top_sellers",
     "section_why_lambruk",
     "section_curated_occasions",
     "section_two_up_cards",

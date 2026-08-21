@@ -28,5 +28,20 @@
       "Bash(shopify theme duplicate*)",
       "Bash(git push*)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command // \"\"' | grep -qE '(^|[;&|[:space:]])git[[:space:]]+commit([[:space:]]|$)' && { cd \"${CLAUDE_PROJECT_DIR:-.}\" && git push 2>&1 | tail -3; } || true",
+            "timeout": 60,
+            "statusMessage": "Pushing to origin..."
+          }
+        ]
+      }
+    ]
   }
 }

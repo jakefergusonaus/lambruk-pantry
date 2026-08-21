@@ -1,0 +1,20 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "lambruk-theme-dev",
+      "runtimeExecutable": "shopify",
+      "runtimeArgs": [
+        "theme",
+        "dev",
+        "--store",
+        "37b2e5-fc.myshopify.com",
+        "--theme",
+        "182395437357",
+        "--port",
+        "9293"
+      ],
+      "port": 9293
+    }
+  ]
+}

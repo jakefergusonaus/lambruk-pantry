@@ -1,0 +1,334 @@
+{%- doc -%}
+  Pill-style category filter for the Shop All collection — the design's
+  All / Tea / Sauces & Chutneys / Pantry & Gifts row, with a right-aligned
+  product count. Not a fork of blocks/filters.liquid (1476 lines, handles
+  price/boolean/swatch filters and a vertical drawer variant this page
+  doesn't use) — this covers only the one horizontal, tag-based case the
+  design needs, reusing Horizon's real facets-form-component /
+  facet-inputs-component / facet-clear-component JS (assets/facets.js) so
+  filtering stays genuine AJAX, in place, no page reload — the same
+  mechanism the native filters block uses, not a reimplementation of it.
+
+  Inserted via an explicit `content_for 'block'` call in
+  sections/main-collection.liquid (that section has no open/merchant-
+  addable block slot — filters and _product-card are both fixed, hardcoded
+  calls, confirmed by reading the file directly rather than assumed) — see
+  ARCHITECTURE.md for that one-line core-file edit, signed off before
+  writing, and the native filters block's own visibility handled by this
+  block's own stylesheet below (see the CSS comment for why).
+
+  Labels are merchant-editable settings, not the raw tag string — a tag
+  value ("condiments") and its design label ("Sauces & Chutneys") are
+  unrelated strings on purpose, per instruction, so wording can change
+  without touching tags in Admin. Matching is case-insensitive on both
+  sides (the tag's actual stored casing isn't guaranteed to match what the
+  collection's automation condition displays) — downcase before comparing,
+  never assume exact casing.
+
+  Section-level insertion means every collection page using main-
+  collection.liquid gets this block, not just Shop All — so it only
+  renders when the underlying tag filter actually has 2+ of the three
+  known values present. On Tea/Condiments/Pantry, every product shares
+  exactly one of the three tags, so the count never reaches 2 and this
+  renders nothing; the native filters block (hidden only inside the
+  conditional below, see the {% style %} block) is left visible there
+  instead, since there's nothing of ours to show in its place. Self-
+  managing by design, not a per-page check — if the client ever creates
+  another multi-category collection sharing this section, the row appears
+  there too without a code change. See ARCHITECTURE.md.
+{%- enddoc -%}
+
+{% liquid
+  assign block_settings = block.settings
+  assign products_count = collection.products_count
+
+  assign tag_filter = nil
+  assign known_tag_value_count = 0
+  for f in collection.filters
+    if f.type == 'list'
+      assign match_count_this_filter = 0
+      for v in f.values
+        assign downcased_v = v.value | downcase
+        if downcased_v == 'tea' or downcased_v == 'condiments' or downcased_v == 'pantry'
+          assign match_count_this_filter = match_count_this_filter | plus: 1
+        endif
+      endfor
+      if match_count_this_filter > known_tag_value_count
+        assign tag_filter = f
+        assign known_tag_value_count = match_count_this_filter
+      endif
+    endif
+  endfor
+%}
+{% if known_tag_value_count >= 2 %}
+  {% liquid
+    assign has_active_tag = false
+    if tag_filter and tag_filter.active_values.size > 0
+      assign has_active_tag = true
+    endif
+
+    assign lambruk_tag_param_name = 'filter.p.tag'
+    if tag_filter and tag_filter.values.first
+      assign lambruk_tag_param_name = tag_filter.values.first.param_name
+    endif
+
+    assign page_type_attribute = 'data-page-type="collection"'
+    assign collection_id_attribute = 'data-collection-id="' | append: collection.id | append: '"'
+    assign collection_handle_attribute = 'data-collection-handle="' | append: collection.handle | append: '"'
+    assign results_count_attribute = 'data-results-count="' | append: products_count | append: '"'
+  %}
+
+<script src="{{ 'facets.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<div
+  class="lambruk-tag-filter spacing-style"
+  style="
+    grid-column: var(--grid-column--desktop);
+    --grid-column--desktop: var(--centered);
+    --grid-column--mobile: var(--centered);
+  "
+  {{ block.shopify_attributes }}
+>
+  <facets-form-component
+    class="lambruk-tag-filter__form-wrapper"
+    section-id="{{ section.id }}"
+    form-style="horizontal"
+    {{ collection_id_attribute }}
+    {{ collection_handle_attribute }}
+    {{ page_type_attribute }}
+    {{ results_count_attribute }}
+  >
+    <form
+      action="{{ collection.url }}"
+      id="LambrukTagFilterForm-{{ block.id }}"
+      class="lambruk-tag-filter__form"
+      ref="facetsForm"
+    >
+      <div class="lambruk-tag-filter__row">
+        <facet-inputs-component
+          on:change="/updateFilters"
+          id="lambruk-tag-filter-inputs-{{ block.id }}"
+          class="lambruk-tag-filter__pills"
+        >
+          {%- comment -%}
+            "All" was originally a facet-clear-component (Horizon's own
+            "clear this filter group" button). Reverted: its clearFilter()
+            (assets/facets.js) only calls facetsForm.updateFilters() after
+            finding an ancestor <details> containing a
+            <facet-status-component> — a dependency on list-filter.liquid's
+            own accordion wrapper, undocumented, found by reading the
+            source after "All" visually cleared the checked pills live but
+            never actually re-filtered (URL and product count both stayed
+            on the previous tag). Tried satisfying it with an inert
+            `<details open>` + hidden status component; `display: contents`
+            doesn't fully dissolve `<details>` in practice — its own
+            box/marker persisted and broke the row layout, confirmed live,
+            not assumed from how the property is supposed to work.
+
+            "All" is a radio instead, in the same input group as the three
+            tag values, empty value. Same on:change path as the other
+            three (FacetInputsComponent.updateFilters(), no details
+            dependency at all) — verified live before committing to this:
+            an empty filter.p.tag value clears the active filter rather
+            than matching zero products, confirmed by the count returning
+            to 52 and the product grid returning to the full unfiltered
+            set, not just the empty param being silently dropped.
+          {%- endcomment -%}
+          <div class="lambruk-tag-filter__pill-wrapper">
+            <input
+              type="radio"
+              name="{{ lambruk_tag_param_name }}"
+              id="LambrukFilter-{{ block.id }}-all"
+              value=""
+              class="lambruk-tag-filter__input"
+              {% unless has_active_tag %}
+                checked
+              {% endunless %}
+              ref="facetInputs[]"
+            >
+            <label
+              class="lambruk-tag-filter__pill lambruk-tag-filter__pill-label"
+              for="LambrukFilter-{{ block.id }}-all"
+            >
+              {{ block_settings.all_label }}
+            </label>
+          </div>
+
+          {% if tag_filter %}
+            {% for value in tag_filter.values %}
+              {% liquid
+                assign downcased_value = value.value | downcase
+                assign is_known_tag = false
+                assign display_label = value.label
+                case downcased_value
+                  when 'tea'
+                    assign display_label = block_settings.tea_label
+                    assign is_known_tag = true
+                  when 'condiments'
+                    assign display_label = block_settings.condiments_label
+                    assign is_known_tag = true
+                  when 'pantry'
+                    assign display_label = block_settings.pantry_label
+                    assign is_known_tag = true
+                endcase
+              %}
+              {% if is_known_tag %}
+                <div class="lambruk-tag-filter__pill-wrapper">
+                  <input
+                    type="radio"
+                    name="{{ value.param_name }}"
+                    id="LambrukFilter-{{ block.id }}-{{ forloop.index }}"
+                    value="{{ value.value }}"
+                    class="lambruk-tag-filter__input"
+                    {% if value.active %}
+                      checked
+                    {% endif %}
+                    ref="facetInputs[]"
+                  >
+                  <label
+                    class="lambruk-tag-filter__pill lambruk-tag-filter__pill-label"
+                    for="LambrukFilter-{{ block.id }}-{{ forloop.index }}"
+                  >
+                    {{ display_label }}
+                  </label>
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </facet-inputs-component>
+
+        <span class="lambruk-tag-filter__count">
+          {{- 'content.item_count' | t: count: products_count -}}
+        </span>
+      </div>
+    </form>
+  </facets-form-component>
+</div>
+
+{% style %}
+  /* Hides the native `filters` block's own rendering (sort dropdown, grid-
+     density toggle, and its own tag checkboxes) for this section instance
+     only — scoped to #shopify-section-{{ section.id }}, not a blanket rule.
+     Lives inside the known_tag_value_count >= 2 conditional above on
+     purpose: on Tea/Condiments/Pantry, this pill row doesn't render at all
+     (only one known tag each), so this rule doesn't either — the native
+     filters block is left visible there instead of being hidden with
+     nothing in its place. Deliberate, not a removal: enable_sorting/
+     enable_grid_density stay "true" in collection.all.json's own filters
+     block settings, so both controls are still fully configured and
+     reachable again by deleting this one rule — no rebuild. See
+     ARCHITECTURE.md. The stylesheet tag can't hold this — it rejects any
+     Liquid variable (theme check's StaticStylesheetAndJavascriptTags,
+     confirmed live, not assumed) since it's static/shared across every
+     instance of this block; this style tag is Shopify's per-render
+     alternative and does allow section.id here. */
+  #shopify-section-{{ section.id }} .facets-block-wrapper--horizontal {
+    display: none;
+  }
+{% endstyle %}
+{% endif %}
+
+{% stylesheet %}
+  .lambruk-tag-filter__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid #E3D6C5;
+  }
+
+  .lambruk-tag-filter__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .lambruk-tag-filter__pill-wrapper {
+    position: relative;
+  }
+
+  .lambruk-tag-filter__input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    appearance: none;
+  }
+
+  .lambruk-tag-filter__pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1px solid #E3D6C5;
+    background: transparent;
+    color: #131A3E;
+    font-family: var(--font-body--family);
+    font-size: 0.875rem;
+    line-height: normal;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .lambruk-tag-filter__input:checked + .lambruk-tag-filter__pill,
+  .lambruk-tag-filter__pill--active {
+    border-color: #131A3E;
+    background: #131A3E;
+    color: #F7F5F2;
+  }
+
+  .lambruk-tag-filter__input:focus-visible + .lambruk-tag-filter__pill {
+    outline: 2px solid #131A3E;
+    outline-offset: 2px;
+  }
+
+  .lambruk-tag-filter__count {
+    font-size: 0.875rem;
+    color: #4A5478;
+    white-space: nowrap;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.lambruk_tag_filter",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:content.lambruk_tag_filter_labels"
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "label": "t:settings.lambruk_tag_filter_all_label",
+      "default": "All"
+    },
+    {
+      "type": "text",
+      "id": "tea_label",
+      "label": "t:settings.lambruk_tag_filter_tea_label",
+      "default": "Tea"
+    },
+    {
+      "type": "text",
+      "id": "condiments_label",
+      "label": "t:settings.lambruk_tag_filter_condiments_label",
+      "default": "Sauces & Chutneys"
+    },
+    {
+      "type": "text",
+      "id": "pantry_label",
+      "label": "t:settings.lambruk_tag_filter_pantry_label",
+      "default": "Pantry & Gifts"
+    }
+  ]
+}
+{% endschema %}

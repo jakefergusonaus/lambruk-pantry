@@ -1,0 +1,400 @@
+{%- doc -%}
+  Extended contact form for the Wholesale page's "Partnership Enquiry" section.
+  Wraps Shopify's native `{% form 'contact' %}` (see blocks/contact-form.liquid
+  for the pattern this follows) with the fuller field set the design calls for
+  — business name/type, location, and a multi-select "interested in" — none of
+  which the native block has settings for. Extra `contact[...]` fields are
+  forwarded by Shopify into the contact-form notification email same as the
+  native fields; see ARCHITECTURE.md for the open question on where that
+  notification actually needs to go for wholesale enquiries specifically.
+{%- enddoc -%}
+
+{% liquid
+  assign form_id = block.id | prepend: 'WholesaleEnquiry-'
+%}
+
+<div class="wholesale-enquiry-form spacing-style" style="width: 100%;" {{ block.shopify_attributes }}>
+  {%- form 'contact', id: form_id, class: 'wholesale-enquiry-form__form' -%}
+    <input name="contact[id]" type="hidden" value="{{ form_id }}">
+    <input name="contact[tags]" type="hidden" value="wholesale-enquiry">
+
+    {% liquid
+      assign form_matches = false
+      if form.id == form_id or form.id == blank
+        assign form_matches = true
+      endif
+
+      assign has_errors = false
+      if form.errors and form_matches
+        assign has_errors = true
+      endif
+
+      assign posted_ok = false
+      if form.posted_successfully? and form_matches
+        assign posted_ok = true
+      endif
+    %}
+
+    {%- if has_errors -%}
+      <div class="wholesale-enquiry-form__error" role="alert" tabindex="-1" autofocus>
+        {{- 'icon-error.svg' | inline_asset_content -}}
+        <div>
+          <p class="wholesale-enquiry-form__error-heading">We couldn't send your enquiry — please fix the following:</p>
+          <ul class="wholesale-enquiry-form__error-list">
+            {%- for field in form.errors -%}
+              <li id="{{ form_id }}-{{ field | handleize }}-error">
+                {{ form.errors.translated_fields[field] | capitalize }}
+                {{ form.errors.messages[field] }}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if posted_ok -%}
+      <div class="wholesale-enquiry-form__success" tabindex="-1" autofocus>
+        <div class="wholesale-enquiry-form__success-badge" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 12.5 9.5 18 20 6"></polyline>
+          </svg>
+        </div>
+        <p class="wholesale-enquiry-form__success-eyebrow">Enquiry Received</p>
+        <h3 class="wholesale-enquiry-form__success-heading">Thank you, we will be in touch</h3>
+        <p class="wholesale-enquiry-form__success-body">Paige or the wholesale team will reply within two business days with pricing and next steps.</p>
+      </div>
+    {%- else -%}
+      <h3 class="wholesale-enquiry-form__title">Apply for a commercial account</h3>
+      <div class="wholesale-enquiry-form__grid">
+        <div class="wholesale-enquiry-form__field">
+          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-business-name">Business name *</label>
+          <input type="text" id="{{ form_id }}-business-name" class="wholesale-enquiry-form__input" name="contact[Business name]" placeholder="Venue or store" required data-preserve-field>
+        </div>
+
+        <div class="wholesale-enquiry-form__field">
+          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-name">Contact name *</label>
+          <input
+            type="text"
+            id="{{ form_id }}-name"
+            class="wholesale-enquiry-form__input"
+            autocomplete="name"
+            name="contact[name]"
+            value="{{ form.name }}"
+            placeholder="Your name"
+            required
+            {% if form.errors contains 'name' and form_matches %}
+              aria-invalid="true"
+              aria-describedby="{{ form_id }}-name-error"
+            {% endif %}
+          >
+        </div>
+
+        <div class="wholesale-enquiry-form__field">
+          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-email">Email *</label>
+          <input
+            type="email"
+            id="{{ form_id }}-email"
+            class="wholesale-enquiry-form__input"
+            autocomplete="email"
+            name="contact[email]"
+            value="{{ form.email }}"
+            spellcheck="false"
+            autocapitalize="off"
+            placeholder="you@venue.com.au"
+            required
+            {% if form.errors contains 'email' and form_matches %}
+              aria-invalid="true"
+              aria-describedby="{{ form_id }}-email-error"
+            {% endif %}
+          >
+        </div>
+
+        <div class="wholesale-enquiry-form__field">
+          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-phone">Phone *</label>
+          <input
+            type="tel"
+            id="{{ form_id }}-phone"
+            class="wholesale-enquiry-form__input"
+            autocomplete="tel"
+            name="contact[phone]"
+            value="{{ form.phone }}"
+            placeholder="Best number"
+            required
+            {% if form.errors contains 'phone' and form_matches %}
+              aria-invalid="true"
+              aria-describedby="{{ form_id }}-phone-error"
+            {% endif %}
+          >
+        </div>
+
+        <div class="wholesale-enquiry-form__field">
+          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-business-type">Business type *</label>
+          <input type="text" id="{{ form_id }}-business-type" class="wholesale-enquiry-form__input" name="contact[Business type]" placeholder="Hotel, cafe, retail" required data-preserve-field>
+        </div>
+
+        <div class="wholesale-enquiry-form__field">
+          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-location">Location *</label>
+          <input type="text" id="{{ form_id }}-location" class="wholesale-enquiry-form__input" name="contact[Location]" placeholder="Suburb and state" required data-preserve-field>
+        </div>
+
+        <div class="wholesale-enquiry-form__field wholesale-enquiry-form__field--full">
+          <span class="wholesale-enquiry-form__label wholesale-enquiry-form__label--static">Interested in *</span>
+          <div class="wholesale-enquiry-form__checkboxes">
+            {%- assign interests = 'Tea range,Custom tea blends,Relishes & chutneys,Hospitality formats,Gifting' | split: ',' -%}
+            {%- for interest in interests -%}
+              <label class="wholesale-enquiry-form__checkbox">
+                <input type="checkbox" data-interest-checkbox value="{{ interest }}">
+                {{ interest }}
+              </label>
+            {%- endfor -%}
+          </div>
+          <input type="hidden" name="contact[Interested in]" data-interests-hidden>
+        </div>
+
+        <div class="wholesale-enquiry-form__field wholesale-enquiry-form__field--full">
+          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-body">Tell us about your venue *</label>
+          <textarea
+            rows="4"
+            id="{{ form_id }}-body"
+            class="wholesale-enquiry-form__input wholesale-enquiry-form__input--textarea"
+            name="contact[body]"
+            placeholder="Rooms, covers, current range, what you are looking for"
+            required
+            {% if form.errors contains 'body' and form_matches %}
+              aria-invalid="true"
+              aria-describedby="{{ form_id }}-body-error"
+            {% endif %}
+          >{{ form.body }}</textarea>
+        </div>
+
+        <p class="wholesale-enquiry-form__helper">All fields are required.</p>
+
+        <div class="wholesale-enquiry-form__field--full">
+          <button type="submit" class="button wholesale-enquiry-form__submit">Send Enquiry</button>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endform -%}
+
+  <script>
+    (function () {
+      // Shopify's contact form only echoes name/email/phone/body back on a
+      // validation error (via the `form` object) — everything else here
+      // (business name/type, location, the interests checkboxes) has no
+      // server-side echo, so a rejected submission would otherwise wipe them.
+      // Cached client-side across the redirect-back-with-errors round trip.
+      var storageKey = 'lambruk-wholesale-enquiry-{{ block.id }}';
+      var form = document.getElementById({{ form_id | json }});
+      if (!form) return;
+
+      var preserveFields = form.querySelectorAll('[data-preserve-field]');
+      var interestCheckboxes = form.querySelectorAll('[data-interest-checkbox]');
+      var interestsHidden = form.querySelector('[data-interests-hidden]');
+      var hasErrors = {{ has_errors | json }};
+      var postedSuccessfully = {{ posted_ok | json }};
+
+      if (hasErrors) {
+        try {
+          var raw = sessionStorage.getItem(storageKey);
+          if (raw) {
+            var state = JSON.parse(raw);
+            preserveFields.forEach(function (el) {
+              if (state.fields && state.fields[el.name] && !el.value) {
+                el.value = state.fields[el.name];
+              }
+            });
+            if (state.interests) {
+              interestCheckboxes.forEach(function (cb) {
+                cb.checked = state.interests.indexOf(cb.value) !== -1;
+              });
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (postedSuccessfully) {
+        try {
+          sessionStorage.removeItem(storageKey);
+        } catch (e) {}
+      }
+
+      form.addEventListener('submit', function () {
+        if (interestsHidden) {
+          var checked = Array.prototype.filter
+            .call(interestCheckboxes, function (cb) { return cb.checked; })
+            .map(function (cb) { return cb.value; });
+          interestsHidden.value = checked.join(', ');
+        }
+        try {
+          var fields = {};
+          preserveFields.forEach(function (el) { fields[el.name] = el.value; });
+          var interests = Array.prototype.filter
+            .call(interestCheckboxes, function (cb) { return cb.checked; })
+            .map(function (cb) { return cb.value; });
+          sessionStorage.setItem(storageKey, JSON.stringify({ fields: fields, interests: interests }));
+        } catch (e) {}
+      });
+    })();
+  </script>
+</div>
+
+{% stylesheet %}
+  .wholesale-enquiry-form__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .wholesale-enquiry-form__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  .wholesale-enquiry-form__field--full {
+    grid-column: 1 / -1;
+  }
+
+  .wholesale-enquiry-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .wholesale-enquiry-form__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #131A3E;
+  }
+
+  .wholesale-enquiry-form__input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    color: #131A3E;
+    background: #FFFFFF;
+    border: 1px solid #E3D6C5;
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+
+  .wholesale-enquiry-form__input--textarea {
+    resize: vertical;
+    min-height: 6rem;
+  }
+
+  .wholesale-enquiry-form__checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+
+  .wholesale-enquiry-form__checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9375rem;
+    color: #131A3E;
+  }
+
+  .wholesale-enquiry-form__helper {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 0.8125rem;
+    color: #686D84;
+  }
+
+  .wholesale-enquiry-form__submit {
+    width: 100%;
+    background-color: #131A3E;
+    color: #F7F5F2;
+    border-color: #131A3E;
+  }
+
+  .wholesale-enquiry-form__error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--color-error, #8B0000);
+  }
+
+  .wholesale-enquiry-form__error-heading {
+    margin: 0 0 4px;
+    font-weight: 500;
+    font-size: 0.9375rem;
+  }
+
+  .wholesale-enquiry-form__error-list {
+    margin: 0;
+    padding-left: 1.1em;
+    font-size: 0.875rem;
+  }
+
+  .wholesale-enquiry-form__title {
+    margin: 0 0 24px;
+    font-family: var(--font-heading--family);
+    font-weight: 400;
+    font-size: 1.75rem;
+    color: #131A3E;
+  }
+
+  .wholesale-enquiry-form__success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  .wholesale-enquiry-form__success-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--icon-badge-background);
+    color: var(--icon-accent);
+    margin-bottom: 20px;
+  }
+
+  .wholesale-enquiry-form__success-eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-accent);
+    margin: 0 0 14px;
+  }
+
+  .wholesale-enquiry-form__success-heading {
+    font-family: var(--font-heading--family);
+    font-weight: 400;
+    font-size: var(--display-4-size);
+    line-height: var(--display-4-line-height);
+    margin: 0 0 12px;
+  }
+
+  .wholesale-enquiry-form__success-body {
+    margin: 0;
+    max-width: 32rem;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #4A5478;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.lambruk_wholesale_enquiry_form",
+  "tag": null,
+  "settings": [],
+  "presets": [
+    {
+      "name": "t:names.lambruk_wholesale_enquiry_form",
+      "category": "t:categories.forms"
+    }
+  ]
+}
+{% endschema %}

@@ -10,6 +10,27 @@
    ========================================================================== */
 
 :root {
+  /* Display 1 · Hero (DESIGN-TOKENS.md §2). type_size_h1 is already 56px —
+     matches our desktop target exactly — but headings are authored with
+     type_preset: "custom" throughout this build (see CLAUDE.md's explicit-
+     text_color rule), so this needs its own token like every other step
+     rather than relying on the native h1 preset's untested mobile fluid
+     minimum. */
+  --display-1-size: clamp(38px, 29.741px + 2.118vw, 56px);
+  --display-1-line-height: 1.04;
+
+  /* Display 2 · Title (DESIGN-TOKENS.md §2). Built 2026-08-20 — the step
+     existed in the documented scale with zero consumers and zero tokens
+     until the audit (ARCHITECTURE.md §17) found the Product page's own
+     title (not the card title) was still on Horizon's untouched h3 preset,
+     32px flat, instead of this step's 48px. First and, for now, only
+     consumer: the Product page title. Canonical 48px, not the raw 46px the
+     product-title source line actually carries — DESIGN-TOKENS.md §2's own
+     absorption table already folds 46 into this step, same treatment as
+     Display 1 absorbing the hero's raw 58. */
+  --display-2-size: clamp(34px, 27.576px + 1.647vw, 48px);
+  --display-2-line-height: 1.06;
+
   /* Display 3 · Feature (DESIGN-TOKENS.md §2). Horizon's own h3 preset can't
      produce this: type_size_h3 is 32px, and Horizon's fluid algorithm
      (theme-styles-variables.liquid) only goes fluid above a 48px cutoff, so
@@ -18,12 +39,205 @@
   --display-3-size: clamp(32px, 28.329px + 0.941vw, 40px);
   --display-3-line-height: 1.08;
 
+  /* Display · Module (DESIGN-TOKENS.md §2) — added 2026-08-20, role-named
+     rather than numbered deliberately (see the doc's own note on why).
+     36px desktop / 28px mobile: the heading scale for a narrower content
+     module — one column of a paired two-column grid (Wholesale's "Who we
+     supply" / "Available specifications", side by side), or a narrow
+     single-column prose page (the unbuilt Shipping/Returns/Terms policy
+     headings) — distinct from Display 4 · Section's full-width single-
+     column rail intro below. Previously the two Wholesale headings were
+     mapped to Display 4 (32px), rounding their raw 36px down under the
+     same absorption logic that correctly folds the trust-row's raw 30px
+     up — but a sitewide count found that absorption was the wrong call
+     here: 32px is the numeric majority (9 instances, all full-width rail
+     intros — Homepage/Product/Cafe) against 36px's 5 (all narrow-column),
+     and the two sizes serve genuinely different, consistently-applied
+     roles rather than one being a rounding drift of the other. See
+     ARCHITECTURE.md §16 for the full count and §18 for this fix. Line-
+     height has no explicit source value for this role (design's raw
+     markup carries only margin, not line-height, on any of the 5 desktop
+     instances) — 1.1 is an interpolation between Feature's 1.08 and
+     Section's 1.15, not a verified figure. */
+  --display-module-size: clamp(28px, 24.329px + 0.941vw, 36px);
+  --display-module-line-height: 1.1;
+
+  /* Display 4 · Section (DESIGN-TOKENS.md §2, §2's "Card/category H3
+     correction"). Horizon's h4 preset is fixed 24px on every viewport — the
+     raw 30px trust-row heading rounds up to this step rather than down to
+     Display 5's 24px native concession. */
+  --display-4-size: clamp(28px, 26.165px + 0.471vw, 32px);
+  --display-4-line-height: 1.15;
+
+  /* Text 1 · Large / Text 2 · Body (DESIGN-TOKENS.md §2). Horizon has one
+     native paragraph preset (type_size_paragraph — 10/12/14/16/18px only,
+     no 15 or 17), fixed at its untouched stock default of 14px in
+     settings_data.json. This split was identified as needing its own CSS
+     layer in the original Horizon mapping and never built — every rte/
+     paragraph-preset text block on every page built so far was silently
+     rendering body copy at 14px instead of either step. Built 2026-08-20,
+     see ARCHITECTURE.md §9 for the technique (type_preset: "custom" +
+     font_size: var(...) passes through typography-style.liquid's failed-
+     rem-parse fallback verbatim) and §14 for the audit this closed. */
+  --text-1-size: clamp(16px, 15.541px + 0.118vw, 17px);
+  --text-2-size: 15px;
+
+  /* Explicit body max-width for a block that must reach the design's actual
+     px measure, decoupled from Horizon's em-based --max-width--body-narrow/
+     -normal (22.75em / 32.5em — both scale with the block's own font-size,
+     so they silently shrank when body copy was stuck at Horizon's 14px, see
+     above, and still fall well short of source values even fixed). text.
+     liquid's max_width setting is a closed three-value select with no
+     passthrough (unlike font_size, which typography-style.liquid echoes
+     verbatim on a failed parse) — the CSS var it references has to exist
+     under the exact name the enum string produces. "wide" isn't a real
+     option in that select; only this one token backs it, so it's inert
+     everywhere except a block that opts in with max_width: "wide". First,
+     and currently only, consumer: the Wholesale hero body (ARCHITECTURE.md
+     §14). Add a new named step here rather than repurposing this one if a
+     future block needs a different fixed width — keep it scoped by name. */
+  --max-width--body-wide: 640px;
+
+  /* Eyebrow/overline tracking (DESIGN-TOKENS.md §2: "Eyebrow / overline —
+     Text 3 · Micro (11–12px), uppercase, 0.22em letter-spacing"). Same
+     never-built-layer pattern as Text 1/Text 2 above — the target value was
+     already documented, just never wired up. text.liquid's letter_spacing
+     setting is a closed three-value select (tight/normal/loose), string-
+     interpolated into --letter-spacing--{type}-{value} with no passthrough
+     (same closed mechanism as max_width, not font_size's free echo) — every
+     eyebrow on the site was authored with letter_spacing: "loose", which
+     resolves through --letter-spacing--body-loose (theme-styles-
+     variables.liquid): 0.03em, ~7x narrower than the design's 0.22em.
+     Redefining --letter-spacing--body-loose itself was ruled out — other
+     body-scale content (§ above) shares that same enum value for line-
+     height's "loose" step and could start sharing it for tracking too, so
+     redefining it under one label would leak into unrelated content. Added
+     a new named step instead, "eyebrow", exactly the same technique as
+     max-width's "wide" — inert everywhere except a block that opts in.
+     Every eyebrow computes type: "body" (typography-style.liquid's own
+     font-size parse: 0.75rem = 0.75, under every cutoff), so only the
+     body-scoped variable is needed; add heading-/display-scoped versions if
+     a non-body eyebrow ever shows up. Not to be confused with the "01/02/03/
+     04" numbered-list labels on the Wholesale "Who we supply" module, which
+     the design tracks at a different, smaller 0.16em (source line ~790) —
+     those stay on the shared "loose" value for now, untouched by this. See
+     ARCHITECTURE.md §14/§15. */
+  --letter-spacing--body-eyebrow: 0.22em;
+
+  /* Text 3 · Micro (DESIGN-TOKENS.md §2) — added 2026-08-20, closing the
+     third instance of the same never-built-layer pattern (ARCHITECTURE.md
+     §17, Finding 4). Every eyebrow's font_size was authored as a literal
+     "0.75rem" — a fixed value, not a token reference, so there was no
+     fluid mobile step at all; this is the fluid clamp DESIGN-TOKENS.md §2
+     always specified (11px mobile / 12px desktop) applied for the first
+     time. Every eyebrow JSON instance updated to font_size:
+     "var(--text-3-size)" in place of the literal "0.75rem" — same computed
+     value at desktop (both resolve to 12px), a genuine 1px reduction at
+     mobile. See ARCHITECTURE.md §18. */
+  --text-3-size: clamp(11px, 10.541px + 0.118vw, 12px);
+
   /* Accent/eyebrow text (DESIGN-TOKENS.md §1). design_handoff_website's raw
      #A07037 fails WCAG AA on both surfaces it's used on (4.13:1 on paper,
      3.91:1 on navy) — these are the nearest points on its own hue/
      saturation line that clear 4.5:1 in each direction. */
   --text-accent: #986A34;
   --text-accent-on-dark: #AE7A3C;
+
+  /* Icon-accent (DESIGN-TOKENS.md §1) — resolved 2026-08-18, flagged in
+     ARCHITECTURE.md §5 as needing this addition once a consumer existed.
+     Checked against WCAG 1.4.11's 3:1 non-text threshold (graphics, not
+     body text) rather than the 4.5:1 text bar: 3.51:1 on gold-200 (#E3D6C5),
+     clears by a wider margin still on the lighter gold-100 (#EFE9E1). */
+  --icon-accent: #8A6A32;
+
+  /* Icon-badge fill (design's gold-100, --divider token: #EFE9E1) — a
+     decorative circular badge background, not the divider role that hex
+     already has a name for elsewhere, so named separately here. */
+  --icon-badge-background: #EFE9E1;
+
+  /* Global colour (ARCHITECTURE.md §1). Horizon has one foreground role and
+     no independent heading colour, so page_text_color is set to body copy
+     and headings are overridden back to navy below. --color-border must be
+     redeclared here too: color-palette.liquid derives it from
+     page_text_color, and this stylesheet now loads after color-palette (see
+     layout/theme.liquid) specifically so this redeclaration wins instead of
+     being overwritten back to blue-grey. */
+  --text-strong: #131A3E;
+  --text-muted: #686D84;
+  --color-border: #E3D6C5;
+  --color-border-rgb: 227, 214, 197;
+
+  /* Activates product-grid.liquid's card border, which reads these two
+     properties but never defines them anywhere in Horizon — without this the
+     border declaration is invalid at computed-value time and cards render
+     with no border at all. */
+  --product-card-border-width: 1px;
+  --product-card-border-opacity: 1;
+}
+
+/* Scoped colour surfaces (contrast-override.liquid, e.g. quote-panel) set
+   their own --color-foreground/--color-border locally and must keep doing
+   so — this only targets real semantic heading tags, which none of those
+   surfaces currently use for their coloured text. Flat override, not a
+   var(--color, ...) fallback — see the rule below for why a fallback
+   doesn't actually work here, confirmed live, not assumed. */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-strong);
+}
+
+/* Native (non-"custom") h1–h6 presets — fixes ARCHITECTURE.md §17's Finding
+   2, generalised at the rule level rather than per-instance, per instruction.
+   base.css defines one combined selector per preset class, e.g.:
+     h3, .h3, .h3.h3, .text-block.h3 > *,
+     .text-block.h3 :is(h1, h2, h3, h4, h5, h6) { ...; color: var(--color); }
+   repeated identically for h1 through h6 (confirmed by reading all six
+   blocks, not assumed from one). The `.text-block.h{N} :is(h1, h2, h3, h4,
+   h5, h6)` branch — specificity (0,2,1), above either bare-tag rule here —
+   matches any real heading tag nested inside a native-preset block, ours
+   included, and is what actually needed beating.
+   First attempt used color: var(--color, var(--text-strong)) — matching
+   specificity, loading after base.css, so it does win the cascade for the
+   `color` property. It still rendered grey, live, on every case. Traced why
+   before accepting the fix: --color is not actually undefined on these
+   blocks. contrast-override.liquid (rendered by the section/group wrapping
+   the heading, e.g. main-collection.liquid — the same call already flagged
+   in §1 for the product-card-border finding, same mechanism, different
+   property) sets --color on `.color-custom-{id} .text-block` whenever that
+   section has ANY background_color set, even one that's visually identical
+   to the plain page background — confirmed live via the actual generated
+   <style> tag: `.color-custom-template--...__section .text-block {
+   --color: #4A5478; }`. That's a real, defined value (the page's ordinary
+   body-text colour, correct for body copy, wrong for a heading), not an
+   absent one — so var(--color, fallback) always resolves to it; the
+   fallback branch is only reachable when --color is truly never set
+   anywhere in the ancestor chain, which turns out to be rare once a
+   section has its own background_color at all. A per-block explicit
+   text_color still wins in this case regardless (set inline, directly on
+   the .text-block itself, nearer than the section-level rule — inheritance
+   resolves to the nearest ancestor that sets a custom property), but
+   nothing CSS-only can distinguish "no text_color, inheriting the
+   ambient section colour" from "no text_color, --color genuinely unset" —
+   both look identical to var()'s fallback mechanism. Given that, matched
+   the project's own existing precedent instead: the bare h1–h6 rule above
+   already made this exact trade-off deliberately (§1: "verified... no
+   other component currently combines a Horizon .h1–.h6 utility class with
+   a contrast-override-scoped surface") and uses a flat override, not a
+   fallback. This rule does the same, for the same reason. Verified this
+   is safe the same way §1 did: every heading actually built so far either
+   sets its own text_color explicitly (custom-preset, a different class
+   entirely — none of those carry .h1–.h6, so this rule's selectors don't
+   match them regardless of override behaviour) or is one of the four
+   native-preset headings this fix targets, none of which want anything
+   but navy. Re-verified live after switching to the flat form: Product
+   page title, "You may also like", every collection page's <h1>, and the
+   404 heading all render #131A3E, not #4A5478 (ARCHITECTURE.md §18). */
+.text-block.h1 > *, .text-block.h1 :is(h1, h2, h3, h4, h5, h6),
+.text-block.h2 > *, .text-block.h2 :is(h1, h2, h3, h4, h5, h6),
+.text-block.h3 > *, .text-block.h3 :is(h1, h2, h3, h4, h5, h6),
+.text-block.h4 > *, .text-block.h4 :is(h1, h2, h3, h4, h5, h6),
+.text-block.h5 > *, .text-block.h5 :is(h1, h2, h3, h4, h5, h6),
+.text-block.h6 > *, .text-block.h6 :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--text-strong);
 }
 
 /* ==========================================================================
@@ -35,6 +249,11 @@
   line-height: var(--display-3-line-height);
 }
 
+.text-display-4 {
+  font-size: var(--display-4-size);
+  line-height: var(--display-4-line-height);
+}
+
 /* Footer nav/legal links read as navigation, not prose — Horizon underlines
    any <a> inside a bare <p> globally (base.css: "Add underline to text
    using our paragraph styles only"), which the footer's link-list text
@@ -42,4 +261,23 @@
 .footer-content a,
 .utilities a {
   text-decoration: none;
+}
+
+/* Product-card image ratio: the design's ProductCard.jsx crops to 4:3
+   (confirmed against DESIGN-TOKENS.md §3's own "Product cards | 4:3" row
+   too), but _product-card-gallery's image_ratio setting is a closed
+   four-value case/when (adapt/portrait 4:5/square 1:1/landscape 16:9) in
+   snippets/card-gallery.liquid — unlike font_size, an unmatched value
+   isn't echoed through, it just falls back to square, so there's no
+   passthrough option to exploit the way --max-width--body-wide or
+   --letter-spacing--body-eyebrow do. "square" was unused sitewide (checked
+   before repurposing it — grepped every image_ratio setting in every
+   template) so it's requisitioned as the named slot for this instead,
+   same technique in spirit: an enum value nobody else depends on, given a
+   real meaning via a scoped CSS override rather than a Horizon-file edit.
+   First consumer: Shop All's product-card-gallery (was "adapt" — natural
+   per-image ratio, which is what produced inconsistent tile heights across
+   products with different source-image proportions in the first place). */
+[data-image-ratio="square"] {
+  --gallery-aspect-ratio: 4 / 3;
 }

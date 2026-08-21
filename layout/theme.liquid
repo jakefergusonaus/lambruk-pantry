@@ -6,6 +6,48 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
+    {% comment %}
+      Horizon sets `scroll-behavior: smooth` globally (assets/base.css), which
+      is correct for in-page anchor clicks but animates the browser's own
+      native "scroll to fragment on load" too — visible as a jump-to-top-then-
+      scroll-down on any page load that already has a URL hash (e.g. Shopify's
+      `{% form %}` tag appending #form-id to the action, landing back here
+      with that hash after a POST). Suppressed only for that specific case,
+      restored after first paint so normal anchor clicks keep animating.
+      Runs this early (before any body content, including .page-wrapper,
+      exists) to win the race against the browser's own fragment-scroll.
+      See ARCHITECTURE.md §6.
+    {% endcomment %}
+    <script>
+      (function () {
+        if (!location.hash) return;
+        var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        document.documentElement.style.scrollBehavior = 'auto';
+
+        // Horizon scrolls `.page-wrapper` instead of `html` at desktop
+        // widths (html gets `overflow: hidden` there) — it doesn't exist
+        // yet this early, so catch it the moment it's added rather than
+        // guessing a fixed delay.
+        var observer = new MutationObserver(function () {
+          var pageWrapper = document.querySelector('.page-wrapper');
+          if (pageWrapper) {
+            pageWrapper.style.scrollBehavior = 'auto';
+            observer.disconnect();
+          }
+        });
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+
+        window.addEventListener('load', function () {
+          observer.disconnect();
+          if (reduceMotion) return;
+          document.documentElement.style.scrollBehavior = '';
+          var pageWrapper = document.querySelector('.page-wrapper');
+          if (pageWrapper) pageWrapper.style.scrollBehavior = '';
+        }, { once: true });
+      })();
+    </script>
+
     {%- if settings.favicon != blank -%}
       <link
         rel="icon"
@@ -42,6 +84,7 @@
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-palette' -%}
+    {{ 'lambruk-tokens.css' | asset_url | stylesheet_tag }}
 
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}

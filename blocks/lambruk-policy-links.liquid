@@ -8,6 +8,15 @@
   shop.terms_of_service, so they stay correct if the client's policy setup
   changes. Only the label text is a merchant-editable setting; a policy's
   link is hidden entirely if that policy isn't set up on the shop.
+
+  Also renders the two social icons inline after the policy links — not a
+  separate `social-links` block. The design's bottom bar groups policy links
+  and social icons into one right-hand cluster (copyright left, everything
+  else right); Horizon's native footer-utilities section lays out exactly 3
+  blocks as start/center/end, which put policy links in the dead centre
+  instead. Folding social icons into this block drops the count to 2 blocks
+  (copyright + this), which Horizon's own start/end layout matches without
+  any override. See ARCHITECTURE.md.
 {%- enddoc -%}
 
 {% assign block_settings = block.settings %}
@@ -32,12 +41,31 @@
   {%- if shop.terms_of_service -%}
     <a href="{{ shop.terms_of_service.url }}" class="footer-utilities__text lambruk-policy-links__link">{{ block_settings.terms_label }}</a>
   {%- endif -%}
+  {%- if block_settings.instagram_url != blank or block_settings.facebook_url != blank -%}
+    <span class="lambruk-policy-links__social">
+      {%- if block_settings.instagram_url != blank -%}
+        <a href="{{ block_settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram" class="lambruk-policy-links__icon">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+            {%- render 'icon', icon: 'instagram' -%}
+          </svg>
+        </a>
+      {%- endif -%}
+      {%- if block_settings.facebook_url != blank -%}
+        <a href="{{ block_settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook" class="lambruk-policy-links__icon">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+            {%- render 'icon', icon: 'facebook' -%}
+          </svg>
+        </a>
+      {%- endif -%}
+    </span>
+  {%- endif -%}
 </div>
 
 {% stylesheet %}
   .lambruk-policy-links {
     color: var(--color-utilities, var(--color-foreground-muted));
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     gap: 24px;
   }
@@ -45,6 +73,22 @@
   .lambruk-policy-links__link {
     color: inherit;
     text-decoration: none;
+  }
+
+  .lambruk-policy-links__social {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .lambruk-policy-links__icon {
+    display: flex;
+    color: inherit;
+  }
+
+  .lambruk-policy-links__icon svg {
+    width: 17px;
+    height: 17px;
   }
 {% endstylesheet %}
 
@@ -74,6 +118,20 @@
       "id": "terms_label",
       "label": "t:settings.terms_of_service_label",
       "default": "Terms & Conditions"
+    },
+    {
+      "type": "header",
+      "content": "t:content.links"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "t:options.instagram"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "t:options.facebook"
     },
     {
       "type": "header",

@@ -132,14 +132,14 @@
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
-                    "type_preset": "h3",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
+                    "type_preset": "custom",
+                    "font": "var(--font-heading--family)",
+                    "font_size": "var(--display-2-size)",
                     "line_height": "normal",
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
-                    "text_color": "",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -320,33 +320,328 @@
         "gap": 48,
         "enable_sticky_add_to_cart": true,
         "background_color": "{{ settings.color_palette.background }}",
-        "padding-block-start": 0,
-        "padding-block-end": 0
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "trust_row": {
+      "type": "section",
+      "blocks": {
+        "row": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "gap": 40,
+            "width": "fill",
+            "height": "fit",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "item_sourced": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "flex-start",
+                "align_baseline": false,
+                "gap": 16,
+                "width": "fill",
+                "height": "fit",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "icon": { "type": "icon", "settings": { "icon": "none", "image_upload": "shopify://shop_images/icon-sustainably-sourced-leaf.svg", "width": 44 }, "blocks": {} },
+                "heading": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Sustainably sourced</p>",
+                    "text_color": "#131A3E",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-heading--family)",
+                    "font_size": "var(--display-4-size)",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "body": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Produce is bought direct from Australian growers we work with season after season, not through a commodity market.</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "var(--text-2-size)",
+                    "line_height": "loose",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": ["icon", "heading", "body"]
+            },
+            "item_freshness": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "flex-start",
+                "align_baseline": false,
+                "gap": 16,
+                "width": "fill",
+                "height": "fit",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "icon": { "type": "icon", "settings": { "icon": "none", "image_upload": "shopify://shop_images/icon-freshness-secured-sparkles.svg", "width": 44 }, "blocks": {} },
+                "heading": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Freshness secured</p>",
+                    "text_color": "#131A3E",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-heading--family)",
+                    "font_size": "var(--display-4-size)",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "body": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Every jar is sealed on the day it is cooked and packed in protective, recyclable materials for the trip to you.</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "var(--text-2-size)",
+                    "line_height": "loose",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": ["icon", "heading", "body"]
+            },
+            "item_sugar": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "flex-start",
+                "align_baseline": false,
+                "gap": 16,
+                "width": "fill",
+                "height": "fit",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "icon": { "type": "icon", "settings": { "icon": "none", "image_upload": "shopify://shop_images/icon-low-sugar-grape.svg", "width": 44 }, "blocks": {} },
+                "heading": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Low sugar</p>",
+                    "text_color": "#131A3E",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-heading--family)",
+                    "font_size": "var(--display-4-size)",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "body": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Real fruit carries the flavour, so each batch is made with less sugar and no artificial sweeteners.</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "var(--text-2-size)",
+                    "line_height": "loose",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": ["icon", "heading", "body"]
+            }
+          },
+          "block_order": ["item_sourced", "item_freshness", "item_sugar"]
+        }
+      },
+      "block_order": ["row"],
+      "settings": {
+        "section_width": "page-width",
+        "background_color": "#F4F1EA",
+        "padding-block-start": 64,
+        "padding-block-end": 64
       }
     },
     "product_recommendations_qggXJq": {
       "type": "product-recommendations",
       "blocks": {
-        "text_cbcgyb": {
+        "eyebrow_gRwsSk": {
           "type": "text",
           "name": "t:names.header",
           "settings": {
-            "text": "<h3>You may also like </h3>",
-            "width": "fit-content",
+            "text": "<p>Goes well with</p>",
+            "text_color": "#986A34",
+            "width": "100%",
             "max_width": "normal",
             "alignment": "left",
-            "type_preset": "h4",
+            "type_preset": "custom",
             "font": "var(--font-body--family)",
-            "font_size": "1rem",
+            "font_size": "var(--text-3-size)",
             "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
+            "letter_spacing": "eyebrow",
+            "case": "uppercase",
             "wrap": "pretty",
-            "text_color": "",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
             "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_cbcgyb": {
+          "type": "text",
+          "settings": {
+            "text": "<p>From the same shelf</p>",
+            "text_color": "#131A3E",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-heading--family)",
+            "font_size": "var(--display-4-size)",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 8,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
@@ -359,12 +654,12 @@
           "static": true,
           "settings": {
             "product_card_gap": 8,
-            "background_color": "",
-            "border": "none",
+            "background_color": "#FFFFFF",
+            "border": "solid",
             "border_width": 1,
             "border_opacity": 100,
-            "border_color": "",
-            "border_radius": 0,
+            "border_color": "#E3D6C5",
+            "border_radius": 16,
             "padding-block-start": 0,
             "padding-block-end": 8,
             "padding-inline-start": 0,
@@ -380,7 +675,7 @@
                 "border_width": 1,
                 "border_opacity": 100,
                 "border_color": "",
-                "border_radius": 0,
+                "border_radius": 16,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -434,16 +729,26 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "review_rQ2nz9": {
+              "type": "review",
+              "settings": {
+                "alignment": "left",
+                "show_number": true
+              },
+              "blocks": {}
             }
           },
           "block_order": [
             "product_card_gallery_DNizbJ",
             "product_title_M7MJkb",
-            "price_gLWgA6"
+            "price_gLWgA6",
+            "review_rQ2nz9"
           ]
         }
       },
       "block_order": [
+        "eyebrow_gRwsSk",
         "text_cbcgyb"
       ],
       "name": "t:names.product_recommendations",
@@ -455,8 +760,8 @@
         "max_products": 4,
         "columns": 4,
         "mobile_columns": "2",
-        "columns_gap": 12,
-        "rows_gap": 24,
+        "columns_gap": 28,
+        "rows_gap": 28,
         "icons_style": "arrow",
         "icons_shape": "none",
         "section_width": "page-width",
@@ -469,6 +774,7 @@
   },
   "order": [
     "main",
+    "trust_row",
     "product_recommendations_qggXJq"
   ]
 }

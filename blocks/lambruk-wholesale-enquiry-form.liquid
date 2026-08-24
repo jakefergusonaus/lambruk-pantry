@@ -3,15 +3,30 @@
   Wraps Shopify's native `{% form 'contact' %}` (see blocks/contact-form.liquid
   for the pattern this follows) with the fuller field set the design calls for
   — business name/type, location, and a multi-select "interested in" — none of
-  which the native block has settings for. Extra `contact[...]` fields are
-  forwarded by Shopify into the contact-form notification email same as the
-  native fields; see ARCHITECTURE.md for the open question on where that
-  notification actually needs to go for wholesale enquiries specifically.
+  which the native block has settings for. See ARCHITECTURE.md for the open
+  question on where the contact-form notification actually needs to go for
+  wholesale enquiries specifically.
+
+  Wholesale and general enquiries land in the same inbox (that open question),
+  so the notification email needs to identify itself as a wholesale enquiry at
+  a glance. `{% form 'contact' %}` only echoes name/email/phone/body back into
+  the notification — body is the only field guaranteed to actually appear in
+  it — so the marker goes there: the visible textarea (`data-body-input`, no
+  longer named `contact[body]` directly) holds only the applicant's own text;
+  a sibling hidden field (`data-body-hidden`, the real `contact[body]`) is
+  populated at submit time with the marker prepended. Splitting the two avoids
+  double-prefixing on a resubmit after a validation error — the visible
+  textarea's own displayed value is re-derived from `form.body` with the
+  marker stripped back off (`remove_first`), so the user only ever sees and
+  edits their own text, never the marker.
 {%- enddoc -%}
 
 {% liquid
   assign form_id = block.id | prepend: 'WholesaleEnquiry-'
 %}
+{% capture double_newline %}
+
+{% endcapture %}
 
 <div class="wholesale-enquiry-form spacing-style" style="width: 100%;" {{ block.shopify_attributes }}>
   {%- form 'contact', id: form_id, class: 'wholesale-enquiry-form__form' -%}
@@ -33,6 +48,9 @@
       if form.posted_successfully? and form_matches
         assign posted_ok = true
       endif
+
+      assign wholesale_marker = 'WHOLESALE ENQUIRY' | append: double_newline
+      assign displayed_body = form.body | remove_first: wholesale_marker
     %}
 
     {%- if has_errors -%}
@@ -157,14 +175,15 @@
             rows="4"
             id="{{ form_id }}-body"
             class="wholesale-enquiry-form__input wholesale-enquiry-form__input--textarea"
-            name="contact[body]"
+            data-body-input
             placeholder="Rooms, covers, current range, what you are looking for"
             required
             {% if form.errors contains 'body' and form_matches %}
               aria-invalid="true"
               aria-describedby="{{ form_id }}-body-error"
             {% endif %}
-          >{{ form.body }}</textarea>
+          >{{ displayed_body }}</textarea>
+          <input type="hidden" name="contact[body]" data-body-hidden>
         </div>
 
         <p class="wholesale-enquiry-form__helper">All fields are required.</p>
@@ -190,6 +209,9 @@
       var preserveFields = form.querySelectorAll('[data-preserve-field]');
       var interestCheckboxes = form.querySelectorAll('[data-interest-checkbox]');
       var interestsHidden = form.querySelector('[data-interests-hidden]');
+      var bodyInput = form.querySelector('[data-body-input]');
+      var bodyHidden = form.querySelector('[data-body-hidden]');
+      var wholesaleMarker = {{ wholesale_marker | json }};
       var hasErrors = {{ has_errors | json }};
       var postedSuccessfully = {{ posted_ok | json }};
 
@@ -224,6 +246,9 @@
             .call(interestCheckboxes, function (cb) { return cb.checked; })
             .map(function (cb) { return cb.value; });
           interestsHidden.value = checked.join(', ');
+        }
+        if (bodyHidden) {
+          bodyHidden.value = wholesaleMarker + (bodyInput ? bodyInput.value : '');
         }
         try {
           var fields = {};

@@ -757,6 +757,25 @@ The four "Curated for every occasion" cards on the homepage (§23) all linked to
 
 ---
 
+## 27. Wholesale enquiry email now identifies itself (2026-08-21)
+
+**Problem**: wholesale and general enquiries land in the same inbox (`sales@lambrukpantry.com`, per Admin → Settings → Notifications), so the client needs to tell them apart without opening every email. `{% form 'contact' %}` only echoes `name`/`email`/`phone`/`body` into Shopify's notification template — body is the one field guaranteed to actually carry content into the email, so that's where the marker had to go.
+
+**Fix, `blocks/lambruk-wholesale-enquiry-form.liquid`**: split the visible textarea from the actual submitted field, rather than prefixing the textarea's own value directly — prefixing the visible field in place would double-prefix on a resubmit after a validation error (the server would echo back the already-marked text, the JS would prepend the marker again on top of it). Instead:
+- The visible `<textarea>` (`data-body-input`) no longer carries `name="contact[body]"` — it's just the applicant's own text, nothing else.
+- A sibling `<input type="hidden" name="contact[body]" data-body-hidden>` is the field Shopify actually reads. Populated at submit time: `bodyHidden.value = "WHOLESALE ENQUIRY\n\n" + bodyInput.value` — same submit handler that already builds the "Interested in" joined-string field, kept untouched (per instruction) and extended, not replaced.
+- The textarea's *displayed* value on an error-reload comes from `form.body` (Shopify's real echo, which now contains the marker-prefixed text) with the marker stripped back off via `remove_first`, so the applicant only ever sees and edits their own words — never the marker, and never a doubled one.
+- Verified directly: dispatched a real `submit` event against the filled-in form and read the hidden field's resulting value — `"WHOLESALE ENQUIRY\n\nWe run a 40-seat cafe and want to stock your relishes."` — confirming the exact string that would reach the inbox.
+
+**Regression check on the two existing fixes, as instructed — reported honestly, not just claimed**: attempted a full click-through (fill form, force a validation error, submit) to verify field repopulation and the no-scroll-jump behaviour end-to-end. Could not complete it — no POST request of any kind reached the dev server for *either* this form or the site's completely unmodified native contact form on `/pages/contact` (checked as a control, precisely to separate "my change broke something" from "this environment can't complete this interaction") — confirmed via `preview_logs`, no `/contact` POST appears for any attempt. This is a dev-preview environment limitation, not something introduced by this change. What was verified instead, with high confidence:
+- Read the full diff (`git diff blocks/lambruk-wholesale-enquiry-form.liquid`) line by line: the `data-preserve-field`/sessionStorage repopulation logic for Business name/type/Location/Interested-in is untouched, character for character. No scroll-related code exists in this file at all — that fix lives entirely in `layout/theme.liquid`, unrelated and untouched.
+- Confirmed the shared submit handler still fires and still executes its existing sessionStorage-write path correctly: triggered a real submit event and read `sessionStorage` afterward — the cached field values were present exactly as before, proving the handler's pre-existing behaviour survived the extension.
+- Recommend a real click-through test (fill the form, force one field invalid, submit; then submit clean) once convenient outside this sandbox — the code-level evidence is strong, but that's not the same as watching the actual round trip.
+
+`shopify theme check --path .` clean — 375 files, no offenses.
+
+---
+
 ## Summary
 
 | Area | Path taken |

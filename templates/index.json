@@ -1374,7 +1374,7 @@
               "settings": {
                 "heading": "Slow Mornings",
                 "caption": "Everything you need for the perfect breakfast.",
-                "link": "/collections/all"
+                "link": "/collections/slow-mornings"
               },
               "blocks": {}
             },
@@ -1383,7 +1383,7 @@
               "settings": {
                 "heading": "Entertaining",
                 "caption": "The perfect companions for cheese boards and shared tables.",
-                "link": "/collections/all"
+                "link": "/collections/entertaining"
               },
               "blocks": {}
             },
@@ -1392,7 +1392,7 @@
               "settings": {
                 "heading": "Sunday Roast",
                 "caption": "Bring richer flavour to every family gathering.",
-                "link": "/collections/all"
+                "link": "/collections/sunday-roast"
               },
               "blocks": {}
             },
@@ -1401,7 +1401,7 @@
               "settings": {
                 "heading": "High Tea",
                 "caption": "French-inspired elegance.",
-                "link": "/collections/all"
+                "link": "/collections/high-tea"
               },
               "blocks": {}
             }

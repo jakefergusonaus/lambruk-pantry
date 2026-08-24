@@ -8,12 +8,16 @@
   Shopify collections yet — creating them is merchandising work the client
   owns, not a theme decision (per instruction, 2026-08-21). So each card's
   image/heading/caption/link are plain editable settings instead. `link`
-  has no default and no render-time fallback — a card added without a
-  link renders with an empty href rather than silently pointing at Shop
-  All. The homepage's four cards were live with all four silently
-  defaulting to /collections/all for a full session before anyone
-  noticed, precisely because the fallback made an unconfigured card look
-  like a working one (fixed 2026-08-24). Revisit once the client has
+  has no default, and a card with no link set renders as a plain,
+  non-interactive `<div>` instead of an `<a>` — not an `<a href="">`,
+  which most browsers treat as a link to the current page and would
+  still be clickable, just wrong. The homepage's four cards were live
+  with all four silently defaulting to /collections/all for a full
+  session before anyone noticed, precisely because a working-looking
+  fallback made an unconfigured card indistinguishable from a
+  configured one (fixed 2026-08-24). An unconfigured card should be
+  obviously unfinished — unclickable — not plausibly wrong. Revisit
+  once the client has
   created real per-occasion collections: at that point this could
   reasonably be replaced by sections/collection-list.liquid (which
   already supports this exact gradient-overlay-on-image look via
@@ -44,11 +48,7 @@
   assign block_settings = block.settings
 %}
 
-<a
-  href="{{ block_settings.link }}"
-  class="lambruk-occasion-card spacing-style"
-  {{ block.shopify_attributes }}
->
+{% capture card_body %}
   {%- if block_settings.image != blank -%}
     {{
       block_settings.image
@@ -65,7 +65,20 @@
       <p class="lambruk-occasion-card__caption">{{ block_settings.caption }}</p>
     {%- endif -%}
   </div>
-</a>
+{% endcapture %}
+
+{%- if block_settings.link != blank -%}
+  <a
+    href="{{ block_settings.link }}"
+    class="lambruk-occasion-card spacing-style"
+    {{ block.shopify_attributes }}
+  >{{ card_body }}</a>
+{%- else -%}
+  <div
+    class="lambruk-occasion-card spacing-style"
+    {{ block.shopify_attributes }}
+  >{{ card_body }}</div>
+{%- endif -%}
 
 {% stylesheet %}
   .lambruk-occasion-card {

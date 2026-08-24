@@ -291,3 +291,40 @@ h1, h2, h3, h4, h5, h6 {
 .header .account-button {
   display: none;
 }
+
+/* Main nav — current-page and hover states (2026-08-24). Not in the design
+   source: LambrukPantry Desktop.dc.html's nav items are static <span>s with
+   one fixed colour, no interaction states specified anywhere — confirmed by
+   reading the source directly, not assumed. A deliberate addition on top of
+   the design, same footing as the logo-size change; recorded in
+   DESIGN-TOKENS.md and flagged in REVIEW-NOTES.md for the source to catch up.
+
+   Colour is settings.color_palette.color1 (#131A3E) — not a new colour, and
+   not the design system's separate blue-950 ramp either. The live nav link
+   colour is actually color_palette.foreground (#4A5478, confirmed via
+   computed style, not the mockup's #131A3E), which makes color1 itself the
+   next-darkest step already inside the theme's own 4-colour palette.
+   Contrast against the page background (#FBFAF7, confirmed live): 16.16:1,
+   comfortably clearing 4.5:1 (the existing #4A5478 state is 7.11:1).
+
+   aria-current="page" is already native — blocks/_header-menu.liquid sets it
+   from Shopify's own `link.current`, no new logic added here.
+
+   Specificity note: _header-menu.liquid's own CSS dims every nav link
+   (including the current one) whenever any link in the list is hovered
+   (`.menu-list:where(:has(.menu-list__list-item:hover)) .menu-list__link`,
+   specificity 0,2,0) — shipped behaviour, not something this rule is trying
+   to change generally. The current-page selector below adds the
+   `.menu-list__list-item` ancestor specifically to outrank that dimming rule
+   (0,3,0 vs 0,2,0), so the current item stays this colour even while a
+   different item is hovered, rather than being included in the dim. */
+:root {
+  --nav-current-color: #131A3E;
+}
+
+.menu-list__list-item .menu-list__link[aria-current="page"],
+.menu-list .menu-list__list-item:hover .menu-list__link,
+.menu-list .menu-list__list-item:focus-within .menu-list__link {
+  color: var(--nav-current-color);
+  transition: color 0.15s ease;
+}

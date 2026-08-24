@@ -418,3 +418,6 @@ Rather than resolve these silently, they're listed here for a decision before th
 
 8. **Two identical copies of the desktop mockup.**
    `uploads/LambrukPantry.dc.html` and `uploads/LambrukPantry.dc copy.html` are byte-for-byte identical (verified with `diff`). Likely an accidental duplicate from the upload — harmless, but worth deleting one before it's mistaken for a divergent revision later.
+
+10. **Main nav has no current-page or hover state specified anywhere in the source (2026-08-24).**
+    `LambrukPantry Desktop.dc.html`'s nav items (Shop/Wholesale/Cafe/Our Story/Contact) are static `<span onClick=...>` elements with one fixed colour (`#131A3E`) and no `:hover` or active/current styling at all — confirmed by reading the source directly. Built anyway, on the same footing as the logo-size change (client ask, not a design-source gap being filled): current page and hover both render in `settings.color_palette.color1` (`#131A3E`), transitioning over 0.15s. See `assets/lambruk-tokens.css` for the implementation and the reasoning behind the colour choice. The design source should be updated to show these states so future builds don't have to reverse-engineer them from the theme.

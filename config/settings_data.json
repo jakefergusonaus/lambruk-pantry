@@ -11,8 +11,8 @@
   "current": {
     "logo": "shopify://shop_images/Lambruk_Logo_Horizontal.svg",
     "logo_inverse": "shopify://shop_images/Lambruk_Logo_Horizontal_white.svg",
-    "logo_height": 44,
-    "logo_height_mobile": 32,
+    "logo_height": 60,
+    "logo_height_mobile": 44,
     "page_text_color": "{{ settings.color_palette.foreground }}",
     "type_body_font": "geist_n4",
     "type_subheading_font": "instrument_serif_n4",

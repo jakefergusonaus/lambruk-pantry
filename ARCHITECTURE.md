@@ -751,6 +751,12 @@ On Shop All, also re-confirmed the filtering itself still works post-edit (the c
 
 ---
 
+## 26. Curated Occasions homepage cards pointed at their real collections (2026-08-21)
+
+The four "Curated for every occasion" cards on the homepage (§23) all linked to `/collections/all` as a placeholder, from before the real occasion collections existed in Admin. Now that they do (§25), matched each card to its handle by reading the card's own heading rather than assuming positional order: Slow Mornings → `/collections/slow-mornings`, Entertaining → `/collections/entertaining`, Sunday Roast → `/collections/sunday-roast`, High Tea → `/collections/high-tea`. Verified live — each card's `href` confirmed against its own rendered heading text, not just the JSON. `shopify theme check --path .` clean.
+
+---
+
 ## Summary
 
 | Area | Path taken |

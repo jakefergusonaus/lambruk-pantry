@@ -16,9 +16,20 @@
   misconfigure it than a self-driven `collection.handle` check has).
 
   Only the *identity* of which four collections count as occasions is
-  hardcoded here — every other occasion's title, description, image and
-  product count still comes live from that collection's own real Shopify
-  data via `collections[handle]`, never hardcoded copy.
+  hardcoded here — every other occasion's title, blurb, image and product
+  count still comes live from that collection's own real Shopify data via
+  `collections[handle]`, never hardcoded copy.
+
+  Card blurb reads `metafields.custom.occasion_card_blurb`, not
+  `collection.description` — a collection has exactly one description
+  field, and this template already uses it for the hero's longer body
+  paragraph (sections/lambruk-occasion-hero.liquid). The card here needs a
+  second, shorter string ("Everything you need for the perfect
+  breakfast.", not the full hero paragraph), so it needs its own field.
+  Requires a metafield definition in Admin: Settings → Custom data →
+  Collections → Add definition → namespace/key `custom.occasion_card_blurb`,
+  type Single line text. Renders nothing if unset, same as image/count —
+  not a guessed fallback.
 {%- endcomment -%}
 
 {% liquid
@@ -55,8 +66,8 @@
               </div>
               <div class="lambruk-other-occasions__card-content">
                 <h3 class="lambruk-other-occasions__card-title">{{ other_occasion.title }}</h3>
-                {%- if other_occasion.description != blank -%}
-                  <div class="lambruk-other-occasions__card-blurb">{{ other_occasion.description }}</div>
+                {%- if other_occasion.metafields.custom.occasion_card_blurb != blank -%}
+                  <div class="lambruk-other-occasions__card-blurb">{{ other_occasion.metafields.custom.occasion_card_blurb }}</div>
                 {%- endif -%}
                 <div class="lambruk-other-occasions__card-footer">
                   <span>{{ 'content.item_count' | t: count: other_occasion.products_count }}</span>

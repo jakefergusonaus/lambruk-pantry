@@ -1,0 +1,119 @@
+{%- doc -%}
+  Category eyebrow for a product card (e.g. "SAUCES & CHUTNEYS"), used only
+  on the occasion collection template (templates/collection.occasion.json) —
+  scoped there deliberately, not sitewide. See ARCHITECTURE.md.
+
+  Not a generic `text` block bound to a dynamic source: `{{ closest.product.type
+  }}` was tried earlier this project and rejected outright by Shopify's own
+  template validator (a real sync error, not assumed) — dynamic sources on a
+  text block's setting are checked against a fixed allow-list, and product
+  type/vendor aren't on it. This block reads `closest.product` directly in
+  compiled Liquid instead, which isn't subject to that same editor-bound
+  validation.
+
+  Also not actually built on `product.type` even though that's the
+  conceptually obvious field — confirmed live via /products.json that
+  `product_type` is empty on every product on this store. `vendor` is just
+  "Lambruk Pantry" on every product too. `tags` is the one field that
+  reliably carries a real category (`tea` / `condiments` / `pantry`) — it's
+  already the whole basis of blocks/lambruk-tag-filter.liquid, so this block
+  reuses that same tag set and the same case-insensitive matching, and the
+  same display labels, so the two stay consistent. A product with none of
+  the three known tags renders nothing rather than guessing.
+
+  The design's example copy ("SAUCES & CHUTNEYS · 260G") also includes a
+  size suffix. Left out on purpose: sizes aren't a separate structured
+  field on this store's products (all variants are "Default Title"; the
+  size lives in the product's own title text, e.g. "Iced Tea 60g Loose
+  Leaf") — extracting it would mean regex-guessing against free-text
+  titles with inconsistent formats, not reading real data.
+{%- enddoc -%}
+
+{% liquid
+  assign label = nil
+  for tag in closest.product.tags
+    assign downcased_tag = tag | downcase
+    case downcased_tag
+      when 'tea'
+        assign label = 'Tea'
+      when 'condiments'
+        assign label = 'Sauces & Chutneys'
+      when 'pantry'
+        assign label = 'Pantry & Gifts'
+    endcase
+  endfor
+%}
+
+{% if label %}
+  <p
+    class="product-category-label spacing-style"
+    style="{% render 'spacing-style', settings: block.settings %}"
+    {{ block.shopify_attributes }}
+  >
+    {{ label }}
+  </p>
+{% endif %}
+
+{% stylesheet %}
+  .product-category-label {
+    margin: 0;
+    font-family: var(--font-body--family);
+    font-size: var(--text-3-size);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #A07037;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.product_category_label",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

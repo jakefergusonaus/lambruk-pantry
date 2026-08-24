@@ -1,0 +1,225 @@
+{%- comment -%}
+  "Other Occasions / Set another table" — three cards linking to the other
+  occasion collections, excluding whichever one the visitor is currently
+  on. Used only on the occasion collection template
+  (templates/collection.occasion.json), one section instance for all four
+  occasions.
+
+  Exclusion mechanism, decided before building (see ARCHITECTURE.md): a
+  hardcoded array of the four known occasion handles, filtered against
+  `closest.collection.handle` (native, no setting needed — always correct
+  for whichever of the four collections is currently rendering). Not a
+  metaobject (this is a fixed, rarely-changing set of exactly four, not
+  something expected to grow or need merchant-managed entries) and not a
+  per-instance section setting (that would just duplicate the same fact
+  once per template instance, with more chances for a merchant to
+  misconfigure it than a self-driven `collection.handle` check has).
+
+  Only the *identity* of which four collections count as occasions is
+  hardcoded here — every other occasion's title, description, image and
+  product count still comes live from that collection's own real Shopify
+  data via `collections[handle]`, never hardcoded copy.
+{%- endcomment -%}
+
+{% liquid
+  assign occasion_handles = 'slow-mornings,entertaining,sunday-roast,high-tea' | split: ','
+  assign current_handle = closest.collection.handle
+%}
+
+<section class="lambruk-other-occasions" style="{% render 'spacing-style', settings: section.settings %}">
+  <div class="lambruk-other-occasions__inner">
+    <div class="lambruk-other-occasions__header">
+      <div>
+        <p class="lambruk-other-occasions__eyebrow">{{ 'content.other_occasions_eyebrow' | t }}</p>
+        <h2 class="lambruk-other-occasions__heading">{{ section.settings.heading }}</h2>
+      </div>
+      <a href="{{ routes.all_products_collection_url }}" class="button button-secondary">
+        {{ 'content.shop_all_products_button' | t }}
+      </a>
+    </div>
+
+    <div class="lambruk-other-occasions__grid">
+      {%- for handle in occasion_handles -%}
+        {%- if handle != current_handle -%}
+          {%- assign other_occasion = collections[handle] -%}
+          {%- if other_occasion != blank -%}
+            <a href="{{ other_occasion.url }}" class="lambruk-other-occasions__card">
+              <div class="lambruk-other-occasions__card-image">
+                {%- if other_occasion.image != blank -%}
+                  {{
+                    other_occasion.image
+                    | image_url: width: 800
+                    | image_tag: widths: '400, 600, 800', sizes: '(min-width: 750px) 33vw, 100vw', loading: 'lazy'
+                  }}
+                {%- endif -%}
+              </div>
+              <div class="lambruk-other-occasions__card-content">
+                <h3 class="lambruk-other-occasions__card-title">{{ other_occasion.title }}</h3>
+                {%- if other_occasion.description != blank -%}
+                  <div class="lambruk-other-occasions__card-blurb">{{ other_occasion.description }}</div>
+                {%- endif -%}
+                <div class="lambruk-other-occasions__card-footer">
+                  <span>{{ 'content.item_count' | t: count: other_occasion.products_count }}</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BF8C45" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="4" y1="12" x2="19" y2="12"></line>
+                    <polyline points="13 6 19 12 13 18"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .lambruk-other-occasions {
+    padding-block: var(--padding-block-start) var(--padding-block-end);
+  }
+
+  .lambruk-other-occasions__inner {
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: 40px;
+  }
+
+  .lambruk-other-occasions__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .lambruk-other-occasions__eyebrow {
+    margin: 0 0 14px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #A07037;
+  }
+
+  .lambruk-other-occasions__heading {
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-weight: 400;
+    font-size: var(--display-module-size, 32px);
+    color: #131A3E;
+  }
+
+  .lambruk-other-occasions__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .lambruk-other-occasions__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .lambruk-other-occasions__card {
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+    border: 1px solid #E3D6C5;
+    border-radius: 16px;
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .lambruk-other-occasions__card-image {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #F4F1EA;
+  }
+
+  .lambruk-other-occasions__card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .lambruk-other-occasions__card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    padding: 24px;
+  }
+
+  .lambruk-other-occasions__card-title {
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 26px;
+    color: #131A3E;
+  }
+
+  .lambruk-other-occasions__card-blurb {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #4A5478;
+  }
+
+  .lambruk-other-occasions__card-blurb p {
+    margin: 0;
+  }
+
+  .lambruk-other-occasions__card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 14px;
+    font-size: 13px;
+    color: #8A8FA3;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.lambruk_other_occasions",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:settings.heading",
+      "default": "Set another table"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 80
+    }
+  ]
+}
+{% endschema %}

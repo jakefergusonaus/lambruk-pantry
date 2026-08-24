@@ -9,12 +9,13 @@
         "dev",
         "--store",
         "37b2e5-fc.myshopify.com",
-        "--theme",
-        "182395437357",
+        "--theme-editor-sync",
+        "--reconciliation-strategy",
+        "abort",
         "--port",
-        "9293"
+        "9394"
       ],
-      "port": 9293
+      "port": 9394
     }
   ]
 }

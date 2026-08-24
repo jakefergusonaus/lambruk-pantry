@@ -66,15 +66,17 @@
               </div>
               <div class="lambruk-other-occasions__card-content">
                 <h3 class="lambruk-other-occasions__card-title">{{ other_occasion.title }}</h3>
-                {%- if other_occasion.metafields.custom.occasion_card_blurb != blank -%}
-                  <div class="lambruk-other-occasions__card-blurb">{{ other_occasion.metafields.custom.occasion_card_blurb }}</div>
-                {%- endif -%}
-                <div class="lambruk-other-occasions__card-footer">
-                  <span>{{ 'content.item_count' | t: count: other_occasion.products_count }}</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BF8C45" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="4" y1="12" x2="19" y2="12"></line>
-                    <polyline points="13 6 19 12 13 18"></polyline>
-                  </svg>
+                <div class="lambruk-other-occasions__card-bottom">
+                  {%- if other_occasion.metafields.custom.occasion_card_blurb != blank -%}
+                    <div class="lambruk-other-occasions__card-blurb">{{ other_occasion.metafields.custom.occasion_card_blurb }}</div>
+                  {%- endif -%}
+                  <div class="lambruk-other-occasions__card-footer">
+                    <span>{{ 'content.item_count' | t: count: other_occasion.products_count }}</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BF8C45" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="4" y1="12" x2="19" y2="12"></line>
+                      <polyline points="13 6 19 12 13 18"></polyline>
+                    </svg>
+                  </div>
                 </div>
               </div>
             </a>
@@ -174,6 +176,25 @@
     color: #131A3E;
   }
 
+  /* Bottom-anchored group (blurb + footer), not the title, so a wrapped
+     title (e.g. "Entertaining" at some widths, confirmed live — the design
+     source doesn't already handle this, checked directly: its own
+     margin-top: auto only anchors the footer, title/blurb are plain flow
+     right after each other) can't push this card's blurb to a different
+     y-position than its neighbours'. Cards are equal height already (CSS
+     Grid's default row-stretch), so anchoring this group to the bottom of
+     each card, rather than reserving a fixed title height, means every
+     card's blurb+footer lands at the same y-position regardless of how
+     many lines the title took above it — extends the same margin-top:auto
+     technique already used below for the footer, rather than introducing
+     a second, different mechanism (a guessed fixed title min-height). */
+  .lambruk-other-occasions__card-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+  }
+
   .lambruk-other-occasions__card-blurb {
     margin: 0;
     font-size: 15px;
@@ -190,7 +211,6 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-top: auto;
     padding-top: 14px;
     font-size: 13px;
     color: #8A8FA3;

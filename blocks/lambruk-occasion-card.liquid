@@ -7,14 +7,22 @@
   Not bound to a collection. The four occasions in the design aren't real
   Shopify collections yet — creating them is merchandising work the client
   owns, not a theme decision (per instruction, 2026-08-21). So each card's
-  image/heading/caption/link are plain editable settings instead, with
-  `link` defaulting to /collections/all as a placeholder — same shape as
-  the footer's pending Shop-column links (see ARCHITECTURE.md open
-  questions). Revisit once the client has created real per-occasion
-  collections: at that point this could reasonably be replaced by
-  sections/collection-list.liquid (which already supports this exact
-  gradient-overlay-on-image look via _collection-card-image.liquid's
-  `placement: "on_image"`), the same way Explore by category was built.
+  image/heading/caption/link are plain editable settings instead. `link`
+  has no default, and a card with no link set renders as a plain,
+  non-interactive `<div>` instead of an `<a>` — not an `<a href="">`,
+  which most browsers treat as a link to the current page and would
+  still be clickable, just wrong. The homepage's four cards were live
+  with all four silently defaulting to /collections/all for a full
+  session before anyone noticed, precisely because a working-looking
+  fallback made an unconfigured card indistinguishable from a
+  configured one (fixed 2026-08-24). An unconfigured card should be
+  obviously unfinished — unclickable — not plausibly wrong. Revisit
+  once the client has
+  created real per-occasion collections: at that point this could
+  reasonably be replaced by sections/collection-list.liquid (which
+  already supports this exact gradient-overlay-on-image look via
+  _collection-card-image.liquid's `placement: "on_image"`), the same way
+  Explore by category was built.
 
   Sits inside a `group` block set to `content_direction: row` — this
   block's own outer div carries `flex: 1 1 0` so four cards share the row
@@ -40,11 +48,7 @@
   assign block_settings = block.settings
 %}
 
-<a
-  href="{{ block_settings.link | default: '/collections/all' }}"
-  class="lambruk-occasion-card spacing-style"
-  {{ block.shopify_attributes }}
->
+{% capture card_body %}
   {%- if block_settings.image != blank -%}
     {{
       block_settings.image
@@ -61,7 +65,20 @@
       <p class="lambruk-occasion-card__caption">{{ block_settings.caption }}</p>
     {%- endif -%}
   </div>
-</a>
+{% endcapture %}
+
+{%- if block_settings.link != blank -%}
+  <a
+    href="{{ block_settings.link }}"
+    class="lambruk-occasion-card spacing-style"
+    {{ block.shopify_attributes }}
+  >{{ card_body }}</a>
+{%- else -%}
+  <div
+    class="lambruk-occasion-card spacing-style"
+    {{ block.shopify_attributes }}
+  >{{ card_body }}</div>
+{%- endif -%}
 
 {% stylesheet %}
   .lambruk-occasion-card {
@@ -147,8 +164,7 @@
     {
       "type": "url",
       "id": "link",
-      "label": "t:settings.link",
-      "default": "/collections/all"
+      "label": "t:settings.link"
     }
   ]
 }

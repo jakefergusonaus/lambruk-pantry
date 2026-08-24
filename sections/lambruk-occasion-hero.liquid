@@ -35,7 +35,7 @@
   <div class="lambruk-occasion-hero__scrim"></div>
   <div class="lambruk-occasion-hero__content">
     <a href="{{ routes.all_products_collection_url }}" class="lambruk-occasion-hero__breadcrumb">
-      {{ 'content.shop_all_products_breadcrumb' | t }}
+      {{ 'content.shop_all_products_breadcrumb' | t: occasion: occasion_collection.title }}
     </a>
     <p class="lambruk-occasion-hero__eyebrow">{{ 'content.curated_occasion' | t }}</p>
     <h1 class="lambruk-occasion-hero__title">{{ occasion_collection.title }}</h1>

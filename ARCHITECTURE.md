@@ -790,6 +790,16 @@ Three header changes (centre-align the menu, enlarge the logo, hide the account/
 
 ---
 
+## 29. Occasion page: card blurb given its own metafield, breadcrumb made dynamic (2026-08-24)
+
+**Card blurb**: `lambruk-occasion-hero.liquid` (hero body) and `lambruk-other-occasions.liquid` (Other Occasions card) were both reading `collection.description` — a collection has exactly one description field, so both would show identical text, and the long hero paragraph was never going to work as a one-line card blurb. Moved the card blurb to `metafields.custom.occasion_card_blurb` — a new definition needed in Admin (Settings → Custom data → Collections, Single line text) before the client can enter per-collection values. Renders nothing if unset, same as the image/count fields already do; verified live it doesn't error with the metafield undefined.
+
+**Breadcrumb**: was hardcoded "Shop / all products" on every occasion page. Checked the design source directly before assuming either way: `LambrukPantry Desktop.dc.html:311` has the identical static string, no interpolation — unlike the H1 two lines below it, which does bind to `{{ occasionLabel }}`. So the build matched the design exactly; this was a design-source gap, not an implementation bug. Flagged rather than silently left — the H1 right next to it updating per-occasion while the breadcrumb doesn't reads as an oversight, not a deliberate choice. Made dynamic on the client's instruction: `locales/en.default.json`'s `shop_all_products_breadcrumb` key now takes an `occasion` variable (`"Shop / {{ occasion }}"`), passed as `occasion_collection.title` — the same source the H1 already uses, so the two can't drift from each other. Design source updated to match at the same line, so the mockup and build stop being able to diverge on this again.
+
+**Verified live on two different collections** (not just one): `/collections/entertaining?view=occasion` → "Shop / Entertaining"; `/collections/sunday-roast?view=occasion` → "Shop / Sunday Roast" — both matching their own page's H1 exactly. `shopify theme check --path .` clean.
+
+---
+
 ## Summary
 
 | Area | Path taken |

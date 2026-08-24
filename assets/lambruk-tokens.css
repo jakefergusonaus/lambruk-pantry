@@ -281,3 +281,13 @@ h1, h2, h3, h4, h5, h6 {
 [data-image-ratio="square"] {
   --gallery-aspect-ratio: 4 / 3;
 }
+
+/* Nav bar redesign (2026-08-24): design calls for the header to show only
+   search and cart, no account/profile icon. shop.customer_accounts_enabled
+   is on at the shop level (account pages, checkout login etc. still work),
+   so the icon in snippets/header-actions.liquid still renders — this only
+   hides the header's own button rather than disabling accounts store-wide,
+   which is a bigger decision than a nav visual change should make. */
+.header .account-button {
+  display: none;
+}

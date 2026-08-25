@@ -19,6 +19,8 @@ state. Query it immediately before edits, commits and remote transfers.
 The published theme is read-only. Never use `--live`, `--allow-live` or
 `--publish`, and never mutate store data as an incidental theme-build step.
 
+**Only one Claude Code session may run against this project at a time, and only one process may push to 182395437357.** Before starting work, check for other sessions (`ps aux | grep -i shopify` / `claude`, and check for a running `shopify theme dev` against this theme) and stop if one is found rather than starting a second writer. This has cost three separate debugging detours: a stray `shopify theme dev` process (PID 15872) silently interfering with another session's verification; a whole navigation-bar-redesign branch built and reportedly shipped but never actually pushed, because it existed only in an isolated worktree; and an `index.json` push that briefly re-clobbered live-theme fixes with a session's stale local copy. All three were real work lost or misattributed to the wrong theme state, not hypothetical risk.
+
 ---
 
 # Project: Lambruk Pantry

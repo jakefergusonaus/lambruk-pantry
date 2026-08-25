@@ -1282,7 +1282,7 @@
       },
       "block_order": [],
       "settings": {
-        "collection": "",
+        "collection": "top-sellers",
         "layout_type": "carousel",
         "carousel_on_mobile": true,
         "max_products": 8,

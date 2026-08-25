@@ -11,17 +11,45 @@
     "section": {
       "type": "section",
       "blocks": {
-        "text_tqQTNE": {
+        "text_shop_eyebrow": {
+          "type": "text",
+          "name": "t:names.eyebrow",
+          "settings": {
+            "text": "<p>Shop</p>",
+            "text_color": "#A07037",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "var(--text-3-size)",
+            "line_height": "normal",
+            "letter_spacing": "eyebrow",
+            "case": "uppercase",
+            "wrap": "pretty",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 18,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_shop_heading": {
           "type": "text",
           "name": "t:names.title",
           "settings": {
-            "text": "<h1>{{ closest.collection.title }}</h1>",
-            "width": "fit-content",
-            "max_width": "normal",
+            "text": "<h1>Teas, relishes and pantry favourites, made in small batches</h1>",
+            "text_color": "#131A3E",
+            "width": "100%",
+            "max_width": "none",
             "alignment": "left",
-            "type_preset": "h2",
-            "font": "var(--font-body--family)",
-            "line_height": "normal",
+            "type_preset": "custom",
+            "font": "var(--font-heading--family)",
+            "font_size": "3.25rem",
+            "line_height": "tight",
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
@@ -35,17 +63,18 @@
           },
           "blocks": {}
         },
-        "text_twGGkJ": {
+        "text_shop_body": {
           "type": "text",
           "name": "t:names.description",
           "settings": {
-            "text": "{{ closest.collection.description }}",
-            "width": "fit-content",
-            "max_width": "normal",
+            "text": "<p>Remember a colour, a flavour or a jar you tasted somewhere. Filter the range to find it again.</p>",
+            "text_color": "#4A5478",
+            "width": "100%",
+            "max_width": "wide",
             "alignment": "left",
             "type_preset": "custom",
             "font": "var(--font-body--family)",
-            "font_size": "var(--text-2-size)",
+            "font_size": "1.0625rem",
             "line_height": "loose",
             "letter_spacing": "normal",
             "case": "none",
@@ -53,17 +82,27 @@
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
-            "padding-block-start": 0,
+            "padding-block-start": 20,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
           "blocks": {}
+        },
+        "text_shop_heading_style": {
+          "type": "custom-liquid",
+          "name": "t:names.custom_liquid",
+          "settings": {
+            "custom_liquid": "<style>#shopify-section-{{ section.id }} h1{max-width:720px;line-height:1.04;}</style>"
+          },
+          "blocks": {}
         }
       },
       "block_order": [
-        "text_tqQTNE",
-        "text_twGGkJ"
+        "text_shop_eyebrow",
+        "text_shop_heading",
+        "text_shop_body",
+        "text_shop_heading_style"
       ],
       "name": "t:names.heading",
       "settings": {
@@ -74,11 +113,11 @@
         "align_baseline": false,
         "horizontal_alignment_flex_direction_column": "flex-start",
         "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
+        "gap": 0,
         "section_width": "page-width",
         "section_height_custom": 50,
         "background_media": "none",
-        "background_color": "{{ settings.color_palette.background }}",
+        "background_color": "#F4F1EA",
         "video_position": "cover",
         "background_image_position": "cover",
         "border": "none",
@@ -89,8 +128,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 48,
-        "padding-block-end": 48
+        "padding-block-start": 64,
+        "padding-block-end": 56
       }
     },
     "main": {
@@ -121,7 +160,7 @@
           "type": "_product-card",
           "static": true,
           "settings": {
-            "product_card_gap": 4,
+            "product_card_gap": 0,
             "background_color": "#FFFFFF",
             "border": "solid",
             "border_color": "#E3D6C5",
@@ -166,10 +205,10 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 4,
+                "padding-block-start": 20,
                 "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "padding-inline-start": 20,
+                "padding-inline-end": 20
               },
               "blocks": {}
             },
@@ -187,10 +226,10 @@
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "padding-block-start": 6,
+                "padding-block-end": 20,
+                "padding-inline-start": 20,
+                "padding-inline-end": 20
               },
               "blocks": {}
             }

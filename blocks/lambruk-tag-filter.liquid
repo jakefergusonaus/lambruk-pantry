@@ -155,44 +155,60 @@
           </div>
 
           {% if tag_filter %}
-            {% for value in tag_filter.values %}
-              {% liquid
-                assign downcased_value = value.value | downcase
-                assign is_known_tag = false
-                assign display_label = value.label
-                case downcased_value
-                  when 'tea'
-                    assign display_label = block_settings.tea_label
-                    assign is_known_tag = true
-                  when 'condiments'
-                    assign display_label = block_settings.condiments_label
-                    assign is_known_tag = true
-                  when 'pantry'
-                    assign display_label = block_settings.pantry_label
-                    assign is_known_tag = true
-                endcase
-              %}
-              {% if is_known_tag %}
-                <div class="lambruk-tag-filter__pill-wrapper">
-                  <input
-                    type="radio"
-                    name="{{ value.param_name }}"
-                    id="LambrukFilter-{{ block.id }}-{{ forloop.index }}"
-                    value="{{ value.value }}"
-                    class="lambruk-tag-filter__input"
-                    {% if value.active %}
-                      checked
-                    {% endif %}
-                    ref="facetInputs[]"
-                  >
-                  <label
-                    class="lambruk-tag-filter__pill lambruk-tag-filter__pill-label"
-                    for="LambrukFilter-{{ block.id }}-{{ forloop.index }}"
-                  >
-                    {{ display_label }}
-                  </label>
-                </div>
-              {% endif %}
+            {%- comment -%}
+              Design order is All / Tea / Sauces & Chutneys / Pantry & Gifts.
+              tag_filter.values comes back from Shopify's own facet API in
+              its own order (alphabetical by tag value: condiments, pantry,
+              tea), which put Tea last — confirmed live, not assumed.
+              Iterating a fixed key order here instead, looking up the
+              matching facet value for each, rather than trusting the
+              API's order.
+            {%- endcomment -%}
+            {% liquid
+              assign ordered_tag_keys = 'tea,condiments,pantry' | split: ','
+              assign pill_index = 0
+            %}
+            {% for tag_key in ordered_tag_keys %}
+              {% for value in tag_filter.values %}
+                {% liquid
+                  assign downcased_value = value.value | downcase
+                  assign display_label = value.label
+                  assign matches_current_key = false
+                  if downcased_value == tag_key
+                    assign matches_current_key = true
+                    case tag_key
+                      when 'tea'
+                        assign display_label = block_settings.tea_label
+                      when 'condiments'
+                        assign display_label = block_settings.condiments_label
+                      when 'pantry'
+                        assign display_label = block_settings.pantry_label
+                    endcase
+                  endif
+                %}
+                {% if matches_current_key %}
+                  {% assign pill_index = pill_index | plus: 1 %}
+                  <div class="lambruk-tag-filter__pill-wrapper">
+                    <input
+                      type="radio"
+                      name="{{ value.param_name }}"
+                      id="LambrukFilter-{{ block.id }}-{{ pill_index }}"
+                      value="{{ value.value }}"
+                      class="lambruk-tag-filter__input"
+                      {% if value.active %}
+                        checked
+                      {% endif %}
+                      ref="facetInputs[]"
+                    >
+                    <label
+                      class="lambruk-tag-filter__pill lambruk-tag-filter__pill-label"
+                      for="LambrukFilter-{{ block.id }}-{{ pill_index }}"
+                    >
+                      {{ display_label }}
+                    </label>
+                  </div>
+                {% endif %}
+              {% endfor %}
             {% endfor %}
           {% endif %}
         </facet-inputs-component>
@@ -237,6 +253,26 @@
     gap: 24px;
     padding-bottom: 28px;
     border-bottom: 1px solid #E3D6C5;
+  }
+
+  /* Design source: filter row's own border-bottom (above) plus a separate
+     40px margin-top on the product grid that follows it — two distinct
+     gaps, not one shared value. Confirmed live before this fix: the grid
+     sat with 0px between it and the divider, not just "tighter than
+     design" — the .collection-wrapper grid's own gap doesn't reach here.
+
+     Not a sibling selector: confirmed live that .product-grid isn't a
+     direct (or even general) sibling of .lambruk-tag-filter at all — it's
+     nested two levels deeper inside an unnamed wrapper div inside
+     .collection-wrapper. :has() instead, scoped to "the collection-wrapper
+     that contains this block" rather than depending on exact sibling
+     structure, which is also more robust against Horizon changing that
+     intermediate markup later. Scoped for free either way: this block
+     only renders at all when 2+ of the three known tags are present (see
+     doc comment at top), i.e. Shop All only — Tea/Condiments/Pantry never
+     render .lambruk-tag-filter, so this rule can't reach them. */
+  .collection-wrapper:has(.lambruk-tag-filter) .product-grid {
+    margin-top: 40px;
   }
 
   .lambruk-tag-filter__pills {

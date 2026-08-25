@@ -1,7 +1,15 @@
 {%- doc -%}
-  Category eyebrow for a product card (e.g. "SAUCES & CHUTNEYS"), used only
-  on the occasion collection template (templates/collection.occasion.json) —
-  scoped there deliberately, not sitewide. See ARCHITECTURE.md.
+  Category eyebrow for a product card (e.g. "SAUCES & CHUTNEYS"). Originally
+  scoped to the occasion collection template only (templates/
+  collection.occasion.json); extended 2026-08-25 to the homepage's Top
+  Sellers rail (templates/index.json) and to Shop All/Tea/Condiments/Pantry's
+  shared product-card (templates/collection.all.json, templates/
+  collection.json), once it turned out all of the site's product-card
+  instances — both the bordered collection-grid treatment and the
+  borderless rail treatment — carry this eyebrow in the design. Each
+  template still configures its own block_order independently, so this
+  stays wherever it's actually wired in per-template. See ARCHITECTURE.md
+  §25 (original scoping) and §31 (extension).
 
   Not a generic `text` block bound to a dynamic source: `{{ closest.product.type
   }}` was tried earlier this project and rejected outright by Shopify's own

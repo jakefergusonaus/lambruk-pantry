@@ -6,6 +6,41 @@
 
 {% render 'group', children: children, settings: block.settings, shopify_attributes: block.shopify_attributes %}
 
+{% stylesheet %}
+  /*
+    The vertical_alignment setting only offers top/center/bottom, and
+    align_baseline (visible_if flex-end) converts bottom into CSS "last
+    baseline" — aligning siblings to a wrapped text item's LAST line. The
+    product-card title+price row needs the opposite: price pinned to the
+    FIRST line of a wrapped title (design source: rail card title+price row
+    uses plain CSS align-items:baseline). No setting combination produces
+    that, so it's set directly here. Scoped to .product-card because
+    _product-card-group is, as of 2026-08-25, only used for that one row —
+    see templates/index.json's title_price_row block.
+  */
+  .product-card .group-block-content.layout-panel-flex--row {
+    align-items: baseline;
+  }
+
+  /*
+    Confirmed live on mobile: despite vertical_on_mobile:false (no
+    .mobile-column class), title and price were stacking instead of sharing
+    a row. Root cause is unrelated to this block's own settings —
+    snippets/product-card-styles.liquid has a generic
+    ".product-grid__card .group-block > * { flex-direction: column }" rule
+    below 749px, written for some future/other case, but the only .group-block
+    descendant inside .product-grid__card anywhere in this theme today is
+    this row, so it silently wins on specificity over .layout-panel-flex--row's
+    own flex-flow:row. flex-direction restored here; flex-wrap forced to
+    nowrap too, since title (width:fill) is otherwise wide enough on its own
+    to push price onto a second flex line even once direction is corrected.
+  */
+  .product-card .group-block-content.layout-panel-flex--row {
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "t:names.group",

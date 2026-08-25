@@ -88,7 +88,7 @@ Many sections that read as distinct in the prototype are the same underlying sha
 | Cafe hero (full-bleed, scrim, centered, 2 buttons) | Cafe | `sections/hero.liquid` | **Native**, adapt |
 | Booking panel — map placeholder + address/hours | Cafe | Static content, `sections/section.liquid` composed | **Native**, composed. Note: prototype literally places a "Google Maps embed" placeholder — decide whether that ships as a real embed or stays a static image/address block. |
 | Booking panel — phone mode (number, Call/Text buttons) | Cafe | `group`/`button` composed | **Native**, composed |
-| Booking panel — widget mode (date/time/guest-count selects, submit) | Cafe | No native equivalent (fake `<div>`s in the prototype, not real inputs) | **New** — and per the README, only one of phone/widget mode ships to production; confirm which before building either |
+| Booking panel — widget mode (date/time/guest-count selects, submit) | Cafe | **Decided (2026-08-25): not built.** Bookings are phone/text only — the client may add an online widget in about a year, at which point this becomes real work, not before. Only the phone-mode card was built. | **Skipped, by decision** |
 | High Tea feature, Pull Up a Chair | Cafe | `media-with-content` (counted above) | **Native** |
 | Gallery mosaic (asymmetric spans, 8-image grid) | Cafe | No direct match — Horizon's image/media blocks don't do asymmetric `grid-column: span` layouts out of the box | **New** (layout-only; images themselves are standard) |
 | "Bring the Lambruk experience home" — copy + button + 3 tiles w/ arrow icon | Cafe | Same collection-card primitives as Home's category tiles, third variant of that shape | **Adapt** |
@@ -175,4 +175,4 @@ Ordered so early work is reused by everything after it, and expensive/uncertain 
 
 - Header markup in the prototype has no account icon despite the page-by-page prose describing "search/account/cart" — confirm with the client/designer which is correct before building.
 - `design/Lambruk Pantry Design System/uploads/` (old, homepage-only) and `design/design_handoff_website/` (new, full 8-page) now coexist in `design/` — worth a note (or a move) so a future session doesn't read the superseded one by mistake.
-- Cafe booking mode (phone vs. widget) and reviews-app choice are both upstream decisions that block real build work in steps 13–15 above — worth raising with the client early rather than at the point of building them.
+- ~~Cafe booking mode (phone vs. widget)~~ — **closed 2026-08-25**: phone/text only, confirmed by the client. Reviews-app choice is still an open upstream decision blocking step 14 above.

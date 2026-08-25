@@ -1,0 +1,239 @@
+{%- comment -%}
+  Cafe page "Inside Lambruk Kitchen" mosaic — 8 images in an asymmetric grid
+  (two spans, one nested 2-row sub-grid), used only on templates/page.cafe.json.
+
+  New section, not an adaptation of an existing one: no native Horizon image/
+  media block does `grid-column: span N` mosaic layouts (checked
+  COMPONENT-INVENTORY.md and blocks/image.liquid before writing this — the
+  latter positions one image per block instance, nothing about asymmetric
+  grid placement). Additive only, no core file touched.
+
+  Eyebrow/heading/body are theme blocks (text), same as every other page-
+  intro module this build — merchant-editable via the theme editor, not
+  hardcoded copy. The 8 tiles are fixed image_picker settings, not a block
+  list — their grid position (span 2, nested sub-grid, aspect ratio) is
+  specific to each of the 8 slots, not a repeatable pattern a merchant could
+  reorder freely, so a fixed settings list is the right shape here, matching
+  sections/hero.liquid's own image_1/image_2 precedent.
+
+  Photography is placeholder for this whole build (per instruction) — every
+  image_picker below is left unset rather than pointed at a filename that
+  may not exist. blocks/image.liquid's own placeholder_svg_tag fallback
+  (confirmed by reading that file) means an unset slot still renders a
+  proper placeholder graphic, not a broken image — reused that exact
+  mechanism here rather than inventing a new one.
+{%- endcomment -%}
+
+<section class="lambruk-cafe-gallery" style="{% render 'spacing-style', settings: section.settings %}">
+  <div class="lambruk-cafe-gallery__inner">
+    <div class="lambruk-cafe-gallery__header">
+      {% content_for 'blocks' %}
+    </div>
+
+    <div class="lambruk-cafe-gallery__grid">
+      <div class="lambruk-cafe-gallery__tile lambruk-cafe-gallery__tile--1">
+        {%- render 'lambruk-cafe-gallery-image', image: section.settings.tile_1 -%}
+      </div>
+      <div class="lambruk-cafe-gallery__stack">
+        <div class="lambruk-cafe-gallery__tile lambruk-cafe-gallery__tile--2">
+          {%- render 'lambruk-cafe-gallery-image', image: section.settings.tile_2 -%}
+        </div>
+        <div class="lambruk-cafe-gallery__tile lambruk-cafe-gallery__tile--3">
+          {%- render 'lambruk-cafe-gallery-image', image: section.settings.tile_3 -%}
+        </div>
+      </div>
+      <div class="lambruk-cafe-gallery__tile lambruk-cafe-gallery__tile--4">
+        {%- render 'lambruk-cafe-gallery-image', image: section.settings.tile_4 -%}
+      </div>
+      <div class="lambruk-cafe-gallery__tile lambruk-cafe-gallery__tile--5">
+        {%- render 'lambruk-cafe-gallery-image', image: section.settings.tile_5 -%}
+      </div>
+      <div class="lambruk-cafe-gallery__tile lambruk-cafe-gallery__tile--6">
+        {%- render 'lambruk-cafe-gallery-image', image: section.settings.tile_6 -%}
+      </div>
+      <div class="lambruk-cafe-gallery__tile lambruk-cafe-gallery__tile--7">
+        {%- render 'lambruk-cafe-gallery-image', image: section.settings.tile_7 -%}
+      </div>
+      <div class="lambruk-cafe-gallery__tile lambruk-cafe-gallery__tile--8">
+        {%- render 'lambruk-cafe-gallery-image', image: section.settings.tile_8 -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .lambruk-cafe-gallery__inner {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding-inline: var(--page-margin);
+  }
+
+  .lambruk-cafe-gallery__header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 32px;
+  }
+
+  .lambruk-cafe-gallery__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .lambruk-cafe-gallery__tile {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .lambruk-cafe-gallery__tile img,
+  .lambruk-cafe-gallery__tile .placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .lambruk-cafe-gallery__tile--1 {
+    grid-column: span 2;
+    aspect-ratio: 16 / 10;
+  }
+
+  .lambruk-cafe-gallery__stack {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 16px;
+    aspect-ratio: 8 / 10;
+  }
+
+  .lambruk-cafe-gallery__stack .lambruk-cafe-gallery__tile {
+    min-height: 0;
+  }
+
+  .lambruk-cafe-gallery__tile--4,
+  .lambruk-cafe-gallery__tile--5,
+  .lambruk-cafe-gallery__tile--6 {
+    aspect-ratio: 4 / 3;
+  }
+
+  .lambruk-cafe-gallery__tile--7 {
+    grid-column: span 2;
+    aspect-ratio: 16 / 9;
+  }
+
+  .lambruk-cafe-gallery__tile--8 {
+    aspect-ratio: 8 / 9;
+  }
+
+  @media screen and (max-width: 749px) {
+    .lambruk-cafe-gallery__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .lambruk-cafe-gallery__tile--1,
+    .lambruk-cafe-gallery__tile--7 {
+      grid-column: span 2;
+    }
+
+    .lambruk-cafe-gallery__stack {
+      grid-template-rows: none;
+      grid-template-columns: 1fr;
+      aspect-ratio: auto;
+    }
+
+    .lambruk-cafe-gallery__stack .lambruk-cafe-gallery__tile {
+      aspect-ratio: 1 / 1;
+    }
+
+    .lambruk-cafe-gallery__tile--8 {
+      grid-column: span 2;
+      aspect-ratio: 16 / 9;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.lambruk_cafe_gallery",
+  "tag": "section",
+  "class": "section",
+  "blocks": [
+    { "type": "text" }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:content.lambruk_cafe_gallery_tiles"
+    },
+    {
+      "type": "image_picker",
+      "id": "tile_1",
+      "label": "t:settings.lambruk_cafe_gallery_tile_1"
+    },
+    {
+      "type": "image_picker",
+      "id": "tile_2",
+      "label": "t:settings.lambruk_cafe_gallery_tile_2"
+    },
+    {
+      "type": "image_picker",
+      "id": "tile_3",
+      "label": "t:settings.lambruk_cafe_gallery_tile_3"
+    },
+    {
+      "type": "image_picker",
+      "id": "tile_4",
+      "label": "t:settings.lambruk_cafe_gallery_tile_4"
+    },
+    {
+      "type": "image_picker",
+      "id": "tile_5",
+      "label": "t:settings.lambruk_cafe_gallery_tile_5"
+    },
+    {
+      "type": "image_picker",
+      "id": "tile_6",
+      "label": "t:settings.lambruk_cafe_gallery_tile_6"
+    },
+    {
+      "type": "image_picker",
+      "id": "tile_7",
+      "label": "t:settings.lambruk_cafe_gallery_tile_7"
+    },
+    {
+      "type": "image_picker",
+      "id": "tile_8",
+      "label": "t:settings.lambruk_cafe_gallery_tile_8"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 88
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.lambruk_cafe_gallery",
+      "category": "t:categories.custom"
+    }
+  ]
+}
+{% endschema %}

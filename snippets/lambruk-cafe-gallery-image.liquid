@@ -1,0 +1,30 @@
+{%- doc -%}
+  Renders one gallery mosaic tile — image if set, Horizon's own placeholder
+  graphic if not (same image_url/image_tag/placeholder_svg_tag mechanism as
+  blocks/image.liquid, reused rather than reinvented). Sizing/cropping is
+  entirely CSS (object-fit: cover on a fixed aspect-ratio ancestor,
+  sections/lambruk-cafe-gallery.liquid's own stylesheet), so this snippet
+  only needs to emit the tag itself.
+
+  @param {image} image - the image_picker value for this tile, possibly blank
+
+  @example
+  {% render 'lambruk-cafe-gallery-image', image: section.settings.tile_1 %}
+{%- enddoc -%}
+
+{%- if image != blank -%}
+  {{
+    image
+    | image_url: width: 1600
+    | image_tag:
+      width: image.width,
+      height: image.height,
+      widths: '240, 352, 550, 800, 1200, 1600',
+      sizes: '(min-width: 750px) 33vw, 50vw',
+      loading: 'lazy'
+  }}
+{%- else -%}
+  <div class="placeholder-image">
+    {{ 'hero-apparel-2' | placeholder_svg_tag: 'lambruk-cafe-gallery__placeholder' }}
+  </div>
+{%- endif -%}

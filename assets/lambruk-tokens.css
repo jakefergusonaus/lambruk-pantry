@@ -173,6 +173,20 @@
      with no border at all. */
   --product-card-border-width: 1px;
   --product-card-border-opacity: 1;
+
+  /* Horizon's .product-grid__item rule (product-grid.liquid) has no
+     border-radius property at all — not missing a value like the two
+     above, just absent from the rule entirely, so the <li> wrapper's own
+     border (needed to satisfy the two properties above) always rendered
+     as a hard right angle regardless of the product-card block's own
+     border_radius setting one level in. Same value as --radius-lg in the
+     design source (design-system-tokens/spacing.css) and as the
+     border_radius: 16 set on every Card A template's product-card block
+     instance today (collection.all.json, collection.json,
+     collection.occasion.json) — hardcoded here for the same reason the two
+     properties above are: this file can't read Liquid/theme settings.
+     Update by hand if Card A's own border_radius setting ever changes. */
+  --product-card-border-radius: 16px;
 }
 
 /* Scoped colour surfaces (contrast-override.liquid, e.g. quote-panel) set

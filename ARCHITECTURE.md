@@ -864,6 +864,26 @@ Three revisions to this same question in one day, so this section states the end
 
 ---
 
+## 34. Card A's corners were square — a second, radius-less border on the `<li>` wrapper (2026-08-25)
+
+**Report**: Card A's border colour is correct, but its corners trace a right angle in a screenshot measurement, not the rounded corner `ProductCard.jsx` specifies (`borderRadius: var(--radius-lg)`).
+
+**Checked settings first, per instruction, before any code.** `config/settings_schema.json` has two global corner-radius settings — `product_corner_radius` (default 0) and `card_corner_radius` (default 0, saved value 4 in `config/settings_data.json`). Neither is the cause: Card A's own `_product-card` block instance carries its own explicit `border_radius: 16` setting in all three templates (`collection.all.json`, `collection.json`, `collection.occasion.json` — confirmed by reading each file directly), which overrides any block-level default regardless of the two global settings above. This is layer 3 (a block's own setting), not layer 1 — the two global settings turned out to be a red herring, not the cause, and are otherwise unrelated to this component.
+
+**Root cause, one level up from the card again — the same shape of bug as §30, different property.** Read computed styles live on the actual rendered elements rather than assuming from the JSON value: `.product-card__content` (the card's own styled div) correctly computes `border-radius: 16px`. But `.product-grid__item` — the `<li>` wrapper one level up, which independently paints its *own* `1px solid #E3D6C5` border (added deliberately, see the `--product-card-border-width`/`--product-card-border-opacity` comment in `assets/lambruk-tokens.css` — Horizon's own `.product-grid__item` rule in `product-grid.liquid` references those two properties but never defines them, so without that activation the border would be invalid at computed-value time and not render at all) — computed `border-radius: 0px`. Same colour as the card's own border since §30, sitting exactly 1px outside it, so the two borders read as one continuous line — until the corner, where the inner border curves and the outer square one doesn't. The square outer corner is what a screenshot measurement actually catches, which is exactly what was reported.
+
+Unlike the width/opacity case, this isn't a property with a missing *value* — Horizon's `.product-grid__item` rule has no `border-radius` property in it at all, so there was nothing to activate, only something to add.
+
+**Design source confirmed directly, not assumed**: `--radius-lg: 16px` in `design/design_handoff_website/design-system-tokens/spacing.css` — matches the `border_radius: 16` already set on every Card A template's product-card block instance exactly. The 16px value in the theme was already correct; only the `<li>`'s radius was missing.
+
+**Image radius — Card A does not match Card B here, by design, and that's correct as built.** Read `ProductCard.jsx` specifically for this: the outer `<article>` carries the only `border-radius` (`var(--radius-lg)`) and `overflow:'hidden'`; the inner image wrapper (`aspectRatio:'4/3', overflow:'hidden'`) has no radius of its own — it's a plain rectangle that gets visually clipped into the article's rounded shape by the *outer* element's overflow, not by carrying a radius itself. This is the opposite of Card B (`Spotlight.jsx`), where there's no outer bordered wrapper at all, so the image itself has to carry `border-radius:'var(--radius-lg)'` directly. Our build currently sets `border_radius: 16` on *both* the product-card wrapper and its `card-gallery` block — redundant against the design source (which only needs it on the outer wrapper) but not wrong: both radii are the same 16px, so the visual result is identical either way, just doubly-specified. Left as-is rather than churned, since removing the gallery's own radius setting would change nothing visible and isn't part of what was reported broken.
+
+**Fix**: added `--product-card-border-radius: 16px` next to the existing width/opacity tokens in `assets/lambruk-tokens.css`, and `border-radius: var(--product-card-border-radius);` to `.product-grid__item` in `snippets/product-grid.liquid`. Hardcoded, same as the two properties beside it, and for the same reason — a static CSS file can't read the block's own Liquid setting. Noted in-file that this needs updating by hand if Card A's `border_radius` setting ever changes from 16.
+
+**Verified live on 182395437357, computed styles not CSS**: `/collections/all` (Shop All) and `/collections/condiments` (category page) — `.product-grid__item` now computes `border-radius: 16px`, matching `.product-card__content`'s 16px exactly, both borders now trace the same curve. `/collections/sunday-roast?view=occasion` — same result, confirming the fix reaches occasion pages through the same shared `product-grid.liquid`/`main-collection.liquid` path. Homepage Top Sellers rail (Card B) reconfirmed unaffected — no `.product-grid__item` in its markup at all (`.resource-list__item`, a different structure entirely, per §31), `border-radius: 0px` there both before and after, exactly as intended since Card B's own radius lives on its image, not a wrapper.
+
+---
+
 ## Summary
 
 | Area | Path taken |

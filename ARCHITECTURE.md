@@ -884,6 +884,21 @@ Unlike the width/opacity case, this isn't a property with a missing *value* — 
 
 ---
 
+## 35. `.product-grid__item`'s wrapper border removed entirely — it was always the duplicate (2026-08-25)
+
+**Two defects in a row from the same element** (§30 colour, §34 radius) were each fixed by making `.product-grid__item`'s wrapper border match `.product-card__content`'s own border property by property. Asked to assess whether that pattern itself was wrong — whether the wrapper border should exist at all, since the design (`ProductCard.jsx`) specifies exactly one border, on the card, not two.
+
+**Checked before changing anything, as instructed:**
+
+- **Dependents**: grepped every consumer of `.product-grid__item` theme-wide. No hover, focus, selected, or filter-grid state keys off its border anywhere — the class's other rules only touch `padding`, `height` (organic layout), grid-column sizing (zoom-out density view), and fade-in `opacity`/`transform` transitions. None reference `border`, `border-color`, or `border-radius`. Two unrelated files coincidentally reuse the class name for unrelated purposes (`product-media-gallery-content-styles.liquid`'s gallery grid, `product-card-styles.liquid`'s equal-height rule) — neither touches its box model.
+- **Which border is "real"**: re-read §1's own history. The wrapper border was activated 2026-08-20 in the belief that it *was* "the" product-card border — before the `_product-card` block's own `border`/`border_color`/`border_radius` settings existed as a configured, per-instance thing. `ProductCard.jsx` has exactly one bordered element, the outer `<article>`, which maps 1:1 to `.product-card__content` — already editor-configurable, already matching the design's colour and radius exactly (§34). The wrapper's border has no design-source counterpart at all; it's a hardcoded CSS-token activation with no correspondence in `ProductCard.jsx`. It was always the accidental duplicate, not a second intentional border.
+
+**Fix**: `--product-card-border-width` in `assets/lambruk-tokens.css` changed from `1px` to `0`. `--product-card-border-opacity` and the `--product-card-border-radius` added in §34 left defined (not deleted) so `.product-grid__item`'s border declaration stays valid rather than reverting to Horizon's original "undefined custom property, invalid at computed-value time" state (§1) — same *visual* result (no border), but explicit rather than accidental. Comment in `lambruk-tokens.css` rewritten to carry this whole history in one place rather than across three separate finding-comments.
+
+**Verified live on 182395437357, computed styles, all three page types**: Shop All, Condiments (category), and `/collections/sunday-roast?view=occasion` all show `.product-grid__item` computing `border: 0px solid rgb(227, 214, 197)` and `.product-card__content` still computing `border: 1px solid rgb(227, 214, 197)` — one real border, not two. `border-radius: 16px` unchanged on both. Screenshots on Shop All and the occasion page confirm no visible difference from before the change, as expected — this removes an invisible duplicate, not anything that was contributing to the visible result.
+
+---
+
 ## Summary
 
 | Area | Path taken |

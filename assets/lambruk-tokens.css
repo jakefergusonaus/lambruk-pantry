@@ -167,25 +167,35 @@
   --color-border: #E3D6C5;
   --color-border-rgb: 227, 214, 197;
 
-  /* Activates product-grid.liquid's card border, which reads these two
-     properties but never defines them anywhere in Horizon — without this the
-     border declaration is invalid at computed-value time and cards render
-     with no border at all. */
-  --product-card-border-width: 1px;
-  --product-card-border-opacity: 1;
+  /* product-grid.liquid's .product-grid__item rule reads these three
+     properties but never defines them anywhere in Horizon — an undefined
+     custom property with no fallback makes the whole border declaration
+     invalid at computed-value time, so leaving them unset does render no
+     border, same practical effect as width:0 below, just implicit rather
+     than stated.
 
-  /* Horizon's .product-grid__item rule (product-grid.liquid) has no
-     border-radius property at all — not missing a value like the two
-     above, just absent from the rule entirely, so the <li> wrapper's own
-     border (needed to satisfy the two properties above) always rendered
-     as a hard right angle regardless of the product-card block's own
-     border_radius setting one level in. Same value as --radius-lg in the
-     design source (design-system-tokens/spacing.css) and as the
-     border_radius: 16 set on every Card A template's product-card block
-     instance today (collection.all.json, collection.json,
-     collection.occasion.json) — hardcoded here for the same reason the two
-     properties above are: this file can't read Liquid/theme settings.
-     Update by hand if Card A's own border_radius setting ever changes. */
+     DELIBERATELY INERT (2026-08-25) — width forced to 0, radius/opacity
+     left defined so the declaration stays valid rather than reverting to
+     "invalid, no border" by omission. This activation was added 2026-08-20
+     (§1) under the belief that this Horizon-native mechanism *was* "the"
+     product-card border, before the _product-card block's own
+     border/border_color/border_radius settings existed as a configured,
+     per-instance thing. It didn't — ProductCard.jsx has exactly one
+     bordered element (the outer <article>), which maps to
+     .product-card__content, driven by the block's own settings, already
+     matching the design's colour and radius exactly. Activating this
+     second, wrapper-level border created an unintentional duplicate:
+     same colour as the card's own border since ARCHITECTURE.md §30, so it
+     read as one border in a screenshot until you hit a corner, where a
+     radius mismatch (§34) revealed there were two. Rather than keep
+     patching the duplicate to match the real one property by property,
+     turned it off at the root. Checked for dependents before doing this —
+     nothing in the theme keys hover/focus/selected states or the filter
+     grid off .product-grid__item's border; its other rules (padding,
+     height, transitions, zoom-out grid sizing) don't reference border at
+     all. See ARCHITECTURE.md §35. */
+  --product-card-border-width: 0;
+  --product-card-border-opacity: 1;
   --product-card-border-radius: 16px;
 }
 

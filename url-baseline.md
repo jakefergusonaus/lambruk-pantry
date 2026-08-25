@@ -120,7 +120,7 @@ These are live URLs with mistakes in them. They are earning search traffic exact
 | `/products/dehyrated-limes` | same |
 | `/products/monring-tea-tea-bags-5` | "monring" — letters transposed |
 | `/products/lemon-ginger-tea-60g-losse-leaf` | "losse" instead of "loose" |
-| `/products/tomato-capsicum-relish-260g-1` | `-1` suffix; likely a duplicate product |
+| `/products/tomato-capsicum-relish-260g-1` | Not a duplicate — resolved 2026-08-24. This is the 100g size; the handle just never got updated when the product was resized down from 260g, so the URL still says 260g on a 100g product. Live and earning traffic like the others in this table; leave as-is unless the client wants it fixed. |
 | `/pages/lambruk-pantry-about-us` | brand name repeated in the handle |
 | `/pages/lambruk-pantry-shop` | same, and may be superseded by a collection page |
 | `/collections/frontpage` | Shopify's default name, not a deliberate choice |

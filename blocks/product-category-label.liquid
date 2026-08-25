@@ -1,15 +1,26 @@
 {%- doc -%}
-  Category eyebrow for a product card (e.g. "SAUCES & CHUTNEYS"). Originally
-  scoped to the occasion collection template only (templates/
-  collection.occasion.json); extended 2026-08-25 to the homepage's Top
-  Sellers rail (templates/index.json) and to Shop All/Tea/Condiments/Pantry's
-  shared product-card (templates/collection.all.json, templates/
-  collection.json), once it turned out all of the site's product-card
-  instances — both the bordered collection-grid treatment and the
-  borderless rail treatment — carry this eyebrow in the design. Each
-  template still configures its own block_order independently, so this
-  stays wherever it's actually wired in per-template. See ARCHITECTURE.md
-  §25 (original scoping) and §31 (extension).
+  Category eyebrow for a product card (e.g. "SAUCES & CHUTNEYS").
+
+  CURRENT SCOPE (2026-08-25, third revision — see ARCHITECTURE.md §25/§31/§32
+  for the full history, this comment states only the end state): wired into
+  templates/collection.occasion.json (occasion pages) and templates/
+  index.json (Top Sellers rail) only. Deliberately absent from templates/
+  collection.all.json (Shop All) and templates/collection.json (Tea/
+  Condiments/Pantry) — briefly added there 2026-08-25, removed again
+  2026-08-25 once the client clarified the design only wants it on occasion
+  pages and the Top Sellers rail, not the plain category grids.
+
+  This is a per-template distinction, not a per-card-type one: both Card A
+  (bordered, occasion pages) and Card B (borderless, Top Sellers) render
+  through the exact same `_product-card`/`_product-card-gallery`/
+  `product-title`/`price` block family as Shop All and the three category
+  pages — the only thing that differs is which templates' `block_order`
+  include this block. Nothing reads collection metadata, tags, or any other
+  signal to decide — a newly created collection shows the eyebrow or doesn't
+  purely by which template it's assigned (occasion vs. default), the same
+  mechanism that already separates the two card treatments. There is
+  deliberately no second card component and no runtime toggle to keep in
+  sync.
 
   Not a generic `text` block bound to a dynamic source: `{{ closest.product.type
   }}` was tried earlier this project and rejected outright by Shopify's own

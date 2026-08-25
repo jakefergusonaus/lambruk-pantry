@@ -919,6 +919,16 @@ Four changes requested against the design: a full page-header module, filter chi
 
 ---
 
+## 37. `/collections/all` was Shopify's automatic collection, not an assignable one — replaced with a real collection (2026-08-25)
+
+§36 left the header's template mismatch as an open decision between two options: assign `collection.all.json` in Admin, or move the header's content into the shared `collection.json` behind a handle check. Neither was actually available as first framed — **`/collections/all` is Shopify's automatic "All products" pseudo-collection, which has no Admin record at all and so cannot be assigned a `template_suffix` in the first place.** This wasn't discoverable from the theme side; it's a fact about how Shopify itself handles the reserved `all` handle, confirmed by the client checking directly in Admin.
+
+**Fix**: client created a real, standalone "Shop All" collection (Automated, sort A–Z) at the same handle, `all` — a real Admin resource overrides Shopify's automatic pseudo-collection at that handle once one exists. Verified live on 182395437357 immediately after: `/collections/all`'s `<h1>` now reads "Shop All" (was "Products," the automatic collection's implicit label) and products sort alphabetically (Beetroot → Blueberry → Chilli...), both matching the new collection's own configuration — confirms the real collection is now what's resolving at that URL, not the automatic one.
+
+**`collection.all.json` is still not the active template — this is expected, not a new problem.** A brand-new collection has no `template_suffix` set by default, so it still renders through `collection.json` (the theme's bare default), just now backed by the new collection's real data instead of the automatic collection's. Confirmed live: no `cta_sample_box` section (unique to `collection.all.json`, still absent), no new header content (a false-positive check against a `<p>Shop</p>` turned out to be the *footer's* own "Shop" link-column heading, not the new header block — the real header block never rendered). **Every "Shop All" verification in this entire build, from the very start, was actually checking `collection.json`'s rendering — `collection.all.json`, including `cta_sample_box`, has never been confirmed live at any point.** Assigning the new collection's theme template to `collection.all.json` in Admin is the next, still-outstanding step — flagged to the client that the dropdown may not offer it at all today, since Shopify's collection template picker only lists templates that exist in the *published* theme, and Horizon (182395437357) isn't published; Flux is.
+
+---
+
 ## Summary
 
 | Area | Path taken |

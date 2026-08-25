@@ -929,6 +929,25 @@ Four changes requested against the design: a full page-header module, filter chi
 
 ---
 
+## 38. `collection.all.json` verified live for the first time, via `?view=all` (2026-08-25)
+
+§37 left `collection.all.json` entirely unverified — every prior "Shop All" check this build, from the very start, was actually hitting `collection.json`. Confirmed directly this can't be fixed pre-publish: the Theme template dropdown in Admin only lists templates from the *published* theme (Flux), so `collection.all.json` isn't a selectable option today regardless of readiness (see the rewritten go-live checklist).
+
+**Verified anyway, using the same alternate-template mechanism already relied on for occasion pages (`?view=occasion`) — `?view=all` renders `collection.all.json` without assigning it,** exactly the way `?view=<suffix>` works for any `templates/collection.<suffix>.json` file. First real render of this file at any point in the build. Checked everything from §36 against it directly, desktop and mobile, via computed styles:
+
+- **Header band**: background `rgb(244, 241, 234)` = `#F4F1EA` exact, on the dedicated `.section-background` element (not the transparent section wrapper itself — Horizon paints section backgrounds via a separate absolutely-positioned child, checked the right element). `padding-block-start`/`-end` computed `64px`/`56px` exact.
+- **Eyebrow**: text "Shop", `color: rgb(160, 112, 55)` = `#A07037` exact, `text-transform: uppercase`, `letter-spacing: 2.64px` = exactly `0.22em` at `12px` font-size, confirming the `--letter-spacing--body-eyebrow` token resolved correctly.
+- **Heading**: `color: rgb(19, 26, 62)` = `#131A3E` exact, `font-family: "Instrument Serif", serif` exact, `max-width: 720px` exact (the `custom-liquid` scoped override), `line-height` computed to exactly `1.04×` font-size (the same override). `font-size` computed `48.33px` rather than the design's `52px` — expected, not a defect: `3.25rem` is above this project's `3.0rem` fluid-clamp cutoff (§ typography-style.liquid), so it fluid-scales with viewport width the same way every other custom-preset heading at this size does sitewide (hero's H1 included) — 52px is the value at the fluid clamp's upper viewport bound, not a fixed constant at every width.
+- **Body**: `color: rgb(74, 84, 120)` = `#4A5478` exact, `font-size: 17px` exact, `line-height: 27.2px` = exactly `1.6×` (`--line-height--body-loose`), `max-width: min(100%, 640px)` (the `--max-width--body-wide` token) exact.
+- **Filter order**: `All, Tea, Sauces & Chutneys, Pantry & Gifts` exact, both breakpoints.
+- **Divider gap**: `40px` between the filter row's border and the grid, both breakpoints.
+- **Card text padding**: title wrapper and price both `20px`/`6px` as built, both breakpoints.
+- **`cta_sample_box`**: rendered — the navy "Sell the moment, not the label. Start with a sample box." band with its "Shop Gifts & Samples" button, full width, confirmed live for the first time this entire build.
+
+Everything from §36 is now confirmed correct on the file that will actually matter once Horizon is published and the five collections in the go-live checklist are assigned. Nothing found wrong; no further code changes from this pass.
+
+---
+
 ## Summary
 
 | Area | Path taken |
@@ -964,15 +983,24 @@ Actions that are deliberately deferred during the build and must happen at (or j
 
   Whichever path, confirm the live nav matches the design before publish, not after — this is easy to forget since the draft theme will look correct throughout the build regardless of which menu `main-menu` itself contains.
 - [ ] Reconcile `redirects.md` against `url-baseline.md` and confirm every changed URL has a redirect in the admin (already tracked in `CLAUDE.md`, restated here for one checklist to work from).
-- [ ] **Template assignments — four custom templates built in the theme, none yet assigned to a real resource in Admin.**
+- [ ] **Page template assignments — `page.wholesale.json` and `page.our-story.json`, not yet assigned in Admin.**
 
-  **Correction, 2026-08-20 — this was wrongly marked "safe to do now" and isn't, for at least two of the four.** `template_suffix` is a property of the *resource* (the page or collection), not of a theme — it's shared across every theme on the store, including whichever one is currently published. Assigning it while working in Horizon's theme editor still writes a value the *live* Flux site reads too: if Flux has its own template matching that suffix name, the live page switches to it immediately; if the resource is currently on a real, in-use Flux template and the new suffix matches nothing in Flux, Flux falls back to its bare default and the live page's actual content disappears. Whether an assignment is safe depends entirely on what each resource's *current* template state is — which wasn't checked before this was written.
-
-  **Checked what's verifiable without Admin API access** (none is available in this session, and `CLAUDE.md` forbids pulling Flux's own files even read-only) — fetched each live URL from the published site and read what's actually rendering, as the best available evidence:
+  **Correction, 2026-08-20 — this was wrongly marked "safe to do now" and isn't.** `template_suffix` is a property of the *resource* (the page), not of a theme — it's shared across every theme on the store, including whichever one is currently published. Assigning it while working in Horizon's theme editor still writes a value the *live* Flux site reads too: if Flux has its own template matching that suffix name, the live page switches to it immediately; if the resource is currently on a real, in-use Flux template and the new suffix matches nothing in Flux, Flux falls back to its bare default and the live page's actual content disappears.
 
   - `page.wholesale.json` → `/pages/wholesale`. Live Flux renders `image_banner` + two `image_with_text` sections — a real, bespoke layout. **Not safe today.** Wait for go-live.
   - `page.our-story.json` → `/pages/lambruk-pantry-about-us`. Live Flux renders a slider, rich text, image-with-text, image gallery and a collection list — a real, bespoke layout. **Not safe today.** Wait for go-live.
-  - `page.cafe.json` → **the Cafe page now exists** (created since this was last checked — it didn't a few turns ago, worth knowing). Live Flux content is just the word "Cafe," one generic section, nothing else. Very likely safe, but not confirmed against the actual stored `template_suffix` — check the "Theme template" dropdown in Admin before assigning, don't assume from this alone.
-  - `collection.all.json` → the built-in **All products** collection (handle `all`). Live Flux shows a generic `banner` + `product-grid` + `recently_viewed_products` — no obvious custom content, but this is inferred from rendered output, not a confirmed default state. Same as Cafe: check the dropdown first.
+  - `page.cafe.json` → the Cafe page. Live Flux content is just the word "Cafe," one generic section, nothing else. Likely safe, but still check the "Theme template" dropdown in Admin before assigning, don't assume from this alone.
 
-  None of the four should be assigned on the strength of this record alone — Wholesale and Our Story are confidently deferred to go-live; Cafe and All-products need a quick Admin check (does the dropdown show "Default template," and does Flux itself list a template with this name?) before either is touched, even though the evidence leans safe.
+- [ ] **Collection template assignments — five, all confirmed genuinely impossible before publish, not just deferred out of caution.** Checked directly (2026-08-25): the Theme template dropdown in Admin only ever lists templates that exist in the currently *published* theme. Horizon (`182395437357`) isn't published — Flux is — so none of the five templates below appear as options at all today, regardless of how ready or safe any of them are. This isn't the same caution as the page templates above (which *could* technically be assigned now but would affect Flux); these literally cannot be selected in Admin until Horizon is the published theme. Confirmed for `collection.all.json` specifically: the dropdown offered only "Default collection" and "sale," both from Flux.
+
+  Assign all five **immediately after publishing Horizon, before doing anything else** — go to each collection in Admin and set:
+
+  | Collection | Theme template to select |
+  |---|---|
+  | Shop All | `all` |
+  | Slow Mornings | `occasion` |
+  | Entertaining | `occasion` |
+  | Sunday Roast | `occasion` |
+  | High Tea | `occasion` |
+
+  **A missed assignment fails silently — there is no error, broken link, or visibly missing content.** The collection just renders as an ordinary collection page (Horizon's bare default grid: plain title, no eyebrow, no curated header, no occasion hero image, none of this build's actual design) instead of the intended one. It still works, still shows products, still looks like a real page — nothing flags that the wrong template is in use, which is exactly what made `collection.all.json` invisible for this entire build (§36/§37) until it was checked directly. Between publish and these five assignments, all five pages are live on the real storefront rendering wrong — treat this as done in the same sitting as publishing, not as a followup task.

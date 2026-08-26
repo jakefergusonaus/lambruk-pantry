@@ -1,8 +1,15 @@
 
 
-<div>
+<div class="custom-liquid-block">
   {{ block.settings.custom_liquid }}
 </div>
+
+{% stylesheet %}
+  .layout-panel-flex--column > .custom-liquid-block {
+    align-self: stretch;
+    width: 100%;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {

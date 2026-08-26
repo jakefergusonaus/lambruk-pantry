@@ -525,7 +525,7 @@
                 "phone_buttons": {
                   "type": "custom-liquid",
                   "settings": {
-                    "custom_liquid": "{% liquid\n  assign tel_number = settings.lambruk_cafe_phone | remove: ' '\n%}\n<div style=\"display:flex;gap:12px;\">\n  <a href=\"tel:{{ tel_number }}\" class=\"button\" style=\"flex:1;text-align:center;\">Call to Book</a>\n  <a href=\"sms:{{ tel_number }}\" class=\"button-secondary\" style=\"flex:1;text-align:center;\">Text to Book</a>\n</div>"
+                    "custom_liquid": "{% liquid\n  assign tel_number = settings.lambruk_cafe_phone | remove: ' '\n%}\n<div style=\"display:flex;gap:12px;\">\n  <a href=\"tel:{{ tel_number }}\" class=\"button\">Call to Book</a>\n  <a href=\"sms:{{ tel_number }}\" class=\"button-secondary\">Text to Book</a>\n</div>"
                   },
                   "blocks": {}
                 }
@@ -1164,6 +1164,7 @@
       },
       "block_order": ["header"],
       "settings": {
+        "collection_list": ["tea", "condiments", "pantry"],
         "layout_type": "grid",
         "columns": 3,
         "mobile_columns": "1",

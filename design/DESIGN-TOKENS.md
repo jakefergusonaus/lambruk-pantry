@@ -374,6 +374,9 @@ Extracted by diffing the two `uploads/*.dc.html` mockups. These are the concrete
 | Reviews card | Fixed 22px padding, 22px serif title, part of a 3-column grid | 268px fixed-width card, 20px serif title, horizontally scrolling rail |
 | Subscribe heading | 28px | 24px |
 | ~~Hero/heading sizes~~ | ~~Scale up to 56–58px~~ | ~~Compressed — no display size above ~40px was found on the mobile mockup's home screen~~ — **superseded by the canonical fluid scale in section 2** |
+| Our Story full-bleed photo, aspect ratio | `16 / 9` | `4 / 3` |
+
+**Our Story's full-bleed photo is the one confirmed instance of a genuinely different (not just scaled) aspect ratio between breakpoints**, added 2026-08-26 while building the page. `blocks/image.liquid`'s own `image_ratio` setting isn't responsive — one value, no breakpoint variant — so this needed a scoped `custom-liquid` override (`#shopify-section-{{ section.id }} .placeholder-image, ... .image-block__image { aspect-ratio: 4/3; }` under a `max-width: 749px` media query), same pattern already used for the Cafe map embed and footer heading style. Deliberate, not a rounding concession: at a 343px mobile column width, 16:9 renders ~193px tall (a thin strip) against 4:3's ~257px — real presence for the page's one photograph, and the design specifies both ratios explicitly rather than leaving mobile to inherit the desktop value.
 
 **No bottom tab bar.** Despite the mobile-majority traffic note in `CLAUDE.md`, the mobile mockup doesn't add a persistent bottom navigation bar — cart and menu stay in the header, same pattern as desktop just at a smaller header height.
 

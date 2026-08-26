@@ -8,6 +8,134 @@
  * ------------------------------------------------------------
  */{
   "sections": {
+    "hero_our_story": {
+      "type": "section",
+      "blocks": {
+        "eyebrow": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Our Story</p>",
+            "text_color": "#986A34",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "var(--text-3-size)",
+            "line_height": "normal",
+            "letter_spacing": "eyebrow",
+            "case": "uppercase",
+            "wrap": "pretty",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<p>From a family kitchen in the Northern Rivers</p>",
+            "text_color": "#131A3E",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-heading--family)",
+            "font_size": "var(--display-1-size)",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "body": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Lambruk Pantry makes the food we grew up eating: relishes on the breakfast table, sauces for the Sunday roast, and a pot of tea for whoever came through the door.</p>",
+            "width": "100%",
+            "max_width": "wide",
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "var(--text-1-size)",
+            "line_height": "loose",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": ["eyebrow", "heading", "body"],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "center",
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 22,
+        "section_width": "page-width",
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 80,
+        "padding-block-end": 64
+      }
+    },
+    "story_image": {
+      "type": "section",
+      "blocks": {
+        "image": {
+          "type": "image",
+          "settings": {
+            "image_ratio": "landscape",
+            "width": "fill",
+            "height": "fit",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 16,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "mobile_ratio_override": {
+          "type": "custom-liquid",
+          "settings": {
+            "custom_liquid": "<style>@media (max-width: 749px){#shopify-section-{{ section.id }} .placeholder-image,#shopify-section-{{ section.id }} .image-block__image{aspect-ratio:4/3;}}</style>"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": ["image", "mobile_ratio_override"],
+      "settings": {
+        "section_width": "page-width",
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 0,
+        "padding-block-end": 96
+      }
+    },
     "media_with_content_meet_paige": {
       "type": "media-with-content",
       "blocks": {
@@ -589,6 +717,8 @@
     }
   },
   "order": [
+    "hero_our_story",
+    "story_image",
     "media_with_content_meet_paige",
     "how_we_make_things",
     "cta_taste_the_range"

@@ -215,89 +215,11 @@
               },
               "blocks": {
                 "map_placeholder": {
-                  "type": "group",
+                  "type": "custom-liquid",
                   "settings": {
-                    "content_direction": "column",
-                    "vertical_on_mobile": true,
-                    "horizontal_alignment_flex_direction_column": "center",
-                    "vertical_alignment_flex_direction_column": "center",
-                    "align_baseline": false,
-                    "gap": 12,
-                    "width": "fill",
-                    "height": "custom",
-                    "custom_height": 100,
-                    "background_media": "none",
-                    "video_position": "cover",
-                    "background_image_position": "cover",
-                    "border": "solid",
-                    "border_width": 1,
-                    "border_opacity": 100,
-                    "border_color": "#E3D6C5",
-                    "border_radius": 6,
-                    "background_color": "#F4F1EA",
-                    "padding-block-start": 32,
-                    "padding-block-end": 32,
-                    "padding-inline-start": 20,
-                    "padding-inline-end": 20
+                    "custom_liquid": "<style>#shopify-section-{{ section.id }} div:has(> #lambruk-map-embed){align-self:stretch;width:100%;}</style><div id=\"lambruk-map-embed\" style=\"width:100%;position:relative;aspect-ratio:4/3;overflow:hidden;border:1px solid #E3D6C5;border-radius:6px;background-color:#F4F1EA;\"><iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3493.965392540799!2d153.5578947!3d-28.869647399999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b90801f4dd6d345%3A0xbf7ee95a853cbd1b!2s8%2F216-234%20River%20St%2C%20Ballina%20NSW%202478!5e0!3m2!1sen!2sau!4v1787727867186!5m2!1sen!2sau\" title=\"Map showing Lambruk Pantry, Ballina\" style=\"position:absolute;inset:0;width:100%;height:100%;border:0;\" loading=\"lazy\" allowfullscreen referrerpolicy=\"strict-origin-when-cross-origin\"></iframe></div>"
                   },
-                  "blocks": {
-                    "pin_icon": {
-                      "type": "icon",
-                      "settings": { "icon": "map_pin", "width": 30, "icon_color": "#BF8C45" },
-                      "blocks": {}
-                    },
-                    "address_short": {
-                      "type": "text",
-                      "settings": {
-                        "text": "<p>Shop 8, 216–234 River Street, Ballina</p>",
-                        "text_color": "#131A3E",
-                        "width": "100%",
-                        "max_width": "normal",
-                        "alignment": "center",
-                        "type_preset": "custom",
-                        "font": "var(--font-body--family)",
-                        "font_size": "0.9375rem",
-                        "line_height": "normal",
-                        "letter_spacing": "normal",
-                        "case": "none",
-                        "wrap": "pretty",
-                        "background": false,
-                        "background_color": "#00000026",
-                        "corner_radius": 0,
-                        "padding-block-start": 0,
-                        "padding-block-end": 0,
-                        "padding-inline-start": 0,
-                        "padding-inline-end": 0
-                      },
-                      "blocks": {}
-                    },
-                    "embed_label": {
-                      "type": "text",
-                      "settings": {
-                        "text": "<p>Google Maps embed</p>",
-                        "text_color": "#8A8FA3",
-                        "width": "100%",
-                        "max_width": "normal",
-                        "alignment": "center",
-                        "type_preset": "custom",
-                        "font": "var(--font-body--family)",
-                        "font_size": "0.75rem",
-                        "line_height": "normal",
-                        "letter_spacing": "loose",
-                        "case": "uppercase",
-                        "wrap": "pretty",
-                        "background": false,
-                        "background_color": "#00000026",
-                        "corner_radius": 0,
-                        "padding-block-start": 0,
-                        "padding-block-end": 0,
-                        "padding-inline-start": 0,
-                        "padding-inline-end": 0
-                      },
-                      "blocks": {}
-                    }
-                  },
-                  "block_order": ["pin_icon", "address_short", "embed_label"]
+                  "blocks": {}
                 },
                 "find_us_heading": {
                   "type": "text",

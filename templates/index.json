@@ -1842,6 +1842,7 @@
               "type": "email-signup",
               "settings": {
                 "heading": "",
+                "label": "Subscribe",
                 "width": "custom",
                 "custom_width": 60
               },

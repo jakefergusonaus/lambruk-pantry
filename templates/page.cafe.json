@@ -129,9 +129,17 @@
             }
           },
           "block_order": ["book_table"]
+        },
+        "heading_style": {
+          "type": "custom-liquid",
+          "name": "t:names.custom_liquid",
+          "settings": {
+            "custom_liquid": "<style>#shopify-section-{{ section.id }} h1{line-height:1.06;}</style>"
+          },
+          "blocks": {}
         }
       },
-      "block_order": ["eyebrow", "heading", "body", "button_row"],
+      "block_order": ["eyebrow", "heading", "body", "button_row", "heading_style"],
       "settings": {
         "media_type_1": "image",
         "content_direction": "column",
@@ -1129,7 +1137,7 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "collection-title": {
+                "tile_label": {
                   "type": "collection-title",
                   "settings": {
                     "text_color": "#131A3E",
@@ -1156,7 +1164,7 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["collection-title", "arrow"]
+              "block_order": ["tile_label", "arrow"]
             }
           },
           "block_order": ["row"]
@@ -1278,6 +1286,7 @@
               "type": "email-signup",
               "settings": {
                 "heading": "",
+                "label": "Subscribe",
                 "width": "custom",
                 "custom_width": 60
               },

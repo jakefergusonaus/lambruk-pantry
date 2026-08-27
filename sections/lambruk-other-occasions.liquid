@@ -37,7 +37,7 @@
   assign current_handle = closest.collection.handle
 %}
 
-<section class="lambruk-other-occasions" style="{% render 'spacing-style', settings: section.settings %}">
+<section class="lambruk-other-occasions spacing-style" style="{% render 'spacing-style', settings: section.settings %}">
   <div class="lambruk-other-occasions__inner">
     <div class="lambruk-other-occasions__header">
       <div>
@@ -88,6 +88,15 @@
 </section>
 
 {% stylesheet %}
+  /* The section tag needs the `spacing-style` class alongside this one,
+     not just the inline style from the spacing-style snippet render —
+     that snippet's calc() expressions reference --spacing-scale, which
+     is itself only defined by assets/base.css's own `.spacing-style`
+     rule. Without the class, --spacing-scale is undefined, the whole
+     custom property becomes invalid, and padding-block silently
+     collapses to 0 with no error. Confirmed live 2026-08-28: this
+     section rendered 0px top/bottom padding despite a correct 80/80
+     setting, until the class was added. */
   .lambruk-other-occasions {
     padding-block: var(--padding-block-start) var(--padding-block-end);
   }

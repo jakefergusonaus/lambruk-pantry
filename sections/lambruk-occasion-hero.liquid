@@ -64,10 +64,16 @@
     display: block;
   }
 
+  /* Deliberate departure from the design source, 2026-08-28 — the
+     source specifies rgba(13, 16, 36, ...) here (the brand's own
+     --blue-950 navy, confirmed identical on both breakpoints), not
+     neutral black. Client call: the photography should read warm and
+     natural under the scrim, not colour-shifted toward navy. See
+     DESIGN-TOKENS.md. */
   .lambruk-occasion-hero__scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(13, 16, 36, 0.88) 0%, rgba(13, 16, 36, 0.48) 46%, rgba(13, 16, 36, 0.12) 76%);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.48) 46%, rgba(0, 0, 0, 0.12) 76%);
   }
 
   .lambruk-occasion-hero__content {

@@ -36,6 +36,18 @@
   managing by design, not a per-page check — if the client ever creates
   another multi-category collection sharing this section, the row appears
   there too without a code change. See ARCHITECTURE.md.
+
+  One explicit exception to that self-managing rule: `template.suffix !=
+  'occasion'`. An occasion collection deliberately mixes products across
+  all three known tags on purpose — that's what makes it a curated
+  selection rather than a single category — which trips the same "2+
+  known tags present" heuristic this block uses to decide whether it has
+  anything useful to show. The design has no filter row on occasion pages
+  at all (confirmed directly in the source: the whole chips-and-count row
+  is wrapped in `{% if occasionPlain %}`, absent whenever a curated
+  occasion is being viewed), so this is a real exclusion, not a guess —
+  Shop All and the three category pages are unaffected, since none of
+  them use the `occasion` template suffix.
 {%- enddoc -%}
 
 {% liquid
@@ -60,7 +72,7 @@
     endif
   endfor
 %}
-{% if known_tag_value_count >= 2 %}
+{% if known_tag_value_count >= 2 and template.suffix != 'occasion' %}
   {% liquid
     assign has_active_tag = false
     if tag_filter and tag_filter.active_values.size > 0

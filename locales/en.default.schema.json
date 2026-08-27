@@ -116,6 +116,7 @@
     "padding": "Padding",
     "padding_desktop": "Desktop padding",
     "paragraph": "Paragraph",
+    "quote_segments": "Inline illustrations (optional)",
     // Footer component section header for legal policy links
     "policies": "Policies",
     "popover": "Popover",
@@ -254,7 +255,8 @@
     "video_autoplay": "Videos will be muted by default",
     "video_external": "Use a YouTube or Vimeo URL",
     "pills_usage": "Used for applied filters, discount codes, and search suggestions",
-    "media_type_info": "Features are populated from your menu links"
+    "media_type_info": "Features are populated from your menu links",
+    "quote_segments": "Fill in Part 1 to switch this quote to segmented mode — up to 3 illustrations rendered inline within the sentence, each after its own part. Leave Part 1 blank to use the plain Quote field above instead."
   },
   "names": {
     "column": "Column",
@@ -919,6 +921,9 @@
     "icon_background": "Icon background",
     "icons": "Icons",
     "illustration": "Illustration",
+    "illustration_1": "Illustration 1 (after part 1)",
+    "illustration_2": "Illustration 2 (after part 2)",
+    "illustration_3": "Illustration 3 (after part 3)",
     "image": "Image",
     "image_1": "Image 1",
     "image_2": "Image 2",
@@ -1062,6 +1067,10 @@
       "checkbox_preset": "Checkbox label"
     },
     "quote": "Quote",
+    "quote_part_1": "Part 1",
+    "quote_part_2": "Part 2 (after illustration 1)",
+    "quote_part_3": "Part 3 (after illustration 2, new line)",
+    "quote_part_4": "Part 4 (after illustration 3)",
     // Checkbox setting to enable quick add to cart from product cards
     "quick_add": "Quick add",
     // Color scheme for quick add buttons on product cards

@@ -2,11 +2,37 @@
   Renders a centred quote on a solid background — validates the
   background_color + contrast-override + explicit text_color pattern from
   ARCHITECTURE.md §2 before it's extended to other surfaces.
+
+  Two rendering modes, chosen by whether `quote_part_1` is set:
+
+  - Segmented (quote_part_1 present): up to 3 gold illustrations sit
+    inline within a flowing sentence, glued to the words around them —
+    matching the design's "Made with real fruit [icon] Australian
+    ingredients [icon] ... [icon]" shape (ARCHITECTURE.md §193, closed
+    for the Promise instance, see the entry logged alongside this
+    change). `quote_part_1`-`_4` are the up-to-four text fragments
+    around the up-to-three illustrations; any of `illustration_1/2/3`
+    left blank simply skips that image and runs the two segments
+    either side together. Segments are `richtext`, not plain `text`,
+    so a future instance (e.g. "Why Lambruk", also named in §193 but
+    not yet populated — its own two illustrations aren't identified
+    yet) can use inline `<em>`/`<strong>` inside a segment; richtext
+    always wraps its own content in a block-level `<p>`, so
+    `.quote-panel__quote p { display: inline }` below is what actually
+    keeps the segments flowing inline rather than stacking.
+
+  - Legacy (quote_part_1 blank): the original single `quote` richtext
+    field plus one optional trailing `illustration`, unchanged — every
+    other quote-panel instance keeps rendering exactly as before.
 {%- enddoc -%}
 
 {% liquid
   assign block_settings = block.settings
   render 'contrast-override', background_color: block_settings.background_color, text_color: block_settings.text_color, border_color: block_settings.accent_color, section_id: block.id
+  assign is_segmented = false
+  if block_settings.quote_part_1 != blank
+    assign is_segmented = true
+  endif
 %}
 
 <div
@@ -17,7 +43,7 @@
   "
   {{ block.shopify_attributes }}
 >
-  <div class="quote-panel__content" style="text-align: center; max-width: 46rem; margin-inline: auto;">
+  <div class="quote-panel__content" style="text-align: center; max-width: {% if is_segmented %}62.5rem{% else %}46rem{% endif %}; margin-inline: auto;">
     {%- if block_settings.eyebrow != blank -%}
       <p
         class="quote-panel__eyebrow"
@@ -34,13 +60,42 @@
       </p>
     {%- endif -%}
 
-    {%- if block_settings.quote != blank -%}
+    {%- if is_segmented -%}
+      <div class="quote-panel__quote quote-panel__quote--segmented h3 text-display-3" style="margin: 0;">
+        {{- block_settings.quote_part_1 -}}
+        {%- if block_settings.illustration_1 != blank -%}
+          &nbsp;{{
+            block_settings.illustration_1
+            | image_url: width: 200
+            | image_tag: widths: '104, 152', class: 'quote-panel__illustration quote-panel__illustration-1', alt: '', loading: 'lazy'
+          }}
+        {%- endif -%}
+        {%- if block_settings.quote_part_2 != blank %} {{ block_settings.quote_part_2 }}{% endif -%}
+        {%- if block_settings.illustration_2 != blank -%}
+          &nbsp;{{
+            block_settings.illustration_2
+            | image_url: width: 200
+            | image_tag: widths: '104, 152', class: 'quote-panel__illustration quote-panel__illustration-2', alt: '', loading: 'lazy'
+          }}
+        {%- endif -%}
+        <br>
+        {%- if block_settings.quote_part_3 != blank -%}{{ block_settings.quote_part_3 }}{%- endif -%}
+        {%- if block_settings.illustration_3 != blank -%}
+          &nbsp;{{
+            block_settings.illustration_3
+            | image_url: width: 200
+            | image_tag: widths: '104, 152', class: 'quote-panel__illustration quote-panel__illustration-3', alt: '', loading: 'lazy'
+          }}
+        {%- endif -%}
+        {%- if block_settings.quote_part_4 != blank %} {{ block_settings.quote_part_4 }}{% endif -%}
+      </div>
+    {%- elsif block_settings.quote != blank -%}
       <div class="quote-panel__quote h3 text-display-3" style="margin: 0;">
         {{ block_settings.quote }}
       </div>
     {%- endif -%}
 
-    {%- if block_settings.illustration != blank -%}
+    {%- if is_segmented == false and block_settings.illustration != blank -%}
       {{
         block_settings.illustration
         | image_url: width: 200
@@ -55,7 +110,54 @@
     display: inline-block;
     height: clamp(52px, 40.988px + 2.824vw, 76px);
     width: auto;
+    vertical-align: middle;
     margin-block-start: 1.5rem;
+  }
+
+  /* Horizon's own `.h3.h3` utility (assets/base.css) carries two class
+     selectors to `.text-display-3`'s one, so it wins the cascade on
+     specificity alone and pins this to a flat 32px (--font-h3--size)
+     regardless of viewport — pre-existing, affects every quote-panel
+     instance including the plain `quote` path, not just segmented mode.
+     Matching its own specificity here is what actually lets the fluid
+     --display-3-size token through. */
+  .quote-panel__quote.quote-panel__quote {
+    font-size: var(--display-3-size);
+    line-height: var(--display-3-line-height);
+  }
+
+  .quote-panel__quote.quote-panel__quote--segmented {
+    line-height: 1.5;
+  }
+
+  .quote-panel__quote--segmented p {
+    display: inline;
+    margin: 0;
+  }
+
+  .quote-panel__quote--segmented .quote-panel__illustration {
+    margin-block-start: 0;
+    margin-inline: 6px;
+  }
+
+  .quote-panel__quote--segmented .quote-panel__illustration-2,
+  .quote-panel__quote--segmented .quote-panel__illustration-3 {
+    margin-inline-end: 6px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .quote-panel__quote.quote-panel__quote--segmented {
+      line-height: 1.45;
+    }
+
+    .quote-panel__quote--segmented .quote-panel__illustration-1 {
+      margin-inline: 14px;
+    }
+
+    .quote-panel__quote--segmented .quote-panel__illustration-2,
+    .quote-panel__quote--segmented .quote-panel__illustration-3 {
+      margin-inline-start: 14px;
+    }
   }
 {% endstylesheet %}
 
@@ -80,6 +182,49 @@
       "type": "image_picker",
       "id": "illustration",
       "label": "t:settings.illustration"
+    },
+    {
+      "type": "header",
+      "content": "t:content.quote_segments"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:info.quote_segments"
+    },
+    {
+      "type": "richtext",
+      "id": "quote_part_1",
+      "label": "t:settings.quote_part_1"
+    },
+    {
+      "type": "image_picker",
+      "id": "illustration_1",
+      "label": "t:settings.illustration_1"
+    },
+    {
+      "type": "richtext",
+      "id": "quote_part_2",
+      "label": "t:settings.quote_part_2"
+    },
+    {
+      "type": "image_picker",
+      "id": "illustration_2",
+      "label": "t:settings.illustration_2"
+    },
+    {
+      "type": "richtext",
+      "id": "quote_part_3",
+      "label": "t:settings.quote_part_3"
+    },
+    {
+      "type": "image_picker",
+      "id": "illustration_3",
+      "label": "t:settings.illustration_3"
+    },
+    {
+      "type": "richtext",
+      "id": "quote_part_4",
+      "label": "t:settings.quote_part_4"
     },
     {
       "type": "header",

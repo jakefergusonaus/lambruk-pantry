@@ -649,7 +649,12 @@
           "type": "quote-panel",
           "settings": {
             "eyebrow": "The Lambruk Promise",
-            "quote": "<p>Made with real fruit, Australian ingredients and partnerships with the farmers who grow them.</p>"
+            "quote_part_1": "<p>Made with real fruit</p>",
+            "illustration_1": "shopify://shop_images/fruit-bowl-gold.png",
+            "quote_part_2": "<p>Australian ingredients</p>",
+            "illustration_2": "shopify://shop_images/australia-gold.png",
+            "quote_part_3": "<p>and partnerships with the farmers who grow them</p>",
+            "illustration_3": "shopify://shop_images/seedling-gold.png"
           },
           "blocks": {}
         }

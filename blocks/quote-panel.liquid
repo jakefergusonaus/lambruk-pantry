@@ -114,18 +114,13 @@
     margin-block-start: 1.5rem;
   }
 
-  /* Horizon's own `.h3.h3` utility (assets/base.css) carries two class
-     selectors to `.text-display-3`'s one, so it wins the cascade on
-     specificity alone and pins this to a flat 32px (--font-h3--size)
-     regardless of viewport — pre-existing, affects every quote-panel
-     instance including the plain `quote` path, not just segmented mode.
-     Matching its own specificity here is what actually lets the fluid
-     --display-3-size token through. */
-  .quote-panel__quote.quote-panel__quote {
-    font-size: var(--display-3-size);
-    line-height: var(--display-3-line-height);
-  }
-
+  /* Font-size/line-height for the base (non-segmented) case come from
+     `.text-display-3` itself — hardened in assets/lambruk-tokens.css
+     against Horizon's `.h3.h3` (see the comment there) rather than
+     re-fixed per-instance here. Segmented mode still needs its own
+     line-height override below: this quote is a wrapping, multi-line
+     sentence, not a short heading, and the source gives it 1.45/1.5
+     rather than Display 3's usual 1.08. */
   .quote-panel__quote.quote-panel__quote--segmented {
     line-height: 1.5;
   }

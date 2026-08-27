@@ -268,14 +268,22 @@ h1, h2, h3, h4, h5, h6 {
    LAMBRUK UTILITIES
    ========================================================================== */
 
-.text-display-3 {
+/* Doubled selector is deliberate, not a typo — do not "clean up" to a
+   single class. assets/base.css defines Horizon's own heading rules as
+   .h1.h1 through .h6.h6 (two class selectors each), paired with a flat,
+   non-fluid --font-hN--size. A plain single-class .text-display-3 loses
+   that specificity fight silently: no error, just Horizon's flat h3
+   value winning over this fluid clamp on every viewport, including
+   desktop. Confirmed live 2026-08-27 on blocks/quote-panel.liquid,
+   which combines both classes on the same element — font-size was
+   pinned to 32px at a 1280px viewport where the clamp should resolve to
+   40px. Matching Horizon's own doubled-class specificity here is what
+   actually lets --display-3-size through wherever this utility is
+   combined with an .hN class. See ARCHITECTURE.md's Lambruk Promise
+   entry for the full writeup. */
+.text-display-3.text-display-3 {
   font-size: var(--display-3-size);
   line-height: var(--display-3-line-height);
-}
-
-.text-display-4 {
-  font-size: var(--display-4-size);
-  line-height: var(--display-4-line-height);
 }
 
 /* Footer nav/legal links read as navigation, not prose — Horizon underlines

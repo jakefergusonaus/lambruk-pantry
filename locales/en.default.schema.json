@@ -256,7 +256,8 @@
     "video_external": "Use a YouTube or Vimeo URL",
     "pills_usage": "Used for applied filters, discount codes, and search suggestions",
     "media_type_info": "Features are populated from your menu links",
-    "quote_segments": "Fill in Part 1 to switch this quote to segmented mode — up to 3 illustrations rendered inline within the sentence, each after its own part. Leave Part 1 blank to use the plain Quote field above instead."
+    "quote_segments": "Fill in Part 1 to switch this quote to segmented mode — up to 3 illustrations rendered inline within the sentence, each after its own part. Leave Part 1 blank to use the plain Quote field above instead.",
+    "hide_break_on_mobile": "The line break after illustration 2 always shows on desktop. Turn this on if the design wraps naturally on mobile instead of breaking at the same point."
   },
   "names": {
     "column": "Column",
@@ -1071,6 +1072,7 @@
     "quote_part_2": "Part 2 (after illustration 1)",
     "quote_part_3": "Part 3 (after illustration 2, new line)",
     "quote_part_4": "Part 4 (after illustration 3)",
+    "hide_break_on_mobile": "Hide line break on mobile",
     // Checkbox setting to enable quick add to cart from product cards
     "quick_add": "Quick add",
     // Color scheme for quick add buttons on product cards

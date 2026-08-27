@@ -9,17 +9,34 @@
     inline within a flowing sentence, glued to the words around them —
     matching the design's "Made with real fruit [icon] Australian
     ingredients [icon] ... [icon]" shape (ARCHITECTURE.md §193, closed
-    for the Promise instance, see the entry logged alongside this
-    change). `quote_part_1`-`_4` are the up-to-four text fragments
-    around the up-to-three illustrations; any of `illustration_1/2/3`
-    left blank simply skips that image and runs the two segments
-    either side together. Segments are `richtext`, not plain `text`,
-    so a future instance (e.g. "Why Lambruk", also named in §193 but
-    not yet populated — its own two illustrations aren't identified
-    yet) can use inline `<em>`/`<strong>` inside a segment; richtext
-    always wraps its own content in a block-level `<p>`, so
+    for Promise and Why Lambruk both). `quote_part_1`-`_4` are the
+    up-to-four text fragments around the up-to-three illustrations; any
+    of `illustration_1/2/3` left blank simply skips that image and runs
+    the two segments either side together — this is how Why Lambruk's
+    two illustrations fit the same three-slot shape as Promise's three:
+    illustration_1 (jar), illustration_2 left blank, illustration_3
+    (peach). Segments are `richtext`, not plain `text`, so Why Lambruk's
+    `<em>less sugar</em>` works without a further schema change;
+    richtext always wraps its own content in a block-level `<p>`, so
     `.quote-panel__quote p { display: inline }` below is what actually
     keeps the segments flowing inline rather than stacking.
+
+    Illustration margins are NOT keyed to which numbered slot an image
+    sits in — Promise's own shape (symmetric first icon, tight second
+    and third) made that look like the rule at first, but Why Lambruk's
+    shape is the mirror of it (tight first icon, symmetric second), so
+    slot position was a coincidence, not the actual rule. The real rule,
+    confirmed against both instances: 14px on any side facing a word,
+    6px on any side immediately followed by a `<br>` or where nothing
+    follows at all. Expressed in the stylesheet via `:has(+ br)` and
+    `:last-child` rather than per-slot classes — verified to reproduce
+    Promise's exact original margins unchanged.
+
+    `hide_break_on_mobile` (default off) exists because Promise's forced
+    `<br>` sits at the same relative position on both breakpoints, but
+    Why Lambruk's mobile source has no forced break at all — one flowing
+    paragraph, natural wrapping only. Off by default so Promise needs no
+    setting change; Why Lambruk turns it on.
 
   - Legacy (quote_part_1 blank): the original single `quote` richtext
     field plus one optional trailing `illustration`, unchanged — every
@@ -67,7 +84,7 @@
           &nbsp;{{
             block_settings.illustration_1
             | image_url: width: 200
-            | image_tag: widths: '104, 152', class: 'quote-panel__illustration quote-panel__illustration-1', alt: '', loading: 'lazy'
+            | image_tag: widths: '104, 152', class: 'quote-panel__illustration', alt: '', loading: 'lazy'
           }}
         {%- endif -%}
         {%- if block_settings.quote_part_2 != blank %} {{ block_settings.quote_part_2 }}{% endif -%}
@@ -75,16 +92,16 @@
           &nbsp;{{
             block_settings.illustration_2
             | image_url: width: 200
-            | image_tag: widths: '104, 152', class: 'quote-panel__illustration quote-panel__illustration-2', alt: '', loading: 'lazy'
+            | image_tag: widths: '104, 152', class: 'quote-panel__illustration', alt: '', loading: 'lazy'
           }}
         {%- endif -%}
-        <br>
+        <br class="quote-panel__break{% if block_settings.hide_break_on_mobile %} quote-panel__break--hide-mobile{% endif %}">
         {%- if block_settings.quote_part_3 != blank -%}{{ block_settings.quote_part_3 }}{%- endif -%}
         {%- if block_settings.illustration_3 != blank -%}
           &nbsp;{{
             block_settings.illustration_3
             | image_url: width: 200
-            | image_tag: widths: '104, 152', class: 'quote-panel__illustration quote-panel__illustration-3', alt: '', loading: 'lazy'
+            | image_tag: widths: '104, 152', class: 'quote-panel__illustration', alt: '', loading: 'lazy'
           }}
         {%- endif -%}
         {%- if block_settings.quote_part_4 != blank %} {{ block_settings.quote_part_4 }}{% endif -%}
@@ -135,23 +152,29 @@
     margin-inline: 6px;
   }
 
-  .quote-panel__quote--segmented .quote-panel__illustration-2,
-  .quote-panel__quote--segmented .quote-panel__illustration-3 {
-    margin-inline-end: 6px;
-  }
-
+  /* Not keyed to slot number — see the doc comment above. 14px on any
+     side facing a word (the default below), dropping to 6px only on
+     the side immediately before a <br> or where nothing follows at
+     all (the two selectors below). Verified to reproduce Promise's
+     original per-slot margins unchanged. */
   @media screen and (min-width: 750px) {
     .quote-panel__quote.quote-panel__quote--segmented {
       line-height: 1.45;
     }
 
-    .quote-panel__quote--segmented .quote-panel__illustration-1 {
+    .quote-panel__quote--segmented .quote-panel__illustration {
       margin-inline: 14px;
     }
 
-    .quote-panel__quote--segmented .quote-panel__illustration-2,
-    .quote-panel__quote--segmented .quote-panel__illustration-3 {
-      margin-inline-start: 14px;
+    .quote-panel__quote--segmented .quote-panel__illustration:has(+ br),
+    .quote-panel__quote--segmented .quote-panel__illustration:last-child {
+      margin-inline-end: 6px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .quote-panel__break--hide-mobile {
+      display: none;
     }
   }
 {% endstylesheet %}
@@ -220,6 +243,13 @@
       "type": "richtext",
       "id": "quote_part_4",
       "label": "t:settings.quote_part_4"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_break_on_mobile",
+      "label": "t:settings.hide_break_on_mobile",
+      "info": "t:info.hide_break_on_mobile",
+      "default": false
     },
     {
       "type": "header",

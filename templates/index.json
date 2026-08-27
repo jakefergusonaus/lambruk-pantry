@@ -1279,7 +1279,12 @@
           "type": "quote-panel",
           "settings": {
             "eyebrow": "Why Lambruk",
-            "illustration": "shopify://shop_images/Lambruk-Illustration-9.png"
+            "quote_part_1": "<p>Every batch is crafted in small quantities</p>",
+            "illustration_1": "shopify://shop_images/Lambruk-Illustration-9.png",
+            "quote_part_3": "<p>and made with <em>less sugar</em></p>",
+            "illustration_3": "shopify://shop_images/peach-gold.png",
+            "quote_part_4": "<p>for a more honest pantry.</p>",
+            "hide_break_on_mobile": true
           },
           "blocks": {}
         }

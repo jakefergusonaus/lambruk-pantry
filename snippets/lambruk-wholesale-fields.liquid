@@ -1,0 +1,100 @@
+{%- doc -%}
+  Shared wholesale field group — Business name, Phone, Business type,
+  Location, Interested in (multi-select), Tell us about your venue.
+
+  Single source of truth for these six fields, rendered by both
+  blocks/lambruk-wholesale-enquiry-form.liquid (the Wholesale page's own
+  form) and blocks/lambruk-contact-form.liquid (Contact page's form,
+  revealed when the enquiry topic is "Wholesale"). Edit here once; both
+  callers pick it up.
+
+  Deliberately excludes Contact name and Email — those stay owned by
+  each calling form's own top-level fields (wholesale's form collects
+  them directly; contact's form already collects them above the topic
+  selector, so this snippet doesn't duplicate them).
+
+  @param {string} form_id - the calling form's id-prefix, for unique
+    element ids (e.g. "WholesaleEnquiry-abc123").
+  @param {object} form - the Liquid `form` object from the enclosing
+    `{% form 'contact' %}`, used only for Phone's native error echo
+    (name/email/phone/body are the only fields Shopify echoes back on
+    a validation error — this snippet's other five fields have no
+    native echo and rely entirely on each caller's own client-side
+    sessionStorage restore, keyed off `data-preserve-field` /
+    `data-interest-checkbox` / `data-body-input`).
+  @param {boolean} form_matches - whether `form.id` matches this
+    specific form instance (guards against a stale error object from a
+    different form on the same page being misread as this one's) —
+    pass the same value the caller already computes for its own
+    name/email fields.
+  @param {string} [body_value] - initial content for the venue textarea.
+    Wholesale's own form passes its native-echoed, marker-stripped
+    `form.body` here (unchanged behaviour). Contact's form omits this —
+    its combined `contact[body]` can't be cleanly split back into
+    "venue text" vs "message text" after an error round-trip, so it
+    restores this field from its own sessionStorage cache instead,
+    the same way it restores Business name/type/Location.
+{%- enddoc -%}
+
+<div class="wholesale-enquiry-form__field">
+  <label class="wholesale-enquiry-form__label" for="{{ form_id }}-business-name">Business name *</label>
+  <input type="text" id="{{ form_id }}-business-name" class="wholesale-enquiry-form__input" name="contact[Business name]" placeholder="Venue or store" required data-preserve-field>
+</div>
+
+<div class="wholesale-enquiry-form__field">
+  <label class="wholesale-enquiry-form__label" for="{{ form_id }}-phone">Phone *</label>
+  <input
+    type="tel"
+    id="{{ form_id }}-phone"
+    class="wholesale-enquiry-form__input"
+    autocomplete="tel"
+    name="contact[phone]"
+    value="{{ form.phone }}"
+    placeholder="Best number"
+    required
+    {% if form.errors contains 'phone' and form_matches %}
+      aria-invalid="true"
+      aria-describedby="{{ form_id }}-phone-error"
+    {% endif %}
+  >
+</div>
+
+<div class="wholesale-enquiry-form__field">
+  <label class="wholesale-enquiry-form__label" for="{{ form_id }}-business-type">Business type *</label>
+  <input type="text" id="{{ form_id }}-business-type" class="wholesale-enquiry-form__input" name="contact[Business type]" placeholder="Hotel, cafe, retail" required data-preserve-field>
+</div>
+
+<div class="wholesale-enquiry-form__field">
+  <label class="wholesale-enquiry-form__label" for="{{ form_id }}-location">Location *</label>
+  <input type="text" id="{{ form_id }}-location" class="wholesale-enquiry-form__input" name="contact[Location]" placeholder="Suburb and state" required data-preserve-field>
+</div>
+
+<div class="wholesale-enquiry-form__field wholesale-enquiry-form__field--full">
+  <span class="wholesale-enquiry-form__label wholesale-enquiry-form__label--static">Interested in *</span>
+  <div class="wholesale-enquiry-form__checkboxes">
+    {%- assign interests = 'Tea range,Custom tea blends,Relishes & chutneys,Hospitality formats,Gifting' | split: ',' -%}
+    {%- for interest in interests -%}
+      <label class="wholesale-enquiry-form__checkbox">
+        <input type="checkbox" data-interest-checkbox value="{{ interest }}">
+        {{ interest }}
+      </label>
+    {%- endfor -%}
+  </div>
+  <input type="hidden" name="contact[Interested in]" data-interests-hidden>
+</div>
+
+<div class="wholesale-enquiry-form__field wholesale-enquiry-form__field--full">
+  <label class="wholesale-enquiry-form__label" for="{{ form_id }}-body">Tell us about your venue *</label>
+  <textarea
+    rows="4"
+    id="{{ form_id }}-body"
+    class="wholesale-enquiry-form__input wholesale-enquiry-form__input--textarea"
+    data-body-input
+    placeholder="Rooms, covers, current range, what you are looking for"
+    required
+    {% if form.errors contains 'body' and form_matches %}
+      aria-invalid="true"
+      aria-describedby="{{ form_id }}-body-error"
+    {% endif %}
+  >{{ body_value }}</textarea>
+</div>

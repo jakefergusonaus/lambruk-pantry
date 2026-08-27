@@ -1,0 +1,528 @@
+{%- doc -%}
+  Contact page's form: Name, Email, a single-select "enquiry topic"
+  (Online order / Cafe booking / Wholesale / Something else), a
+  conditional wholesale sub-form revealed when the topic is
+  "Wholesale", and a Message field.
+
+  Wraps Shopify's native `{% form 'contact' %}`, same pattern as
+  blocks/lambruk-wholesale-enquiry-form.liquid and blocks/contact-form.liquid.
+  The wholesale sub-form's fields (Business name, Phone, Business type,
+  Location, Interested in, Tell us about your venue) are rendered by
+  snippets/lambruk-wholesale-fields.liquid, shared with the Wholesale
+  page's own form — one source of truth for that field group. Edit
+  those fields there, not here.
+
+  contact[body] is assembled client-side at submit time, since it
+  needs to combine either just the Message field (most topics), or a
+  distinct marker + the venue textarea + the Message field, each under
+  its own label (Wholesale topic) — folding two free-text fields into
+  one native `body` field the same way the Wholesale form folds one.
+  Uses a marker distinct from the Wholesale page's own form
+  ("WHOLESALE ENQUIRY (VIA CONTACT PAGE)", not "WHOLESALE ENQUIRY") so
+  the two entry points stay distinguishable in the shared inbox.
+
+  The topic selector and the venue/message textareas have no native
+  Shopify echo on a validation error (only name/email/phone/body do),
+  so — same problem as the Wholesale form, same fix — their values are
+  cached client-side across the error round trip and restored on
+  reload, including re-revealing the wholesale sub-form if the cached
+  topic was "Wholesale".
+{%- enddoc -%}
+
+{% liquid
+  assign form_id = block.id | prepend: 'LambrukContactForm-'
+  assign topics = 'Online order,Cafe booking,Wholesale,Something else' | split: ','
+  assign wholesale_marker = 'WHOLESALE ENQUIRY (VIA CONTACT PAGE)'
+%}
+
+<div class="lambruk-contact-form spacing-style" style="width: 100%;" {{ block.shopify_attributes }}>
+  {%- form 'contact', id: form_id, class: 'lambruk-contact-form__form' -%}
+    <input name="contact[id]" type="hidden" value="{{ form_id }}">
+    <input name="contact[tags]" type="hidden" value="contact-page-enquiry">
+
+    {% liquid
+      assign form_matches = false
+      if form.id == form_id or form.id == blank
+        assign form_matches = true
+      endif
+
+      assign has_errors = false
+      if form.errors and form_matches
+        assign has_errors = true
+      endif
+
+      assign posted_ok = false
+      if form.posted_successfully? and form_matches
+        assign posted_ok = true
+      endif
+    %}
+
+    {%- if has_errors -%}
+      <div class="lambruk-contact-form__error" role="alert" tabindex="-1" autofocus>
+        {{- 'icon-error.svg' | inline_asset_content -}}
+        <div>
+          <p class="lambruk-contact-form__error-heading">We couldn't send your message — please fix the following:</p>
+          <ul class="lambruk-contact-form__error-list">
+            {%- for field in form.errors -%}
+              <li id="{{ form_id }}-{{ field | handleize }}-error">
+                {{ form.errors.translated_fields[field] | capitalize }}
+                {{ form.errors.messages[field] }}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if posted_ok -%}
+      <div class="lambruk-contact-form__success" tabindex="-1" autofocus>
+        <p class="lambruk-contact-form__success-eyebrow">Message Sent</p>
+        <h3 class="lambruk-contact-form__success-heading">Thank you for getting in touch</h3>
+        <p class="lambruk-contact-form__success-body">We reply to messages within two business days.</p>
+      </div>
+    {%- else -%}
+      <p class="lambruk-contact-form__eyebrow">Send a Message</p>
+      <div class="lambruk-contact-form__grid">
+        <div class="lambruk-contact-form__field">
+          <label class="lambruk-contact-form__label" for="{{ form_id }}-name">Name *</label>
+          <input
+            type="text"
+            id="{{ form_id }}-name"
+            class="lambruk-contact-form__input"
+            autocomplete="name"
+            name="contact[name]"
+            value="{{ form.name }}"
+            placeholder="Your name"
+            required
+            {% if form.errors contains 'name' and form_matches %}
+              aria-invalid="true"
+              aria-describedby="{{ form_id }}-name-error"
+            {% endif %}
+          >
+        </div>
+
+        <div class="lambruk-contact-form__field">
+          <label class="lambruk-contact-form__label" for="{{ form_id }}-email">Email *</label>
+          <input
+            type="email"
+            id="{{ form_id }}-email"
+            class="lambruk-contact-form__input"
+            autocomplete="email"
+            name="contact[email]"
+            value="{{ form.email }}"
+            spellcheck="false"
+            autocapitalize="off"
+            placeholder="you@email.com"
+            required
+            {% if form.errors contains 'email' and form_matches %}
+              aria-invalid="true"
+              aria-describedby="{{ form_id }}-email-error"
+            {% endif %}
+          >
+        </div>
+
+        <div class="lambruk-contact-form__field lambruk-contact-form__field--full">
+          <span class="lambruk-contact-form__label lambruk-contact-form__label--static">What is your enquiry about *</span>
+          <div class="lambruk-contact-form__chips">
+            {%- for topic in topics -%}
+              <label class="lambruk-contact-form__chip">
+                <input type="radio" name="contact[Enquiry Topic]" value="{{ topic }}" data-topic-radio required>
+                {{ topic }}
+              </label>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <div class="lambruk-contact-form__field lambruk-contact-form__field--full lambruk-contact-form__wholesale-fields" data-wholesale-fields hidden>
+          <div class="lambruk-contact-form__wholesale-intro">
+            <p class="lambruk-contact-form__wholesale-eyebrow">Wholesale Details</p>
+            <p class="lambruk-contact-form__wholesale-copy">So we can send pricing, formats and lead times with our first reply.</p>
+          </div>
+          <div class="lambruk-contact-form__wholesale-grid">
+            {%- comment -%} Shared with blocks/lambruk-wholesale-enquiry-form.liquid — see snippets/lambruk-wholesale-fields.liquid. Edit there, not here. {%- endcomment -%}
+            {%- render 'lambruk-wholesale-fields', form_id: form_id, form: form, form_matches: form_matches -%}
+          </div>
+        </div>
+
+        <div class="lambruk-contact-form__field lambruk-contact-form__field--full">
+          <label class="lambruk-contact-form__label" for="{{ form_id }}-message">Message *</label>
+          <textarea
+            rows="5"
+            id="{{ form_id }}-message"
+            class="lambruk-contact-form__input lambruk-contact-form__input--textarea"
+            data-message-input
+            placeholder="How can we help?"
+            required
+            {% if form.errors contains 'body' and form_matches %}
+              aria-invalid="true"
+              aria-describedby="{{ form_id }}-message-error"
+            {% endif %}
+          ></textarea>
+          <input type="hidden" name="contact[body]" data-body-hidden>
+        </div>
+
+        <p class="lambruk-contact-form__helper">All fields are required.</p>
+
+        <div class="lambruk-contact-form__field--full">
+          <button type="submit" class="button lambruk-contact-form__submit">Send Message</button>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endform -%}
+
+  <script>
+    (function () {
+      var storageKey = 'lambruk-contact-form-{{ block.id }}';
+      var form = document.getElementById({{ form_id | json }});
+      if (!form) return;
+
+      var topicRadios = form.querySelectorAll('[data-topic-radio]');
+      var wholesaleFields = form.querySelector('[data-wholesale-fields]');
+      var preserveFields = form.querySelectorAll('[data-preserve-field]');
+      var interestCheckboxes = form.querySelectorAll('[data-interest-checkbox]');
+      var interestsHidden = form.querySelector('[data-interests-hidden]');
+      var venueInput = form.querySelector('[data-body-input]');
+      var messageInput = form.querySelector('[data-message-input]');
+      var bodyHidden = form.querySelector('[data-body-hidden]');
+      var wholesaleMarker = {{ wholesale_marker | json }};
+      var hasErrors = {{ has_errors | json }};
+      var postedSuccessfully = {{ posted_ok | json }};
+
+      function checkedTopic() {
+        var checked = Array.prototype.filter.call(topicRadios, function (r) { return r.checked; })[0];
+        return checked ? checked.value : '';
+      }
+
+      function updateWholesaleVisibility() {
+        if (!wholesaleFields) return;
+        wholesaleFields.hidden = checkedTopic() !== 'Wholesale';
+      }
+
+      topicRadios.forEach(function (radio) {
+        radio.addEventListener('change', updateWholesaleVisibility);
+      });
+
+      if (hasErrors) {
+        try {
+          var raw = sessionStorage.getItem(storageKey);
+          if (raw) {
+            var state = JSON.parse(raw);
+            if (state.topic) {
+              topicRadios.forEach(function (radio) {
+                radio.checked = radio.value === state.topic;
+              });
+            }
+            preserveFields.forEach(function (el) {
+              if (state.fields && state.fields[el.name] && !el.value) {
+                el.value = state.fields[el.name];
+              }
+            });
+            if (state.interests) {
+              interestCheckboxes.forEach(function (cb) {
+                cb.checked = state.interests.indexOf(cb.value) !== -1;
+              });
+            }
+            if (state.venue && venueInput && !venueInput.value) {
+              venueInput.value = state.venue;
+            }
+            if (state.message && messageInput && !messageInput.value) {
+              messageInput.value = state.message;
+            }
+          }
+        } catch (e) {}
+        updateWholesaleVisibility();
+      }
+
+      if (postedSuccessfully) {
+        try {
+          sessionStorage.removeItem(storageKey);
+        } catch (e) {}
+      }
+
+      form.addEventListener('submit', function () {
+        if (interestsHidden) {
+          var checkedInterests = Array.prototype.filter
+            .call(interestCheckboxes, function (cb) { return cb.checked; })
+            .map(function (cb) { return cb.value; });
+          interestsHidden.value = checkedInterests.join(', ');
+        }
+
+        var topic = checkedTopic();
+        var messageVal = messageInput ? messageInput.value : '';
+        if (bodyHidden) {
+          if (topic === 'Wholesale') {
+            var venueVal = venueInput ? venueInput.value : '';
+            bodyHidden.value = wholesaleMarker
+              + '\n\nTell us about your venue:\n' + venueVal
+              + '\n\nMessage:\n' + messageVal;
+          } else {
+            bodyHidden.value = messageVal;
+          }
+        }
+
+        try {
+          var fields = {};
+          preserveFields.forEach(function (el) { fields[el.name] = el.value; });
+          var interests = Array.prototype.filter
+            .call(interestCheckboxes, function (cb) { return cb.checked; })
+            .map(function (cb) { return cb.value; });
+          sessionStorage.setItem(storageKey, JSON.stringify({
+            topic: topic,
+            fields: fields,
+            interests: interests,
+            venue: venueInput ? venueInput.value : '',
+            message: messageVal
+          }));
+        } catch (e) {}
+      });
+    })();
+  </script>
+</div>
+
+{% stylesheet %}
+  .lambruk-contact-form__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lambruk-contact-form__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  .lambruk-contact-form__field--full {
+    grid-column: 1 / -1;
+  }
+
+  .lambruk-contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .lambruk-contact-form__eyebrow {
+    grid-column: 1 / -1;
+    margin: 0 0 4px;
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-accent, #986A34);
+  }
+
+  .lambruk-contact-form__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #131A3E;
+  }
+
+  .lambruk-contact-form__input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    color: #131A3E;
+    background: #FFFFFF;
+    border: 1px solid #E3D6C5;
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+
+  .lambruk-contact-form__input--textarea {
+    resize: vertical;
+    min-height: 7.5rem;
+  }
+
+  .lambruk-contact-form__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+
+  .lambruk-contact-form__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9375rem;
+    color: #131A3E;
+  }
+
+  .lambruk-contact-form__wholesale-fields {
+    border: 1px solid #E3D6C5;
+    border-radius: 16px;
+    background: #FBFAF7;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .lambruk-contact-form__wholesale-fields[hidden] {
+    display: none;
+  }
+
+  .lambruk-contact-form__wholesale-intro {
+    grid-column: 1 / -1;
+  }
+
+  .lambruk-contact-form__wholesale-eyebrow {
+    margin: 0 0 6px;
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-accent, #986A34);
+  }
+
+  .lambruk-contact-form__wholesale-copy {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #4A5478;
+  }
+
+  .lambruk-contact-form__wholesale-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lambruk-contact-form__wholesale-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  /* These match snippets/lambruk-wholesale-fields.liquid's own class names
+     (wholesale-enquiry-form__*), duplicated from blocks/lambruk-wholesale-enquiry-form.liquid's
+     stylesheet so the shared field markup renders identically in both forms.
+     Edit both copies together if either changes. */
+  .wholesale-enquiry-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .wholesale-enquiry-form__field--full {
+    grid-column: 1 / -1;
+  }
+
+  .wholesale-enquiry-form__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #131A3E;
+  }
+
+  .wholesale-enquiry-form__label--static {
+    display: block;
+  }
+
+  .wholesale-enquiry-form__input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    color: #131A3E;
+    background: #FFFFFF;
+    border: 1px solid #E3D6C5;
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+
+  .wholesale-enquiry-form__input--textarea {
+    resize: vertical;
+    min-height: 6rem;
+  }
+
+  .wholesale-enquiry-form__checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+
+  .wholesale-enquiry-form__checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9375rem;
+    color: #131A3E;
+  }
+
+  .lambruk-contact-form__helper {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 0.8125rem;
+    color: #686D84;
+  }
+
+  .lambruk-contact-form__submit {
+    width: 100%;
+    background-color: #131A3E;
+    color: #F7F5F2;
+    border-color: #131A3E;
+  }
+
+  .lambruk-contact-form__error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--color-error, #8B0000);
+  }
+
+  .lambruk-contact-form__error-heading {
+    margin: 0 0 4px;
+    font-weight: 500;
+    font-size: 0.9375rem;
+  }
+
+  .lambruk-contact-form__error-list {
+    margin: 0;
+    padding-left: 1.1em;
+    font-size: 0.875rem;
+  }
+
+  .lambruk-contact-form__success {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 12px;
+  }
+
+  .lambruk-contact-form__success-eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-accent, #986A34);
+    margin: 0;
+  }
+
+  .lambruk-contact-form__success-heading {
+    font-family: var(--font-heading--family);
+    font-weight: 400;
+    font-size: var(--display-4-size);
+    line-height: var(--display-4-line-height);
+    margin: 0;
+  }
+
+  .lambruk-contact-form__success-body {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #4A5478;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.lambruk_contact_form",
+  "tag": null,
+  "settings": [],
+  "presets": [
+    {
+      "name": "t:names.lambruk_contact_form",
+      "category": "t:categories.forms"
+    }
+  ]
+}
+{% endschema %}

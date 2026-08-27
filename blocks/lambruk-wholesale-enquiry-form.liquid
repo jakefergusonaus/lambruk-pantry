@@ -7,6 +7,13 @@
   question on where the contact-form notification actually needs to go for
   wholesale enquiries specifically.
 
+  Business name/Phone/Business type/Location/Interested in/venue-textarea are
+  rendered by snippets/lambruk-wholesale-fields.liquid, shared with
+  blocks/lambruk-contact-form.liquid (Contact page's form, when its topic
+  selector is set to "Wholesale") — one source of truth for that field group.
+  Only Contact name and Email stay here, since Contact's own form collects
+  those separately, above its topic selector.
+
   Wholesale and general enquiries land in the same inbox (that open question),
   so the notification email needs to identify itself as a wholesale enquiry at
   a glance. `{% form 'contact' %}` only echoes name/email/phone/body back into
@@ -85,11 +92,6 @@
       <h3 class="wholesale-enquiry-form__title">Apply for a commercial account</h3>
       <div class="wholesale-enquiry-form__grid">
         <div class="wholesale-enquiry-form__field">
-          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-business-name">Business name *</label>
-          <input type="text" id="{{ form_id }}-business-name" class="wholesale-enquiry-form__input" name="contact[Business name]" placeholder="Venue or store" required data-preserve-field>
-        </div>
-
-        <div class="wholesale-enquiry-form__field">
           <label class="wholesale-enquiry-form__label" for="{{ form_id }}-name">Contact name *</label>
           <input
             type="text"
@@ -127,64 +129,9 @@
           >
         </div>
 
-        <div class="wholesale-enquiry-form__field">
-          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-phone">Phone *</label>
-          <input
-            type="tel"
-            id="{{ form_id }}-phone"
-            class="wholesale-enquiry-form__input"
-            autocomplete="tel"
-            name="contact[phone]"
-            value="{{ form.phone }}"
-            placeholder="Best number"
-            required
-            {% if form.errors contains 'phone' and form_matches %}
-              aria-invalid="true"
-              aria-describedby="{{ form_id }}-phone-error"
-            {% endif %}
-          >
-        </div>
-
-        <div class="wholesale-enquiry-form__field">
-          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-business-type">Business type *</label>
-          <input type="text" id="{{ form_id }}-business-type" class="wholesale-enquiry-form__input" name="contact[Business type]" placeholder="Hotel, cafe, retail" required data-preserve-field>
-        </div>
-
-        <div class="wholesale-enquiry-form__field">
-          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-location">Location *</label>
-          <input type="text" id="{{ form_id }}-location" class="wholesale-enquiry-form__input" name="contact[Location]" placeholder="Suburb and state" required data-preserve-field>
-        </div>
-
-        <div class="wholesale-enquiry-form__field wholesale-enquiry-form__field--full">
-          <span class="wholesale-enquiry-form__label wholesale-enquiry-form__label--static">Interested in *</span>
-          <div class="wholesale-enquiry-form__checkboxes">
-            {%- assign interests = 'Tea range,Custom tea blends,Relishes & chutneys,Hospitality formats,Gifting' | split: ',' -%}
-            {%- for interest in interests -%}
-              <label class="wholesale-enquiry-form__checkbox">
-                <input type="checkbox" data-interest-checkbox value="{{ interest }}">
-                {{ interest }}
-              </label>
-            {%- endfor -%}
-          </div>
-          <input type="hidden" name="contact[Interested in]" data-interests-hidden>
-        </div>
-
-        <div class="wholesale-enquiry-form__field wholesale-enquiry-form__field--full">
-          <label class="wholesale-enquiry-form__label" for="{{ form_id }}-body">Tell us about your venue *</label>
-          <textarea
-            rows="4"
-            id="{{ form_id }}-body"
-            class="wholesale-enquiry-form__input wholesale-enquiry-form__input--textarea"
-            data-body-input
-            placeholder="Rooms, covers, current range, what you are looking for"
-            required
-            {% if form.errors contains 'body' and form_matches %}
-              aria-invalid="true"
-              aria-describedby="{{ form_id }}-body-error"
-            {% endif %}
-          >{{ displayed_body }}</textarea>
-          <input type="hidden" name="contact[body]" data-body-hidden>
-        </div>
+        {%- comment -%} Shared with blocks/lambruk-contact-form.liquid — see snippets/lambruk-wholesale-fields.liquid. Edit there, not here. {%- endcomment -%}
+        {%- render 'lambruk-wholesale-fields', form_id: form_id, form: form, form_matches: form_matches, body_value: displayed_body -%}
+        <input type="hidden" name="contact[body]" data-body-hidden>
 
         <p class="wholesale-enquiry-form__helper">All fields are required.</p>
 

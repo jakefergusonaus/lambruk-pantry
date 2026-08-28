@@ -101,45 +101,64 @@
               },
               "blocks": {}
             },
-            "price": {
-              "type": "price",
+            "price_row": {
+              "type": "_product-card-group",
               "settings": {
-                "show_sale_price_first": true,
-                "show_installments": false,
-                "show_tax_info": false,
-                "type_preset": "custom",
-                "text_color": "#4A5478",
-                "width": "100%",
-                "alignment": "left",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "padding-block-start": 6,
-                "padding-block-end": 0,
-                "padding-inline-start": 20,
-                "padding-inline-end": 20
-              },
-              "blocks": {}
-            },
-            "buy_buttons": {
-              "type": "buy-buttons",
-              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": false,
+                "horizontal_alignment": "space-between",
+                "vertical_alignment": "center",
+                "gap": 12,
+                "width": "fill",
+                "height": "fit",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
                 "padding-block-start": 6,
                 "padding-block-end": 20,
                 "padding-inline-start": 20,
                 "padding-inline-end": 20
               },
-              "blocks": {}
+              "blocks": {
+                "price": {
+                  "type": "price",
+                  "settings": {
+                    "show_sale_price_first": true,
+                    "show_installments": false,
+                    "show_tax_info": false,
+                    "type_preset": "custom",
+                    "text_color": "#4A5478",
+                    "width": "fit-content",
+                    "alignment": "left",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "add_button": {
+                  "type": "_lambruk-add-button",
+                  "settings": {}
+                }
+              },
+              "block_order": ["price", "add_button"]
             }
           },
           "block_order": [
             "card-gallery",
             "category_label",
             "product_title",
-            "price",
-            "buy_buttons"
+            "price_row"
           ]
         }
       },

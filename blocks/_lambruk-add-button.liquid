@@ -1,0 +1,91 @@
+
+
+{% assign product = closest.product %}
+
+{% if product != blank and product.available %}
+  <div class="lambruk-add-button">
+    {% render 'quick-add', product: product, section_id: section.id %}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  /*
+    Repositions Horizon's native quick-add from a hover-revealed circular
+    overlay on the card image into a persistent, always-visible button in
+    the price row. The quick-add snippet itself (variant resolution,
+    availability, the Add/Choose branch, cart submission) is untouched —
+    only its container's positioning and the button's own visual styling
+    are overridden here. See ARCHITECTURE.md's upgrade log for the design
+    spec this was measured against.
+  */
+  .lambruk-add-button {
+    display: inline-flex;
+  }
+
+  .lambruk-add-button .quick-add {
+    display: inline-flex;
+    position: static;
+    inset: unset;
+    pointer-events: auto;
+    z-index: auto;
+  }
+
+  .lambruk-add-button .quick-add__button {
+    display: flex !important;
+    opacity: 1 !important;
+    position: static;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap-2xs);
+    width: auto;
+    max-inline-size: none;
+    min-inline-size: 0;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 6px;
+    border: 1px solid #D4BA9C;
+    background: transparent;
+    color: #131A3E;
+    font-family: var(--font-body--family);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: normal;
+    text-transform: none;
+    overflow: visible;
+    backdrop-filter: none;
+    transition-property: background-color, border-color;
+  }
+
+  .lambruk-add-button .add-to-cart-icon {
+    display: none;
+  }
+
+  .lambruk-add-button .quick-add__button:is(:hover, :focus-visible) {
+    width: auto;
+    padding-inline-end: 16px;
+    background: #EFE9E1;
+    border-color: #D4BA9C;
+  }
+
+  /*
+    Suppresses Horizon's native hover-pill quick-add (still rendered by the
+    unmodified _product-card-gallery block on the card's image) wherever
+    this button is present. :has() scopes this to only the four templates
+    that include _lambruk-add-button — the homepage Top Sellers rail and
+    product-page recommendations never render this block, so their native
+    hover pill is untouched. :has() is already used extensively elsewhere
+    in Horizon (assets/base.css, etc.), confirmed safe for this project's
+    browser support baseline.
+  */
+  product-card:has(.lambruk-add-button) .card-gallery .quick-add {
+    display: none !important;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Add button (price row)",
+  "tag": null,
+  "settings": []
+}
+{% endschema %}

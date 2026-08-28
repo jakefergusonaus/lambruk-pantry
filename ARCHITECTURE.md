@@ -1195,6 +1195,47 @@ Found by auditing the rest of the build for the same shape of bug (below) and ta
 
 ---
 
+## 45. Card Add button — inline in the price row, native quick-add logic reused, native hover pill retired on four templates (2026-08-30)
+
+**Scope: Shop All, the three category pages (`collection.json`), and the occasion template. Not the homepage Top Sellers rail, not product-page recommendations.**
+
+**What was tried first, and abandoned.** The original approach forked `_product-card-gallery.liquid` to reposition Horizon's native quick-add pill out of the image overlay via CSS. Confirmed structurally unworkable: `.card-gallery { position: relative; overflow: hidden; }` (stock, unforked) is the pill's actual containing block, and `overflow: hidden` clips anything positioned outside the image's own box. A CSS offset large enough to visually reach the price row would be calculated against the image's fixed bottom edge, not price's actual position — and would misalign the moment a title wraps to a second line. Reverted that fork entirely rather than ship something that breaks on real product titles.
+
+**What was built instead: a new, genuinely-new block, not a fork.** `blocks/_lambruk-add-button.liquid` — a leaf block with no children of its own — renders `{% render 'quick-add', product: closest.product, section_id: section.id %}` verbatim, then restyles the result with scoped CSS. Zero logic touched: variant resolution, the Add/Choose branch, the quick-add modal, cart submission, and out-of-stock handling are all still Horizon's own `snippets/quick-add.liquid`, unmodified. Placed as a true sibling of `price` inside a native `_product-card-group` (content_direction: row, horizontal_alignment: space-between) — the same block Horizon already uses for the homepage rail's own title+price row — so price and button share one flex row without any absolute-positioning trickery.
+
+**Stock files actually forked: one, additive only.** `_product-card-gallery.liquid` is back to byte-identical with pristine (confirmed by diff). The only stock file touched is `_product-card-group.liquid`'s schema, adding `_lambruk-add-button` to its accepted-blocks list so the new block can be nested inside it:
+
+```diff
+     },
+     {
+       "type": "_lambruk-add-button"
++    },
++    {
+       "type": "product-title"
+```
+
+Nothing else in that file is this session's work — the file already carried an unrelated, earlier fix (baseline-alignment CSS for the homepage's title+price row, 2026-08-25); this diff is additive to that, not a replacement.
+
+**Two real bugs found and fixed during build, both confirmed live before/after:**
+- `.lambruk-add-button` reported `width: 0` on first push. Root cause: `<quick-add-component>` is a custom element with no browser default `display`, so it defaults to `inline` — and an inline descendant inside a block/flex ancestor chain with nothing else establishing sizing collapsed the whole wrapper to zero width. Fixed with explicit `display: inline-flex` on both `.lambruk-add-button` and `.quick-add` itself. Same category of gotcha CLAUDE.md already documents for missing `width: 100%` on custom blocks, just manifesting as collapse instead of no-fill.
+- The button initially rendered with Horizon's cart icon prefixed to "Add" — the design's own `Button` component (`size="sm" variant="secondary"`) never passes an icon. Hidden via `.lambruk-add-button .add-to-cart-icon { display: none; }`.
+
+**The native hover pill is suppressed, not restyled, using `:has()`:**
+```css
+product-card:has(.lambruk-add-button) .card-gallery .quick-add {
+  display: none !important;
+}
+```
+Scoped entirely by the presence of our own block inside the same `<product-card>` — the homepage rail and product recommendations never include `_lambruk-add-button`, so this selector never matches there, confirmed live (0 of our blocks found on either surface, native pill still present and functioning normally on the rail). `:has()` is already used 228 times across this theme (`assets/base.css`, `assets/lambruk-tokens.css`, stock Horizon files), confirmed safe for this project's browser baseline before relying on it here.
+
+**`mobile_quick_add` and `quick_add` theme settings: untouched, confirmed still absent from `settings_data.json`** (i.e. still schema default: `quick_add: true`, `mobile_quick_add: false`). The new button's mobile visibility comes entirely from our own CSS (`display: flex !important; opacity: 1 !important;` scoped to `.lambruk-add-button`), not from flipping the global mobile flag — so the rail and recommendations keep their exact existing mobile behavior (no quick-add at all on mobile, per the untouched global default).
+
+**Verified live, computed style, all 11 design-spec properties, Shop All and Sunday Roast (occasion):** height 36px, radius 6px, transparent fill, `1px solid rgb(212, 186, 156)` (`#D4BA9C`), text `rgb(19, 26, 62)` (`#131A3E`), 13px/500 Geist, `0px 16px` padding, label "Add" (no icon), no letter-spacing/transform, hover fill exactly `rgba(239, 233, 225, 1)` (`#EFE9E1`), border unchanged on hover. **375px viewport:** button visible with no interaction needed (`display:flex; opacity:1` confirmed without hover), no overlap with price, same row confirmed by y-coordinate. **Out-of-stock:** confirmed zero controls rendered — the block's own `{% if product.available %}` gate matches the retired gallery fork's behavior exactly. **DOM count, filtered for actual visibility (not raw presence — the native pill still exists in the DOM at `display:none`, which a naive count would over-report):** exactly one visible Add control per available card, both templates, both breakpoints. **Cart:** clicked "Citrus Tea 12 Tea Bags" ($17.00) on Shop All, confirmed via `/cart.js` (not markup inspection) — `item_count: 1`, correct title, correct price. Cart cleared after. **Card bottom inset:** re-measured with the button in place — 21px, matching the ~20px design target and consistent with §43's original measurement, confirming the row restructuring didn't disturb it. **Leak check:** homepage Top Sellers rail and one product page (`citrus-tea-12-tea-bags`) both confirmed at 0 instances of `.lambruk-add-button`, native quick-add pill still present and DOM-normal on the rail, product page's own PDP add-to-cart button (a completely separate code path) unaffected.
+
+`shopify theme check --path .` clean throughout.
+
+---
+
 ## Summary
 
 | Area | Path taken |

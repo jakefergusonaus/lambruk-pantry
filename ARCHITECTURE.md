@@ -1169,6 +1169,20 @@ Not changed. This is a measurement, not a fix — holding for confirmation befor
 
 ---
 
+## 44. Occasion price preset closed; `type_preset != "custom"` named as a standing verification risk (2026-08-30)
+
+**Occasion price preset fixed.** §43 left `collection.occasion.json`'s `price` block on `type_preset: "h6"` deliberately, out of scope for that pass. Closed now: `"h6"` → `"custom"`, added `text_color: "#4A5478"` (font/font_size were already correct — `var(--font-body--family)`/`1rem` — same shape as every other fix in this bug class, only the preset and colour were wrong). Verified live on Sunday Roast: price now computes `16px`, `Geist, sans-serif`, `rgb(74, 84, 120)` — was `12px` Instrument Serif under the native `h6` preset before. All four collection templates (`collection.all.json`, `collection.json`, `collection.occasion.json` ×1 shared file) now carry the same `custom` preset on both `product-title` and `price`.
+
+**Standing principle, not just this instance.** This is the third bug found this project of the same shape — the setting is correct in the JSON, but a mechanism between the setting and the rendered page silently drops it, with no error anywhere: `--spacing-scale`'s missing `.spacing-style` class, `.text-display-3`'s specificity loss to `.h3.h3`, and now `type_preset != "custom"` causing `snippets/text.liquid` to ignore a block's own explicit `font`/`font_size`/`text_color`. All three passed a JSON read and a `theme check` run clean.
+
+**Rule going forward: a setting is not verified until its computed style is read live.** Reading the template JSON, reasoning about what a default or a preset *should* produce, or a clean `theme check` are all necessary but none of them are sufficient — none of the three actually execute the rendering path that broke in any of these three cases. Before calling any visual or typographic setting on this theme "done," check `getComputedStyle()` on the actual rendered element, not the config that's supposed to produce it. CLAUDE.md's "verify any setting change against the rendered page" rule already covers this for saved-instance-vs-schema-default drift (the eyebrow/header/Curated Occasions cases); this is the same discipline applied to a different failure mode — a config value the *rendering mechanism itself* discards.
+
+**Audit for the same `type_preset` bug class across the rest of the build is a separate, reported-not-yet-fixed pass — see the audit findings delivered in conversation.**
+
+`shopify theme check --path .` clean throughout.
+
+---
+
 ## Summary
 
 | Area | Path taken |

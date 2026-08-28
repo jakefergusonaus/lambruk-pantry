@@ -1256,6 +1256,20 @@ Scoped entirely by the presence of our own block inside the same `<product-card>
 
 `shopify theme check --path .` clean throughout.
 
+**Follow-up, same day — wrap implemented, and it uncovered a genuine Horizon internals issue the design/spec work never exposed.** Switched from "hide" to "wrap" per sign-off. The `:has(.compare-at-price)` scoping and `flex-wrap: wrap` alone weren't sufficient — implementing it surfaced a real bug in `quick-add`'s own nested markup, not something introduced by this build.
+
+**Root cause, traced live, not assumed.** `quick-add`'s markup nests the actual button inside two further custom elements — `<product-form-component>`, then a real `<form class="shopify-product-form">` — that were only ever exercised inside the original absolute-positioned image overlay, which supplied their sizing for free via `inset`/`max-inline-size`. Once wrapped onto its own line, `<product-form-component>` resolves to `0` width (confirmed by walking `getBoundingClientRect()` down every nested element in the chain), and `quick-add-styles.liquid`'s own `justify-content: flex-end` on `.shopify-product-form` then anchors the button's *right* edge to that zero-width point — so the button rendered `58.375px` to the left of where it should be, visibly detached from the row, confirmed at `left: -29.375px`.
+
+**First attempt — forcing explicit pixel widths through every nested layer — was abandoned.** It worked at each individual level in isolation but kept breaking a *different* layer each time the one above it was fixed (`.lambruk-add-button` → `.quick-add` → `.quick-add__product-form-component`, each needing its own override, none of them stable together). That's the exact "looks fine until a real edge case breaks it" fragility this whole build has tried to avoid — not shipped.
+
+**The actual fix is one property, not a chain of width overrides:** flip `.shopify-product-form`'s `justify-content`/`align-items` from `flex-end` to `flex-start`, scoped to `.lambruk-add-button .shopify-product-form` only (so the real product-page add-to-cart form — a different `.shopify-product-form` entirely, elsewhere in the DOM — is untouched). `flex-start` packs the button against its container's *start* edge instead, which resolves correctly even against a zero-width container. Confirmed live: button lands at the row's left edge, full 58.375×36 size, directly below the price line, no overlap, inside the card.
+
+**Full verification, live, on the real deployed CSS (not the ad-hoc test styles used while diagnosing):**
+- **Sale-price simulation, Shop All, 375px:** exactly 1 visible Add control, both prices shown in full ("$17.00 $22.00"), button correctly below price and inside the card, card height grew from `286.19px` to `320.59px` matching its untouched neighbour exactly (bottoms aligned).
+- **Single-price regression check — the one that mattered most:** all 13 real, currently-available products on Shop All at 375px measured and compared against the exact pre-sale-price-work baseline recorded earlier this session. `flex-wrap` stayed `nowrap` for every one (the `:has(.compare-at-price)` condition never matched, as designed), zero overlap, uniform `58.375×36` button size, and the reference card ("Citrus Tea 12 Tea Bags") matched the recorded baseline to the decimal — `btnLeft: 94.125`, `priceContainerRight: 76.109375`, both exact. Also spot-checked clean on the occasion template (Sunday Roast).
+
+`shopify theme check --path .` clean throughout.
+
 ---
 
 ## Summary

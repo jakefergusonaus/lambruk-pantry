@@ -68,44 +68,79 @@
   }
 
   /*
-    Sale-price collision fix. The price+button row is only ~123px wide on a
-    2-up mobile grid card; a sale price (current + struck-through compare-at,
-    both rendered by snippets/price.liquid as siblings inside one
-    [ref="priceContainer"]) doesn't fit next to the button at that width.
-    flex-shrink/flex-basis on product-price were tried first and silently
-    ignored — something in the existing layout-panel-flex system keeps
-    resolving its flex-basis from content regardless (not fully root-caused;
-    max-width is the lever that actually works, confirmed live). The sale
-    price itself is protected (flex-shrink: 0) and never truncates; only the
-    secondary struck-through compare-at price shrinks, then disappears
-    entirely rather than truncating mid-digit — confirmed live this reads as
-    "$17.00 [Add]" on a 375px 2-up card, not a garbled cut-off number, and
-    both prices show in full on desktop where there's room (compare-at
-    measured at full 53.98px width, unclipped). No real sale product exists
-    in the catalog to verify this against — simulated via injected markup
-    matching snippets/price.liquid's actual sale-price output exactly.
+    Sale price: wrap, not hide/truncate. A sale price (current + struck-
+    through compare-at, both rendered by snippets/price.liquid as sibling
+    spans inside one [ref="priceContainer"]) plus the button don't fit on
+    one line at a 2-up mobile card's ~123px price-row width. Chosen over
+    hiding the compare-at price (the first fix shipped here): hiding
+    removes the only discount signal for the majority-mobile audience it
+    matters most for, and a live test confirmed the layout risk that would
+    argue for hiding doesn't actually hold — CSS Grid's default
+    align-items: stretch keeps every card in a shared grid row aligned
+    even when one wraps taller. Confirmed by forcing one card into the
+    wrapped state and measuring it against its untouched neighbour: both
+    grew from 286.19px to 320.59px together, bottoms stayed exactly
+    aligned. The cost is a non-sale neighbour gaining dead space to match
+    the taller card — the same row-height dynamic this grid already has
+    from variable title-wrap lengths, not a new failure mode.
+
+    :has(.compare-at-price) scopes this to rows that actually have a sale
+    price — .compare-at-price only exists in the DOM when
+    show_compare_price is true in snippets/price.liquid, so every
+    single-price card (all 52 products in the catalogue as of 2026-08-30)
+    never matches this selector, at any viewport, and is untouched by it.
+
+    No real sale product exists in the catalog to verify this against —
+    simulated via injected markup matching snippets/price.liquid's actual
+    sale-price output exactly.
+
+    !important on flex-wrap: this file's own selector and the pre-existing
+    `.product-card .group-block-content.layout-panel-flex--row { flex-wrap:
+    nowrap; }` rule (in this block's own stylesheet, written earlier for a
+    different row — the homepage's title+price row) compute to the exact
+    same specificity, (0,3,0). Confirmed live: without !important, nowrap
+    silently won and the wrap never engaged. Not a hack — matches this
+    project's own established precedent for the same situation (see the
+    --gallery-aspect-ratio fix, ARCHITECTURE.md §43).
+
+    justify-content override on .shopify-product-form: quick-add's own
+    markup nests the actual button inside two further custom elements
+    (<product-form-component>, then a real <form class="shopify-product-form">)
+    that were never designed to be measured for their own content width —
+    they were always rendered inside the original absolute-positioned image
+    overlay, which supplied their sizing context for free via inset/
+    max-inline-size. Once wrapped onto its own line, <product-form-component>
+    resolves to 0 width (confirmed live, not assumed — traced through every
+    nested element via getBoundingClientRect), and quick-add-styles.liquid's
+    own `justify-content: flex-end` on .shopify-product-form then anchors the
+    button's RIGHT edge to that zero-width point, so the button renders
+    58.375px to the LEFT of where it should be — confirmed live at
+    left: -29.375px, visibly detached from the row. Forcing explicit pixel
+    widths through every nested layer (product-form-component, quick-add
+    itself) was tried first and kept breaking a different layer each time
+    it fixed the one above — not a stable fix. Overriding just this one
+    property is: flex-start packs the button against its container's START
+    edge instead, which resolves correctly even against a zero-width
+    container. Scoped to .lambruk-add-button only, so the real product-page
+    add-to-cart form (a different .shopify-product-form entirely, in a
+    totally different part of the DOM) is untouched.
   */
-  .group-block-content:has(> .lambruk-add-button) product-price {
-    max-width: calc(100% - 74px);
-    overflow: hidden;
+  .group-block-content:has(> .lambruk-add-button):has(.compare-at-price) {
+    flex-wrap: wrap !important;
   }
 
-  .group-block-content:has(> .lambruk-add-button) product-price [ref='priceContainer'] {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-    min-width: 0;
+  .group-block-content:has(> .lambruk-add-button):has(.compare-at-price)
+    product-price {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 100%;
   }
 
-  .group-block-content:has(> .lambruk-add-button) product-price [ref='priceContainer'] .price {
-    flex-shrink: 0;
-  }
-
-  .group-block-content:has(> .lambruk-add-button) product-price [ref='priceContainer'] .compare-at-price {
-    flex-shrink: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .group-block-content:has(> .lambruk-add-button):has(.compare-at-price)
+    .lambruk-add-button
+    .shopify-product-form {
+    justify-content: flex-start;
+    align-items: flex-start;
   }
 
   /*

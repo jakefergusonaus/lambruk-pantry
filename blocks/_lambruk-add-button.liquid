@@ -2,7 +2,7 @@
 
 {% assign product = closest.product %}
 
-{% if product != blank and product.available %}
+{% if product != blank and product.available and settings.quick_add %}
   <div class="lambruk-add-button">
     {% render 'quick-add', product: product, section_id: section.id %}
   </div>
@@ -65,6 +65,47 @@
     padding-inline-end: 16px;
     background: #EFE9E1;
     border-color: #D4BA9C;
+  }
+
+  /*
+    Sale-price collision fix. The price+button row is only ~123px wide on a
+    2-up mobile grid card; a sale price (current + struck-through compare-at,
+    both rendered by snippets/price.liquid as siblings inside one
+    [ref="priceContainer"]) doesn't fit next to the button at that width.
+    flex-shrink/flex-basis on product-price were tried first and silently
+    ignored — something in the existing layout-panel-flex system keeps
+    resolving its flex-basis from content regardless (not fully root-caused;
+    max-width is the lever that actually works, confirmed live). The sale
+    price itself is protected (flex-shrink: 0) and never truncates; only the
+    secondary struck-through compare-at price shrinks, then disappears
+    entirely rather than truncating mid-digit — confirmed live this reads as
+    "$17.00 [Add]" on a 375px 2-up card, not a garbled cut-off number, and
+    both prices show in full on desktop where there's room (compare-at
+    measured at full 53.98px width, unclipped). No real sale product exists
+    in the catalog to verify this against — simulated via injected markup
+    matching snippets/price.liquid's actual sale-price output exactly.
+  */
+  .group-block-content:has(> .lambruk-add-button) product-price {
+    max-width: calc(100% - 74px);
+    overflow: hidden;
+  }
+
+  .group-block-content:has(> .lambruk-add-button) product-price [ref='priceContainer'] {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .group-block-content:has(> .lambruk-add-button) product-price [ref='priceContainer'] .price {
+    flex-shrink: 0;
+  }
+
+  .group-block-content:has(> .lambruk-add-button) product-price [ref='priceContainer'] .compare-at-price {
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /*

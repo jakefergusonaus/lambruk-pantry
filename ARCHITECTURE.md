@@ -1234,6 +1234,16 @@ Scoped entirely by the presence of our own block inside the same `<product-card>
 
 `shopify theme check --path .` clean throughout.
 
+**Follow-up, same day — three gaps closed after review, all found by checking rather than assuming.**
+
+1. **`settings.quick_add` was missing from the new block's gate.** The original stock condition was `product.available and settings.quick_add or settings.mobile_quick_add`; the new block only replicated `product.available`. Confirmed live first, not assumed broken: 0 of 11 sold-out cards on Shop All and 0 of 4 on Sunday Roast showed a button either way, since `settings.quick_add` is currently `true` — no live bug today. But the gap was real: if that setting is ever turned off, the stock pill would correctly respect it and the new button wouldn't have. Added `and settings.quick_add` to the block's condition (deliberately not `or settings.mobile_quick_add` — the whole point of this build was to make the button mobile-visible independent of that flag). Re-verified after the fix: still 0/11 and 0/4.
+
+2. **Sale price + button collision at 375px — a real, confirmed bug, now fixed.** No product in the live catalog currently has a `compare_at_price` set (checked `/products.json`, all 52), so this was simulated by injecting `snippets/price.liquid`'s actual sale-price markup (`show_sale_price_first: true` — both the sale and struck-through compare-at price as sibling spans inside one `[ref="priceContainer"]`) into a real rendered card. Confirmed the bug first: at a 2-up mobile card's ~123px price-row width, "$17.00 $22.00" plus the button don't fit — the compare-at price overlapped the button by ~40px, with `product-price`'s own `flex-shrink`/`flex-basis` silently not applying (tried repeatedly, confirmed via computed style the browser kept resolving `flex-basis` to a content-derived pixel value regardless of what was set — not fully root-caused, but `max-width` reliably worked where `flex-basis` didn't, confirmed by isolating the two). Fixed by protecting the sale price (`flex-shrink: 0`, never truncates) and letting only the secondary compare-at price shrink, then disappear entirely rather than truncate mid-digit — a first attempt at plain `text-overflow: ellipsis` on the whole price element cut "$17.00" down to "$17.0" with no ellipsis mark, which reads as a rendering glitch, not a real number. Verified both ends: 375px shows "$17.00 [Add]" cleanly, no overlap, no wrap, no push-out, compare-at price simply absent; desktop shows both prices in full (compare-at measured at its full, unclipped 53.98px width — the fix only engages when space is actually tight).
+
+3. **`git show HEAD -- blocks/_product-card-group.liquid` re-run on request, to settle a doubt about the diff shown in the original report.** The report's diff had been hand-formatted as a markdown code block rather than real command output, and read ambiguously enough to raise the question of whether it was showing genuine additions or unchanged context. The actual `git diff` output is unambiguous: 3 `+`-prefixed new lines (the `_lambruk-add-button` accepted-blocks entry), nothing removed, nothing else touched — confirms the original claim was accurate, just not shown via the literal command.
+
+`shopify theme check --path .` clean throughout.
+
 ---
 
 ## Summary

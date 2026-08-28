@@ -22,15 +22,22 @@
     theme, not just this block's original consumer. A second, unrelated
     consumer now exists (the Add-button price row on Shop All/category/
     occasion cards, blocks/_lambruk-add-button.liquid) and this rule reaches
-    it too — confirmed live, its own vertical_alignment:"center" setting is
-    silently overridden to "baseline" by this rule, same mechanism as the
-    flex-wrap collision below. Left as-is: the visual effect there measured
-    at ~1.2px, invisible in practice, and a genuinely narrower selector
+    it too. Confirmed live: that row's own vertical_alignment:"center"
+    setting is INERT because of it — not slightly off, disconnected from
+    the render entirely, since align-items:baseline always wins here
+    regardless of what --vertical-alignment resolves to. Fourth confirmed
+    instance of this project's own standing pattern (a setting that reads
+    as configured and is silently discarded — see REVIEW-NOTES.md and
+    ARCHITECTURE.md §44/§45). Today the inert setting costs ~1.2px, which
+    is why it isn't fixed — but that's incidental to today's content, not
+    evidence the control works; a copy or font change could open the gap
+    with no warning, because nothing is actually reading that setting. Not
+    fixed regardless of the current gap size: a genuinely narrower selector
     isn't available without either a content-based :has() heuristic (the
     same fragile, assumption-based coupling that caused this in the first
     place) or new per-instance class-passing plumbing through the far more
     broadly-shared snippets/group.liquid — a bigger, riskier change than
-    the sub-pixel discrepancy it would fix. Audited, not overlooked.
+    the setting it would restore. Audited, not overlooked.
   */
   .product-card .group-block-content.layout-panel-flex--row {
     align-items: baseline;

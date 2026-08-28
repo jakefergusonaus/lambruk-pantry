@@ -309,9 +309,29 @@ h1, h2, h3, h4, h5, h6 {
    real meaning via a scoped CSS override rather than a Horizon-file edit.
    First consumer: Shop All's product-card-gallery (was "adapt" — natural
    per-image ratio, which is what produced inconsistent tile heights across
-   products with different source-image proportions in the first place). */
+   products with different source-image proportions in the first place).
+
+   `!important` added 2026-08-30 — this rule never actually applied. The
+   inline `style="--gallery-aspect-ratio: {{ ratio }};"` in
+   snippets/card-gallery.liquid:72 sits on the *same* `.card-gallery`
+   element this attribute selector targets, and an inline declaration
+   always wins over an external stylesheet rule for the same property on
+   the same element regardless of selector specificity, unless the
+   external rule is `!important`. Confirmed live before the fix: computed
+   `--gallery-aspect-ratio` was `1`, not `4 / 3`, on Shop All. Horizon's
+   own `snippets/editorial-product-grid.liquid` already overrides this
+   same inline-set property the same way (`--gallery-aspect-ratio: 99
+   !important;`), so this isn't a new technique for this codebase.
+
+   Global, not template-scoped — deliberately. Every current consumer of
+   `image_ratio: "square"` (Shop All, the three category pages, and the
+   occasion template) wants the same 4:3 crop per the design source, so
+   this one rule now also corrects the occasion template's own gallery,
+   which was flagged as already-correct but, on checking, shared this
+   exact unapplied square setting. Disclosed in ARCHITECTURE.md rather
+   than scoped away from it. */
 [data-image-ratio="square"] {
-  --gallery-aspect-ratio: 4 / 3;
+  --gallery-aspect-ratio: 4 / 3 !important;
 }
 
 /* Nav bar redesign (2026-08-24): design calls for the header to show only

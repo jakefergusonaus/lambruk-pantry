@@ -1244,6 +1244,18 @@ Scoped entirely by the presence of our own block inside the same `<product-card>
 
 `shopify theme check --path .` clean throughout.
 
+**Follow-up, same day — sale-price behaviour reassessed: hide vs. wrap, not yet switched.** The shipped fix (compare-at price shrinks to nothing at narrow widths) is layout-correct but has a real merchandising cost: on a majority-mobile site, a shopper on the narrowest cards loses the only visual cue that an item is discounted. Assessed the alternative — wrap the row (price on its own line, button beneath) instead of hiding — before touching anything, per instruction.
+
+**Tested the specific risk raised: does wrapping misalign card bottoms across a grid row where only some products are on sale?** Live test, not assumed: forced one card into the wrapped, two-line state (sale-price simulation + `flex-wrap: wrap` scoped to that one card only) and measured it against its untouched neighbour in the same grid row. Before: both cards `286.19px` tall, bottoms aligned. After: **both cards grew to `320.59px`, bottoms still exactly aligned** — CSS Grid's default `align-items: stretch` pulls every card in a shared row up to match the tallest one, confirmed empirically rather than assumed from spec. So the specific failure mode asked about — jagged, misaligned card bottoms — does not happen.
+
+**The real cost is different: a non-sale neighbour sharing a row with a discounted item gains dead space to match it.** That's a real visual softness, not a broken layout — and it's the same row-height dynamic this exact grid already has from variable title-wrap lengths (a 2-line title already stretches its row's shorter neighbours today, uncomplained-about). Wrapping doesn't introduce a new category of inconsistency, it just adds one more trigger for a dynamic the grid already lives with.
+
+**Recommendation: wrap, not hide.** Layout risk (the thing that would have justified keeping "hide") tested clean; the merchandising cost of "hide" (discount invisible to the majority of traffic on the exact products where it matters most) is the more serious problem of the two. Scoping is straightforward and leaves every product in today's catalog untouched: `:has(.compare-at-price)` only matches when a second price value actually exists, so the wrap condition never triggers for a normal single-price card regardless of viewport — confirmed as the mechanism, not yet wired into `_lambruk-add-button.liquid`'s stylesheet pending sign-off, since this changes the shipped, reviewed behaviour rather than fixing an oversight in it.
+
+**Logged in `REVIEW-NOTES.md`** under its own heading, flagged for whoever's present when the client's first sale goes live — every measurement in this section (both the shipped "hide" and the assessed "wrap") is simulated against injected markup, never seen against a real discounted product, and needs a real re-check the first time one exists.
+
+`shopify theme check --path .` clean throughout.
+
 ---
 
 ## Summary

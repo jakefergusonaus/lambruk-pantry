@@ -1124,6 +1124,33 @@ Occasion hero photography identified in the design package, not yet uploaded: `d
 
 ---
 
+## 43. Shop All: gap above the filter row, plus a full card-sizing measurement (2026-08-29)
+
+**Gap above the filter chips, fixed.** Checked computed styles first, per instruction, rather than assuming which setting was at fault. The header band's own `padding-block-end` (`56`, `templates/collection.all.json`'s `section` section) was already correct and already applying live, unchanged — confirmed via computed style, not the file. The actual shortfall was `main`'s own `padding-block-start`, set to `0`; design's equivalent product-listing section (`Desktop.dc.html:319`) wraps the filter row inside a section with `padding: 40px 0 96px`, so the missing 40px sat on the *product-listing section's* own top padding, not the header's bottom or the filter block's own internal spacing. Changed `padding-block-start: 0 → 40`.
+
+Design's mobile structure for this same gap is genuinely different, not just a scaled-down version — mobile has no equivalent wrapping section at all (`Mobile.dc.html:246-251`: header section, then the filter row's own wrapper directly, no extra top-padding section between them). `sections/main-collection.liquid` outputs `padding-block-start` as a single literal `{{ value }}px` with no responsive scaling (confirmed — this is a different mechanism from `spacing-style.liquid`'s `calc()` approach, not exposed to §42's bug), so the 40px needed for desktop would have applied flatly on mobile too, roughly doubling a gap that was already close to correct there. Added a scoped `@media (max-width: 749px)` reset in `assets/lambruk-tokens.css`, targeting `[data-template="collection.all"] .product-grid-container` — an attribute selector rather than a section id, so it survives ordinary re-saves. Verified live: desktop now computes `40px` (was `0px`); mobile unchanged at `0px`, confirming the reset holds.
+
+Confirmed this doesn't touch the three category pages before pushing: `collection.json`'s own `main` section carries its own independent `padding-block-start: 0` — same shared *code*, separate settings instance per template, same pattern already established for the occasion-page fix above. Not changed, not affected either way.
+
+**Card sizing — measured both sides, nothing built.** Per instruction: report the specific values, not a general "make it feel closer" adjustment.
+
+| Property | Design (`ProductCard.jsx`) | Build, live (`?view=all`, desktop) | Build, live (mobile) |
+|---|---|---|---|
+| Card width | Fluid — 3 columns across a 1160px content area (1240px max-width − 80px padding) at 28px gaps ≈ **368px** at a 1240px+ viewport | **279px** at 1280px viewport (`product_card_size: "medium"`, 250px auto-fill minimum) | **181.5px** (2-col mobile grid) |
+| Image aspect ratio | **4 / 3** (`aspectRatio:'4 / 3'`) | **1 / 1** (square — `card-gallery`'s `image_ratio: "square"`) | **1 / 1**, same |
+| Text area padding | **20px all sides** (single value, children spaced by a 6px flex gap) | Title block: **20px left/right, 0 bottom** — inline sides match, but built per-block-padding rather than one uniform 20px + gap | not re-measured separately, same mechanism |
+| Title type | **24px** (`--display-5-size`), Instrument Serif, line-height 1.25 | **14px**, Geist sans-serif | **14px**, unchanged from desktop — no responsive scaling on this value either |
+| Price type | **16px** (`--body-size`), Geist sans | **12px**, Instrument Serif | **12px**, unchanged |
+| Grid gap | **28px** | **28px** — matches | not re-measured, set once at the grid level |
+
+Grid gap is the one value that already matches exactly. Everything else reads smaller than spec, and title/price have their typefaces swapped relative to the design (title should be serif, is sans; price should be sans, is serif) on top of being undersized — not just a scale difference. Confirmed the eyebrow and Add button are absent as expected, per instruction not to build them here — they're the outstanding buy-button work already logged in §42.
+
+Not changed. This is a measurement, not a fix — holding for confirmation before touching card sizing, same as the buy-button gap.
+
+`shopify theme check --path .` clean throughout.
+
+---
+
 ## Summary
 
 | Area | Path taken |

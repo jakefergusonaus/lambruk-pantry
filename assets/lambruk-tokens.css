@@ -364,3 +364,21 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--nav-current-color);
   transition: color 0.15s ease;
 }
+
+/* Shop All — gap above the filter row, desktop only. `sections/main-
+   collection.liquid` outputs padding-block-start as a single literal
+   `{{ value }}px`, no responsive scaling (unlike the spacing-style
+   snippet's calc()-based approach used elsewhere) — one setting, both
+   breakpoints. The design's own gap here is genuinely different per
+   breakpoint (desktop nests the filter row inside a separate 40px-
+   top-padded section; mobile has no such wrapper, just the header's own
+   bottom padding), so the 40px `padding-block-start` needed for desktop
+   (templates/collection.all.json) would flatly double mobile's already-
+   close-to-correct gap if left unscoped. Reset to 0 below 750px so
+   mobile keeps its current spacing. `[data-template]` rather than a
+   section id, since it survives ordinary section edits/re-saves. */
+@media screen and (max-width: 749px) {
+  [data-template="collection.all"] .product-grid-container {
+    padding-top: 0;
+  }
+}

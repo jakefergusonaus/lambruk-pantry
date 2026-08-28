@@ -154,7 +154,7 @@
         "padding-inline-end": 0,
         "background_color": "{{ settings.color_palette.background }}",
         "padding-block-start": 40,
-        "padding-block-end": 32
+        "padding-block-end": 96
       }
     },
     "other_occasions": {

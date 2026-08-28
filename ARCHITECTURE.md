@@ -1270,6 +1270,14 @@ Scoped entirely by the presence of our own block inside the same `<product-card>
 
 `shopify theme check --path .` clean throughout.
 
+**Follow-up, same day — audited whether `_product-card-group.liquid`'s pre-existing `nowrap`/`baseline` rule is genuinely over-scoped, on request. Confirmed necessary, kept as-is; one previously-uncaught leak found and disclosed, not fixed.**
+
+The rule's own comment claimed it was scoped to `.product-card` only because, "as of 2026-08-25," the block had exactly one consumer (the homepage rail's title+price row) — an assumption that's now false, since our price+button row is a second. Checked for a genuinely narrower selector before concluding anything: the `group` block architecture gives no per-instance class hook (`.group-block-content` carries only generic classes), the row's actual children on the rail are a generic `display:contents` link wrapper and a `<product-price>` element — nothing safely selectable — and the only real options were a content-based `:has()` heuristic (which just re-encodes "not mine" as "has a title, no button," the same fragile assumption that caused this collision, aimed the other way) or new per-instance class-passing plumbing through `snippets/group.liquid`, which is shared by every group block sitewide — a bigger, riskier change than the thing it would save. **Kept the rule broad and kept the `!important`** — confirmed load-bearing (already re-verified last turn: without it, `nowrap` silently wins the specificity tie).
+
+**Found something the original question didn't ask about while checking: the same rule's sibling declaration, `align-items: baseline`, is also leaking onto our row**, silently overriding its own `vertical_alignment: "center"` setting. Measured the actual effect before deciding whether it mattered: `1.2px` vertical offset between price and button — invisible in practice, not fixed, but disclosed rather than left as a silent surprise for whoever reads this file next. Corrected the file's own comment (which repeated the same now-false "only used for that one row" claim) to record both leaks and why neither is being fixed.
+
+`shopify theme check --path .` clean throughout.
+
 ---
 
 ## Summary

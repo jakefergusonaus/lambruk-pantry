@@ -14,9 +14,23 @@
     product-card title+price row needs the opposite: price pinned to the
     FIRST line of a wrapped title (design source: rail card title+price row
     uses plain CSS align-items:baseline). No setting combination produces
-    that, so it's set directly here. Scoped to .product-card because
-    _product-card-group is, as of 2026-08-25, only used for that one row —
-    see templates/index.json's title_price_row block.
+    that, so it's set directly here.
+
+    Correction, 2026-08-31 — the "only used for that one row" premise below
+    is no longer true, and this selector was never actually scoped to that
+    row; .product-card matches every _product-card-group instance in the
+    theme, not just this block's original consumer. A second, unrelated
+    consumer now exists (the Add-button price row on Shop All/category/
+    occasion cards, blocks/_lambruk-add-button.liquid) and this rule reaches
+    it too — confirmed live, its own vertical_alignment:"center" setting is
+    silently overridden to "baseline" by this rule, same mechanism as the
+    flex-wrap collision below. Left as-is: the visual effect there measured
+    at ~1.2px, invisible in practice, and a genuinely narrower selector
+    isn't available without either a content-based :has() heuristic (the
+    same fragile, assumption-based coupling that caused this in the first
+    place) or new per-instance class-passing plumbing through the far more
+    broadly-shared snippets/group.liquid — a bigger, riskier change than
+    the sub-pixel discrepancy it would fix. Audited, not overlooked.
   */
   .product-card .group-block-content.layout-panel-flex--row {
     align-items: baseline;
@@ -34,6 +48,12 @@
     own flex-flow:row. flex-direction restored here; flex-wrap forced to
     nowrap too, since title (width:fill) is otherwise wide enough on its own
     to push price onto a second flex line even once direction is corrected.
+
+    This rule collided with a second consumer for the same reason noted
+    above — blocks/_lambruk-add-button.liquid overrides it back to
+    flex-wrap:wrap (with !important, required to win the resulting
+    specificity tie) when its own row needs to wrap for a sale price. Kept
+    broad for the same reason: no lower-risk narrower selector exists.
   */
   .product-card .group-block-content.layout-panel-flex--row {
     flex-direction: row;

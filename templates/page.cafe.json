@@ -126,9 +126,27 @@
                 "custom_width_mobile": 100
               },
               "blocks": {}
+            },
+            "view_menu": {
+              "type": "_lambruk-view-menu-button",
+              "settings": {
+                "label": "View menu",
+                "style_class": "button-custom",
+                "custom_button_background": "#FBFAF7",
+                "custom_button_text": "#131A3E",
+                "custom_button_border": "#FBFAF7",
+                "mobile_custom_button_background": "#131A3E",
+                "mobile_custom_button_text": "#F7F5F2",
+                "mobile_custom_button_border": "#131A3E",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
             }
           },
-          "block_order": ["book_table"]
+          "block_order": ["book_table", "view_menu"]
         },
         "heading_style": {
           "type": "custom-liquid",
@@ -664,9 +682,24 @@
                     "custom_width_mobile": 100
                   },
                   "blocks": {}
+                },
+                "view_menu": {
+                  "type": "_lambruk-view-menu-button",
+                  "settings": {
+                    "label": "View menu",
+                    "style_class": "button-custom",
+                    "custom_button_background": "#00000000",
+                    "custom_button_text": "#131A3E",
+                    "custom_button_border": "#D4BA9C",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "custom",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
                 }
               },
-              "block_order": ["book"]
+              "block_order": ["book", "view_menu"]
             }
           },
           "block_order": ["eyebrow", "heading", "body", "meta_price", "meta_sittings", "cta_group"]
@@ -808,9 +841,51 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "cta_group": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "gap": 12,
+                "width": "fit-content",
+                "height": "fit",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 24,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "view_menu": {
+                  "type": "_lambruk-view-menu-button",
+                  "settings": {
+                    "label": "View menu",
+                    "style_class": "button-custom",
+                    "custom_button_background": "#00000000",
+                    "custom_button_text": "#131A3E",
+                    "custom_button_border": "#D4BA9C",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "custom",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": ["view_menu"]
             }
           },
-          "block_order": ["eyebrow", "heading", "body", "meta_hours", "meta_walkins"]
+          "block_order": ["eyebrow", "heading", "body", "meta_hours", "meta_walkins", "cta_group"]
         }
       },
       "block_order": ["media", "content"],

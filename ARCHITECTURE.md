@@ -1424,6 +1424,16 @@ Raw `#BF8C45` itself isn't usable directly — DESIGN-TOKENS.md's own earlier au
 
 ---
 
+### §49 addendum — both decisions made, resolved (2026-08-31)
+
+**Colour: `#4A5478` applied, deliberately, on Jake's explicit instruction.** Confirmed once more before applying — the design source's gold is real, and Jake is overriding it on purpose, not asking for a correction back to something the design already specifies. Applied to all 10 icon blocks (`section_proof_bar` and `section_proof_bar_marquee`), scoped to this row only — Wholesale's own `check_box` icons verified unchanged (`rgb(152, 106, 52)` = `#986A34`, untouched). Recorded as an intentional departure in `design/DESIGN-TOKENS.md` §13, dated, so a future reader of the mockup doesn't "fix" this row back to gold believing it drifted. `assets/lambruk-tokens.css`'s own comment updated to match — no longer describes the colour as pending or wrong.
+
+**Keyboard/touch pause: the `:focus-within` rule removed, not left as unreachable groundwork.** On reflection this was the right call, not just tidiness — CSS that implies a protection which cannot fire is worse than no CSS at all, since it reads as solved to the next person who greps for it. The tempting completion (`tabindex="0"` on `marquee-component`) was rejected on the merits, not deferred: forcing a non-interactive element into the tab order creates a dead stop for keyboard users navigating past it — a new problem — while still doing nothing for touch users, who have no hover equivalent at all. That trade makes the accessibility posture worse, not better. Replaced with a comment stating the actual, current state plainly: hover pauses it (mouse only, verified via a real hover), keyboard and touch have no pause mechanism, and `prefers-reduced-motion: reduce` disables the animation outright regardless of input device — the one protection every user actually has. A real fix, if this row ships as a marquee, is a visible always-focusable pause/play control — a separate, bigger build, not a CSS bolt-on, and not undertaken here without its own decision.
+
+Verified live after both changes: tick colour `rgb(74, 84, 120)` on both the static row and the marquee, exact match to `#4A5478`; no `marquee-component:focus-within` rule present in any stylesheet. `shopify theme check --path .` clean.
+
+---
+
 ## Summary
 
 | Area | Path taken |

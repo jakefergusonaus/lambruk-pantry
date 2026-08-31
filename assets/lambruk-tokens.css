@@ -422,20 +422,17 @@ h1, h2, h3, h4, h5, h6 {
    templates/index.json, not here — only the box removal needs CSS, since
    Horizon has no per-path settings.
 
-   Colour is #131A3E (navy) as of 2026-08-31 — CONFIRMED WRONG, left as-is
-   pending a decision, not fixed here. The design source's own checkmark
+   Colour is #4A5478, matching the label — a DELIBERATE departure from the
+   design source, confirmed with Jake, not drift. The design's own checkmark
    (LambrukPantry Desktop.dc.html:68-72, and again at :775) uses a fixed
-   `stroke="#BF8C45"` regardless of the adjacent label's colour (#4A5478 in
-   one instance, #131A3E in the other) — the tick is a consistent brand-gold
-   accent, not matched to label colour, contradicting both the original
-   build and Jake's proposed "match the label" fix. The raw #BF8C45 itself
-   fails WCAG contrast per this project's own earlier audit (DESIGN-TOKENS.md:
-   2.86:1); `--icon-accent: #8A6A32` (defined above, already consumed once by
-   lambruk-wholesale-enquiry-form.liquid) is this project's existing,
-   accessibility-corrected substitute for exactly this role, and computes to
-   4.44:1 against this row's own #F4F1EA background — clears the 3:1 non-text
-   graphics bar with margin. Recommended value once Jake confirms:
-   var(--icon-accent). Not applied without sign-off. */
+   `stroke="#BF8C45"` gold regardless of the adjacent label's colour, and the
+   accessibility-corrected substitute for that gold (`--icon-accent:
+   #8A6A32`, defined above) was the evidence-backed recommendation — Jake
+   overrode both in favour of matching the label exactly, per his original
+   instruction. Recorded in DESIGN-TOKENS.md (2026-08-31) as an intentional
+   departure, so the mockup's gold isn't read as the build having drifted
+   and "corrected" back later. Scoped to this row only — Wholesale's own
+   check_box icons keep the design's gold, untouched. */
 [data-template="index"] svg.icon-default path[d^="M18.5 1.5H1.5L1.5 18.5H18.5V1.5Z"] {
   display: none;
 }
@@ -468,19 +465,27 @@ h1, h2, h3, h4, h5, h6 {
       matched nothing (wrong element depth) and silently produced a flat
       8px gap everywhere, caught by measuring live rather than assuming
       the CSS took effect.
-   2. Keyboard-focus pause — marquee.js's own pause mechanism is pointer-only
-      (pointerenter/pointerleave), no focus/blur handling at all, a WCAG
-      2.2.2 gap for any future marquee with focusable content. Fixed with an
-      immediate (non-eased, unlike the JS's hover ramp) CSS pause on
-      :focus-within — sitewide on marquee-component, not scoped to this one
-      section, since the gap is in the native component itself and any
-      future marquee should get the same fix, not need it re-added. */
+   2. Keyboard/touch pause — NOT implemented, deliberately, after trying and
+      reverting it (2026-08-31). marquee.js's own pause mechanism is
+      pointer-only (pointerenter/pointerleave); a `:focus-within` CSS pause
+      was added to cover keyboard users, but checked live and found nothing
+      inside this marquee is focusable and marquee-component itself carries
+      no `tabindex` — the rule had no way to ever fire, dead CSS pretending
+      to be a protection. The straightforward fix (`tabindex="0"` on
+      marquee-component) was rejected: making a non-interactive element
+      focusable creates a dead stop in the tab order — its own accessibility
+      problem — and does nothing for touch users, who can't hover either.
+      That trades one gap for two rather than closing one. A real fix (a
+      visible, always-focusable pause/play control) is a bigger build than
+      this task's scope and needs its own decision, not a CSS bolt-on.
+      Current, honest state: hover pauses it (mouse only, confirmed live via
+      a real hover — a synthetic PointerEvent did not trigger the native
+      component's listener). Keyboard and touch users have no way to pause
+      it. `prefers-reduced-motion: reduce` disables the animation entirely
+      regardless of input method (native, unchanged, confirmed above) — the
+      one mechanism that protects every user regardless of device. */
 [data-template="index"] marquee-component .marquee__repeated-items > .icon-block {
   margin-inline-start: 32px;
-}
-
-marquee-component:focus-within .marquee__wrapper {
-  animation-play-state: paused;
 }
 
 /* Shop All + category pages (Tea/Sauces & Chutneys/Pantry): 4-up at wide

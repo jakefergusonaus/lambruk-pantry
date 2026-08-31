@@ -17,7 +17,14 @@
      rather than relying on the native h1 preset's untested mobile fluid
      minimum. */
   --display-1-size: clamp(38px, 29.741px + 2.118vw, 56px);
-  --display-1-line-height: 1.04;
+  /* 1.13, not the design's declared 1.04 — deliberate override, approved
+     2026-09-01. 1.04 read as too tight at 56px on the rendered page; 1.13
+     is close to Instrument Serif's own natural leading, the same value
+     every heading the design left unspecified was already sitting at
+     (measured directly, ARCHITECTURE.md §51's investigation pass — the six
+     "used value" headings clustered at 1.125-1.141). See DESIGN-TOKENS.md
+     §2 for the full record. */
+  --display-1-line-height: 1.13;
 
   /* Display 2 · Title (DESIGN-TOKENS.md §2). Built 2026-08-20 — the step
      existed in the documented scale with zero consumers and zero tokens

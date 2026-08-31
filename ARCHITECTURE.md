@@ -1525,7 +1525,23 @@ Hero and Cafe intro — the only two with an explicit design-declared value — 
 
 ---
 
-## Summary
+### §51 addendum — hero line-height overridden to 1.13 by request (2026-09-01)
+
+Once 1.04 was actually live (reconnecting the token, exactly as designed, computing the correct 58.24px), Jake read it as too tight at 56px and asked for 1.13 instead. **Changed the token, not the block** — `--display-1-line-height` in `assets/lambruk-tokens.css`, `1.04 → 1.13` — per instruction, since a literal value on the hero block itself would both take it off the shared type scale and silently not even work: the new passthrough branch only intercepts a `var(...)`-shaped value (`contains 'var('`), so a literal number would fall straight through to the old enum-lookup path and render something else entirely, not 1.13.
+
+Verified live at 1280px: **63.28px** (56 × 1.13), exact.
+
+**`--display-1-size` sitewide consumer count, checked directly, not estimated: exactly 4**, matching your own read of the audit:
+1. Homepage hero — "Handcrafted pantry essentials..." (`templates/index.json`) — **opted in**, `line_height: "var(--display-1-line-height)"`.
+2. Our Story hero — "From a family kitchen in the Northern Rivers..." (`templates/page.our-story.json`) — not yet opted in, `line_height: "normal"`.
+3. Wholesale hero — "Partner with Lambruk Pantry" (`templates/page.wholesale.json`) — not yet opted in, `line_height: "normal"`.
+4. Contact hero — "Talk to us about orders, the cafe or wholesale" (`templates/page.contact.json`) — not yet opted in, `line_height: "normal"`.
+
+Confirmed: this change touches nothing today beyond the hero (the other three are still on the enum path, still resolving `--line-height--body-normal` = 1.4, unaffected by a token they don't yet reference) — but it does pre-set the value those three will inherit the moment Stage 2 wires them up, which is now approved and about to happen in the same pass. Recorded as a deliberate override (not a concession) in `design/DESIGN-TOKENS.md`, with the reasoning on record: 1.04 read as too tight once rendered; 1.13 is close to Instrument Serif's own natural leading, the same value every design-unspecified heading was already sitting at when measured in §51's own investigation — a correction to the design, not drift from it.
+
+---
+
+## 52. Stage 2 — remaining 20 display-scale blocks sitewide reconnected (2026-09-01)
 
 | Area | Path taken |
 |---|---|

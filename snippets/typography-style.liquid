@@ -64,7 +64,17 @@
     --font-family: {{ settings.font }};
     --text-transform: {{ settings.case }};
     --text-wrap: {{ settings.wrap | default: 'pretty' }};
-    {% if settings.type_preset == 'custom' and settings.font_size == blank %}
+    {% comment %}
+      Lambruk fork: verbatim passthrough for a var()-referenced line_height,
+      mirroring font_size's own direct-echo branch above. Added because the
+      enum branches below can't reach a custom ratio like 1.04 — they can
+      only ever resolve to one of tight/normal/loose per type. Existing
+      enum-keyword values are untouched; this only intercepts a value that
+      already looks like a CSS variable reference.
+    {% endcomment %}
+    {% if settings.line_height contains 'var(' %}
+      --line-height: {{ settings.line_height }};
+    {% elsif settings.type_preset == 'custom' and settings.font_size == blank %}
       --line-height--display: var(--line-height--display-{{ settings.line_height }});
       --line-height--heading: var(--line-height--heading-{{ settings.line_height }});
       --line-height--body: var(--line-height--body-{{ settings.line_height }});

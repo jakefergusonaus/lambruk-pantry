@@ -1462,6 +1462,69 @@ Screenshots taken at both breakpoints, confirming: static row gone, one badge ro
 
 ---
 
+## 51. Heading line-height — root cause fixed via a verbatim `var()` passthrough; homepage's 8 headings reconnected to their own design tokens (Stage 1 of 2, 2026-09-01)
+
+Jake flagged the hero reading looser than the design; investigation (this section's own prior turn) found it systemic — all 8 homepage headings built via the generic `text` block were rendering at a uniform **1.4** line-height ratio, regardless of their own font-size or design target. Root cause, traced through `snippets/typography-style.liquid`: every one of these headings sets `font_size` to a `var(--display-N-size)` reference (this project's own correct, established pattern), and the snippet's type-classification logic (display/heading/body) tries to parse that string as a literal rem number to pick which `--line-height--{type}-{value}` token to reference — a `var()` string can't be parsed that way, silently coerces to `0`, and always falls through to `type = 'body'`. Every custom heading sitewide was landing on `--line-height--body-normal` (1.4) by the same accident, not by design.
+
+**Decision: option (c) — give `line_height` the same verbatim-reference capability `font_size` already has**, rather than (a) per-block patches (leaves the trap live for every future heading) or (b) fixing the type-classification logic itself (a much larger, riskier stock-file change touching all 94 var()-sized blocks sitewide at once, and — confirmed in the investigation — would only reach `--line-height--display-normal` (1.1), not each heading's actual design value, since none of Horizon's three enum steps equal 1.04/1.06/1.08). The tokens needed for (c) already existed, unused: `--display-1-line-height` through `--display-4-line-height` and `--display-module-line-height`, each matching the design value the corresponding `--display-N-size` token was originally built from. Wiring `line_height` to its paired token isn't approximating the design — those numbers *are* the design, already recorded once and never connected.
+
+**Mechanism — `snippets/typography-style.liquid`, one additive branch, nothing else touched:**
+```liquid
+{% comment %}
+  Lambruk fork: verbatim passthrough for a var()-referenced line_height,
+  mirroring font_size's own direct-echo branch above. Added because the
+  enum branches below can't reach a custom ratio like 1.04 — they can
+  only ever resolve to one of tight/normal/loose per type. Existing
+  enum-keyword values are untouched; this only intercepts a value that
+  already looks like a CSS variable reference.
+{% endcomment %}
+{% if settings.line_height contains 'var(' %}
+  --line-height: {{ settings.line_height }};
+{% elsif settings.type_preset == 'custom' and settings.font_size == blank %}
+  ...
+```
+A `contains 'var('` check gates a single new branch that echoes the value directly, exactly matching `font_size`'s own existing direct-echo line (56). Every existing enum-keyword value (`tight`/`normal`/`loose`) — currently all 94 var()-sized blocks sitewide — doesn't contain that substring, so it falls straight through to the unmodified `elsif`/`else` branches, unaffected.
+
+**Homepage's 8 heading blocks updated** (`templates/index.json`), each block's `line_height` set to the token matching its *own already-set* `font_size` token — no font-size changes, no token changes, purely reconnecting the existing pairing:
+
+| Heading | `font_size` token (unchanged) | `line_height` set to |
+|---|---|---|
+| Hero H1 | `--display-1-size` | `var(--display-1-line-height)` |
+| Explore by category | `--display-module-size` | `var(--display-module-line-height)` |
+| Lambruk Pantry Cafe | `--display-3-size` | `var(--display-3-line-height)` |
+| What everyone's reaching for | `--display-module-size` | `var(--display-module-line-height)` |
+| Curated for every occasion | `--display-module-size` | `var(--display-module-line-height)` |
+| Wholesale partnerships | `--display-4-size` | `var(--display-4-line-height)` |
+| A high tea worth travelling for | `--display-4-size` | `var(--display-4-line-height)` |
+| Subscribe to Seasonal Dispatches | `--display-4-size` | `var(--display-4-line-height)` |
+
+**Verified live, 1280px, before → after, against the design numbers measured in the investigation pass** (the six without an explicit design line-height were measured via top-to-top distance between forced-wrapped lines on a styled clone, validated against the two headings with a known declared value before trusting it on the rest — see the investigation turn):
+
+| Heading | Font-size | Design (measured) | Build before | Build after |
+|---|---|---|---|---|
+| Hero H1 | 56px | 1.04 | 1.4 | **1.04** ✓ exact |
+| Explore by category | 36px | 1.141 (used, no design token — see REVIEW-NOTES dependency note below) | 1.4 | **1.1** (display-module token) |
+| Lambruk Pantry Cafe | 40px | 1.08 | 1.4 | **1.08** ✓ exact |
+| What everyone's reaching for | 36px | 1.141 (used) | 1.4 | **1.1** |
+| Curated for every occasion | 36px | 1.141 (used) | 1.4 | **1.1** |
+| Wholesale partnerships | 32px | 1.133 (used) | 1.4 | **1.15** (display-4 token) |
+| A high tea worth travelling for | 32px | 1.133 (used) | 1.4 | **1.15** |
+| Subscribe to Seasonal Dispatches | 32px | 1.125 (used) | 1.4 | **1.15** |
+
+Hero and Cafe intro — the only two with an explicit design-declared value — now match exactly. The other six land on their token's value, which is at most ~0.02 off the browser-default "used" value the design never actually specified (not a design gap this fix could close; there was nothing to match). The three `display-module` headings are correctly wired to *their current* font-size token, per the dependency noted below — not yet the token §16/§18 says they should eventually be on, since that's a separate bug, deliberately not touched here.
+
+**Confirmed unopted blocks are byte-identical, not just assumed** — sampled three text-scale blocks left untouched: hero eyebrow ("Multi Award Winning", `--text-3-size` + `line_height: "normal"`) and a marquee label ("Low FODMAP", same settings) both still resolve to `1.4` exactly (`--line-height--body-normal`, unchanged path); hero body copy ("Discover handcrafted teas...", `--text-1-size` + `line_height: "loose"`) still resolves to `1.6` exactly (`--line-height--body-loose`). All three take the same `elsif`/`else` branches as before the fork — the new branch never fires for them, confirming (c)'s central claim live rather than trusting the Liquid logic in isolation.
+
+`shopify theme check --path .` clean. Screenshot taken confirming the hero visually tightens as expected, no layout breakage.
+
+**Two things recorded, not solved, per instruction:**
+1. `--display-3-line-height` (1.08) vs two other live consumers' own declared 1.06 ("Traceable to the grower," "A home cook who kept going") — logged as an accepted concession in `design/DESIGN-TOKENS.md`, same place and reasoning as the Display 5 · Card and footer-copy concessions.
+2. The three `display-module` headings' line-height will need to move to `--display-4-line-height` in the same edit that eventually fixes their font-size token (§16/§18) — dependency logged in `REVIEW-NOTES.md` so the two settings don't get separated and left mismatched.
+
+**Stage 2 (remaining 20 display-scale blocks sitewide — Wholesale, Our Story, Contact, Cafe, Product, Shop All, 404, footer) not started.** Awaiting explicit go-ahead per instruction.
+
+---
+
 ## Summary
 
 | Area | Path taken |

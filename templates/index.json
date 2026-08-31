@@ -229,7 +229,7 @@
               "blocks": {
                 "icon": {
                   "type": "icon",
-                  "settings": { "icon": "check_box", "width": 14, "icon_color": "#BF8C45" },
+                  "settings": { "icon": "check_box", "width": 20, "icon_color": "#131A3E" },
                   "blocks": {}
                 },
                 "label": {
@@ -286,7 +286,7 @@
               "blocks": {
                 "icon": {
                   "type": "icon",
-                  "settings": { "icon": "check_box", "width": 14, "icon_color": "#BF8C45" },
+                  "settings": { "icon": "check_box", "width": 20, "icon_color": "#131A3E" },
                   "blocks": {}
                 },
                 "label": {
@@ -343,7 +343,7 @@
               "blocks": {
                 "icon": {
                   "type": "icon",
-                  "settings": { "icon": "check_box", "width": 14, "icon_color": "#BF8C45" },
+                  "settings": { "icon": "check_box", "width": 20, "icon_color": "#131A3E" },
                   "blocks": {}
                 },
                 "label": {
@@ -400,7 +400,7 @@
               "blocks": {
                 "icon": {
                   "type": "icon",
-                  "settings": { "icon": "check_box", "width": 14, "icon_color": "#BF8C45" },
+                  "settings": { "icon": "check_box", "width": 20, "icon_color": "#131A3E" },
                   "blocks": {}
                 },
                 "label": {
@@ -457,7 +457,7 @@
               "blocks": {
                 "icon": {
                   "type": "icon",
-                  "settings": { "icon": "check_box", "width": 14, "icon_color": "#BF8C45" },
+                  "settings": { "icon": "check_box", "width": 20, "icon_color": "#131A3E" },
                   "blocks": {}
                 },
                 "label": {

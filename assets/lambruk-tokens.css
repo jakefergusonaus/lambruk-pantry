@@ -403,6 +403,29 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Homepage trust-badge row ("Low FODMAP" etc, section_proof_bar): remove the
+   square outline from the check_box icon, enlarge and recolour the tick.
+   Horizon's check_box icon (snippets/icon.liquid) is one <svg> with two
+   <path> children — the box outline drawn first, the checkmark second, both
+   painted the same `color` via the icon block's own icon_color setting
+   (blocks/icon.liquid). There's no boxless check icon in Horizon's icon set
+   to swap to instead (checked the full option list in blocks/icon.liquid),
+   so removing the box means hiding its path, not choosing a different icon.
+   Matched by the box path's own `d` data, not `:first-child` — the homepage
+   also has three unrelated icons (map_pin/stopwatch/chat_bubble, Cafe info
+   card) whose own first path is meaningful content, not a box to hide;
+   chat_bubble's is one of its three dots. `[data-template="index"]`
+   (layout/theme.liquid's own <main data-template>, not a Shopify-generated
+   section id) scopes this to the homepage only — check_box is also used on
+   Wholesale's benefits list, a different colour, unrelated to this row, not
+   touched here. Size (14px→20px) and colour (#BF8C45 gold→#131A3E navy) are
+   set directly on the block's own width/icon_color settings in
+   templates/index.json, not here — only the box removal needs CSS, since
+   Horizon has no per-path settings. */
+[data-template="index"] svg.icon-default path[d^="M18.5 1.5H1.5L1.5 18.5H18.5V1.5Z"] {
+  display: none;
+}
+
 /* Shop All + category pages (Tea/Sauces & Chutneys/Pantry): 4-up at wide
    desktop, 3-up below that — ARCHITECTURE.md §47. Occasion pages stay 3-up
    deliberately (small collections, see §47) and are NOT touched here.

@@ -1377,6 +1377,22 @@ Neither is a visual regression (a single 688px-wide card at tablet width was an 
 
 ---
 
+## 48. Trust-badge row: box removed, tick enlarged and recoloured (2026-08-31)
+
+Homepage `section_proof_bar` ("Low FODMAP", "Gluten-Free", etc, 5 items) uses Horizon's native `check_box` icon (`blocks/icon.liquid` → `snippets/icon.liquid`). First established what the tick actually is, per instruction, before touching anything: one inline `<svg>` (viewBox `0 0 20 20`) with **two `<path>` children** — the square outline drawn first, the checkmark second — both painted the same colour via the icon block's own `icon_color` setting. Not a wrapper border, a font glyph, or a CSS pseudo-element; "larger" is the block's own `width` range setting (14→200px), and "remove the box" means hiding one of the two paths, since Horizon's icon set has no boxless checkmark to swap to instead (checked the full option list).
+
+**Changes:**
+- `templates/index.json`: all 5 icon blocks, `width: 14 → 20`, `icon_color: "#BF8C45" → "#131A3E"`.
+- `assets/lambruk-tokens.css`: new rule hiding the box path via its own SVG `d` data, not `:first-child` — the homepage also carries three unrelated icons (`map_pin`/`stopwatch`/`chat_bubble` in the Cafe info card) whose own first path is real content, not a box; `chat_bubble` alone is 4 paths (3 dots + outline), and a positional selector would have deleted one of its dots. Matched instead on the box path's distinctive `d`-attribute prefix, scoped to `[data-template="index"]` (the sitewide `<main data-template="{{ template }}">` from `layout/theme.liquid`, not a Shopify-generated section id — more stable than the section-id approach used in §47, since it isn't tied to any template-asset ID at all).
+
+**Scoping verified live, not assumed:** homepage has 8 total icon SVGs; exactly the 5 `check_box` instances had a path hidden, all matching the box's `d` prefix; the other 3 (Cafe info card) had zero hidden paths, full path count intact. Checked Wholesale's own 4 `check_box` icons separately (different page, different colour `#986A34`, unrelated to this row) — `data-template="page.wholesale"`, zero hidden paths, confirming the scope holds.
+
+**Discrepancy flagged, not silently resolved:** the instruction was to match the tick to "the label text (#131A3E)". The label's actual `text_color` in the same JSON blocks is `#4A5478` (a muted blue-grey), not `#131A3E` (navy) — confirmed live, computed colour matches the JSON. Built to the literal hex given (`#131A3E`), since that's an unambiguous instruction; flagging that the label itself isn't currently that colour, in case the mismatch was the actual target rather than the tick.
+
+Verified live at 1280px and 375px (mobile still stacks one-per-line, untouched) and on `/pages/wholesale`. `shopify theme check --path .` clean.
+
+---
+
 ## Summary
 
 | Area | Path taken |

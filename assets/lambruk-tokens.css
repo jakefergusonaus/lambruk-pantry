@@ -402,3 +402,49 @@ h1, h2, h3, h4, h5, h6 {
     padding-top: 0;
   }
 }
+
+/* Shop All + category pages (Tea/Sauces & Chutneys/Pantry): 4-up at wide
+   desktop, 3-up below that — ARCHITECTURE.md §47. Occasion pages stay 3-up
+   deliberately (small collections, see §47) and are NOT touched here.
+
+   No stable semantic hook exists for "collection pages except occasion":
+   layout/theme.liquid emits no template.suffix/page_type class anywhere on
+   body or main (checked directly, not assumed — the theme's only
+   request.page_type use is a one-off 'index' check in sections/header.liquid,
+   unrelated to collection pages). Adding one would mean editing
+   layout/theme.liquid, a file Horizon updates often — a worse trade than
+   the fragility below, per instruction.
+
+   So this is scoped the only way available without touching Liquid: the
+   two class names below are Shopify-GENERATED template-asset IDs
+   (`.product-grid--template--<id>__main`, set by snippets/product-grid.liquid
+   from `section.id`), hardcoded as they exist today (checked live,
+   2026-08-31):
+     template--25877634711853__main  → collection.all.json (Shop All)
+     template--25868165546285__main  → collection.json (the default
+                                        template — also Tea/Sauces &
+                                        Chutneys/Pantry Staples)
+   These IDs are stable under ordinary editing (JSON edits, content changes,
+   Admin renames) but are NOT the section's own key — they're tied to the
+   template ASSET record itself. If either template.json file is ever
+   deleted and recreated as a new asset (not renamed — the underlying
+   record), the ID changes and this rule silently stops matching: no error,
+   grid reverts to whatever product_card_size says (currently "large",
+   340px/3-up). See REVIEW-NOTES.md for the symptom to watch for.
+
+   325px is the resolved minimum (not Horizon's native 340px large/250px
+   medium) — arithmetic in ARCHITECTURE.md §47: floor((container+28)/(min+28))
+   gives 3 columns at a 1200px container (~381px cards) and 4 columns once
+   the container hits its 1440px page-width cap (~339px cards), with margin
+   on both sides of the flip point so the ~1440-1520px fluid container band
+   doesn't flip unpredictably. Also checked below the range this was
+   originally derived for (verification at 768px/1140px surfaced two more
+   auto-fill column thresholds in the sub-1200px tablet range, an inherent
+   side effect of lowering the minimum, not scoped to just the 1440px cap) —
+   325 clears both of those with real margin (10px, 29px) rather than the
+   first value tried (330), which sat exactly on the 768px boundary with
+   zero clearance. See §47 for the full verification. */
+.product-grid--template--25877634711853__main:is(.product-grid--grid),
+.product-grid--template--25868165546285__main:is(.product-grid--grid) {
+  --product-grid-columns-desktop: repeat(auto-fill, minmax(325px, 1fr)) !important;
+}

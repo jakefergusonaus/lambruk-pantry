@@ -1305,6 +1305,78 @@ Client supplied the Cafe menu PDF (to be uploaded to Files by Jake, not by this 
 
 ---
 
+## 47. Shop All + category pages: 4-up at wide desktop, occasion pages stay 3-up (2026-08-31)
+
+Reverses part of §43's card-sizing pass on request: Jake wants a fourth column once the viewport is wide enough, on Shop All and the three category pages only — not occasion pages, and not a sitewide change.
+
+**Measured before changing anything, per instruction.** Content container is `--page-content-width`, driven by `settings.page_width` ("narrow" = 90rem/1440px, set in `snippets/theme-styles-variables.liquid`) — a theme setting, not per-section. Below a ~1400-1520px viewport (the container itself is fluid there, confirmed live, not exactly the textbook 1400px breakpoint), the content area tracks viewport growth linearly (`assets/base.css`'s `.grid` columns use `var(--margin-4xl)` fixed margins); above that band it hard-caps at 1440px and all further viewport growth goes into the margins instead. Current 3-up card width (product_card_size: "large", 340px minimum, §43) measured at **381px** at a 1280px viewport — already 12% over Horizon's own 340px minimum, since auto-fill stretches to fill the row. At the 1440px cap, 3-up cards reach **461px** — 25% over the 340px "large" nominal size, and this had never been measured above 1280px before now (the design source itself only specifies one viewport, so there was no wide-desktop target to check against). `sections/main-collection.liquid` has no native column-count setting at all (confirmed by grep, unlike the homepage rail's `product-list.liquid`) — the only lever is `product_card_size`'s 4-value enum (small/medium/large/extra-large), each a fixed pixel floor fed into `repeat(auto-fill, minmax(N, 1fr))`.
+
+**Rejected mechanisms, per instruction to state the tradeoff:**
+- **A fixed column count** — would force whatever the container is at 1280px (a 1280px laptop, common in this site's mobile-majority-but-not-exclusively traffic) into columns sized for the 1920px case, producing ~279px cards on the smaller screen. The column math is inherently viewport-dependent; a fixed count throws that away.
+- **Widening `page_width`** — global, sitewide (headers, footers, every non-grid section too), and overshoots badly: the next tier up ("normal", 120rem/1920px) would let 3-up cards reach 459px, worse than the 461px problem already found, not better, and it wasn't scoped to only these two templates in the first place.
+
+**Mechanism chosen: override the card-size minimum**, scoped to these two templates only, landing between Horizon's native 250px (medium) and 340px (large) floors. Arithmetic (`columns = floor((container + gap) / (min + gap))`, gap fixed at 28px, confirmed via computed style, unchanged from §43):
+
+| min (px) | 1280px → container 1200 | 1440px → container 1360 | 1520px → container 1440 (capped) | 1600px → container 1440 | 1920px → container 1440 |
+|---|---|---|---|---|---|
+| valid range | 320–339px produces 3-up through 1360px container, 4-up once capped at 1440px, with no early flip |
+| 330 (first tried) | 3 cols, 381.33px | 3 cols, 434.67px | 4 cols, 339.00px | 4 cols, 339.00px | 4 cols, 339.00px |
+
+330 sits 10px inside the range's low edge (320) and 9px inside its high edge (339), chosen to keep clear of both boundaries in the 1440–1520px band where the container itself is fluid. **Revised to 325 after verification below surfaced two more auto-fill column thresholds outside this range** (see "Two more column thresholds" below) — 330 sat exactly on one of them with zero clearance. Final arithmetic, all values live-verified, not just derived:
+
+| Viewport | Container | min=325 columns | Card width | Margin from next boundary |
+|---|---|---|---|---|
+| 768px | 688px | 2 | 330.00px | 10px (needs ≥678px) |
+| 1140px | 1060px | 3 | 334.66px | 29px (needs ≥1031px) |
+| 1280px | 1200px | 3 | 381.33px | matches original target |
+| 1440px | 1360px | 3 | 434.67px | matches original target |
+| 1520–1920px | 1440px (capped) | 4 | 339.00px | matches original target |
+
+325 reproduces every original target exactly (the 1280/1440/1520 checkpoints are unchanged from the 330 arithmetic — moving the minimum by 5px doesn't touch those, only the two lower thresholds) while giving both new boundaries real clearance instead of sitting on them.
+
+**Where the override lives, and why not a Liquid change.** The only place `--product-grid-columns-desktop` is set for a specific section instance is `snippets/product-grid.liquid`'s own `{% style %}` block: `.product-grid--{{ section.id }}:is(.product-grid--grid) { --product-grid-columns-desktop: repeat(auto-fill, minmax({{ product_card_size }}, 1fr)); }`. Two questions were investigated before choosing a mechanism, both raised on request rather than assumed:
+
+- **Does the image `sizes` attribute already diverge from actual card width?** Yes, already and independent of this change. Measured live on Shop All: at 1280px, `sizes` (`snippets/util-autofill-img-size-attr.liquid`, called from `card-gallery.liquid`) resolves to `33vw` = 422px against a real 381px card (11% over); at 1600px, `25vw` = 400px against a real 461px card (13% under — the opposite direction). Traced why: that util generates breakpoints assuming viewport ≈ container, with zero awareness that the container hard-caps at `page_width` — architecturally incapable of tracking the real value once the cap engages, regardless of what `product_card_size` is set to. This is a pre-existing Horizon approximation (not something this build introduced), and it settles the "keep sizes in sync" question — there's no existing sync to preserve, so a CSS-only change doesn't create a new inconsistency, just adds a few more percent to one that already exists. Logged separately in `REVIEW-NOTES.md`.
+- **Is pure CSS-only, no Liquid touched, feasible?** Yes, with one disclosed cost. The `.product-grid--{{ section.id }}` class is the only DOM hook that distinguishes these two templates' grids from every other product-grid consumer (occasion pages share the identical section type and settings shape — confirmed — so any broader/unscoped rule would incorrectly reach occasion too, which must stay 3-up). No stable semantic alternative exists: checked `layout/theme.liquid` directly for a `template.suffix` or `request.page_type` class on `<body>`/`<main>` — none exists (the theme's only `request.page_type` use anywhere is a one-off `== 'index'` check in `sections/header.liquid`, unrelated). Adding one would mean a one-line edit to `layout/theme.liquid` — a core file Horizon updates often — which is a worse trade than the alternative. So the override in `assets/lambruk-tokens.css` hardcodes the two templates' current, live `section.id` values directly:
+  ```css
+  .product-grid--template--25877634711853__main:is(.product-grid--grid),
+  .product-grid--template--25868165546285__main:is(.product-grid--grid) {
+    --product-grid-columns-desktop: repeat(auto-fill, minmax(325px, 1fr)) !important;
+  }
+  ```
+  (`!important` needed — matches Horizon's own rule at identical specificity, same precedent as §43/§45.) First ID is `collection.all.json` (Shop All); second is `collection.json`, the default template, which is why it also covers Tea/Sauces & Chutneys/Pantry Staples with one rule. **Real, disclosed cost:** these are Shopify-generated template-*asset* IDs, not the section's own key — stable under ordinary editing (content, JSON, Admin renames) but tied to the underlying asset record. If either `collection.all.json` or `collection.json` is ever deleted and recreated as a new asset, the ID changes and this rule stops matching, silently — no error, the grid just reverts to whatever `product_card_size` says. Same risk category already rejected once this session for `#shopify-section-{{id}}`-style scoping elsewhere, accepted here only because the alternative (forking `product-grid.liquid`, or a new schema setting making the existing `product_card_size` dropdown silently inert) was judged worse. Logged in `REVIEW-NOTES.md`, titled by symptom ("grid silently reverts to 3-up"), not by cause, so it's findable by whoever hits it without already knowing why.
+
+**Occasion pages: left at 3-up, deliberately.** Not touched by the override above (different `section.id`, and occasion's own template — `collection.occasion.json` — was never in scope). Occasion collections hold 5-6 products; 3-up fills those rows tidily, 4-up would leave an orphan row of one or two. Logged in `REVIEW-NOTES.md` as a decision, not an oversight.
+
+**Two more column thresholds, found by the requested 768px check, not assumed away.** The explicit instruction was to verify 768px "to confirm mobile and tablet are untouched." It wasn't: lowering the minimum shifts *every* auto-fill column threshold, not just the one at the 1440px cap this override was built for — the same `floor((container+gap)/(min+gap))` math produces an earlier breakpoint at every column count, not only the one this change specifically targeted. Confirmed by simulating the old 340px value live against the current DOM (temporary inline-style override, no file changes) at the two affected widths:
+
+| Viewport | Container | Old (340px min) | New — first tried (330px) | 
+|---|---|---|---|
+| 768px | 688px | 1 column, 688px card | 2 columns, exactly 330.00px — the minimum itself, zero clearance |
+| ~1140px | 1060px | 2 columns, 516px card | 3 columns, 334.66px |
+
+Neither is a visual regression (a single 688px-wide card at tablet width was an unreviewed rough edge, not a verified-correct baseline), but 330 landing exactly on the 768px boundary — `(688+28)/(330+28) = 2.000` precisely — meant any small variance (a scrollbar, a fractional viewport, a slightly different margin) could flip it back to 1 column with no warning. Revised to 325 for real clearance at both thresholds (10px and 29px respectively — see the arithmetic table above), re-verified live after the change: 768px → 2 columns/330.00px, 1140px → 3 columns/334.66px, both with margin this time, and all five original desktop checkpoints (1280/1440/1520/1600/1920) unchanged from the 330 arithmetic since none of them sit near either of these two lower thresholds.
+
+**Occasion collections aren't actually on `collection.occasion.json` live yet — a pre-existing gap (§37/§38), not something this change created, but now visible during review.** Checked three of the four Curated Occasion collections (Slow Mornings, Entertaining, Sunday Roast) against their live, unassigned URLs: all three render `.product-grid--template--25868165546285__main` — the same section ID as `collection.json` — not their own template's ID. Confirmed the real `collection.occasion.json` template is correctly excluded by this override (`?view=occasion` on Slow Mornings: distinct ID `template--25893430231341__main`, 3-up, 461px, unaffected) — the mechanism is right for the assigned state. The problem is upstream: same as §37's finding for Shop All, Admin's theme-template picker only offers templates that exist in the *published* theme (Flux), so occasion collections likely can't be assigned `template_suffix: occasion` until Horizon publishes. Until then, previewing an occasion collection in the Horizon review theme shows 4-up, not the 3-up just decided above — because it's silently rendering the default template, which this change now makes behave differently at wide viewports. Not customer-facing (Flux, the live theme, is untouched either way) and self-resolves once template assignment happens post-publish, at which point this override's exclusion is already correct and needs no further change. **Decision (2026-08-31): ship as-is, documented** — rather than fork Liquid to work around a temporary, pre-publish-only state. Logged in `REVIEW-NOTES.md`.
+
+**Verification — rendered card widths and column counts, measured live, not derived, at the final min=325:**
+
+| Viewport | Template | Columns | Card width |
+|---|---|---|---|
+| 375px | Shop All | 2 (unchanged) | mobile untouched |
+| 768px | Shop All | 2 | 330.00px |
+| 1140px | Shop All | 3 | 334.66px |
+| 1280px | Shop All | 3 | 381.33px |
+| 1440px | Shop All | 3 | 434.67px |
+| 1520px | Shop All | 4 | 339.00px |
+| 1600px | Shop All | 4 | 339.00px |
+| 1920px | Shop All | 4 | 339.00px |
+| 1600px | Occasion (`?view=occasion`) | 3 (unchanged) | confirms exclusion held |
+
+`shopify theme check --path .` clean.
+
+---
+
 ## Summary
 
 | Area | Path taken |

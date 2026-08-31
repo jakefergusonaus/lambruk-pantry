@@ -13,6 +13,7 @@
     "logo_inverse": "shopify://shop_images/Lambruk_Logo_Horizontal_white.svg",
     "logo_height": 60,
     "logo_height_mobile": 44,
+    "lambruk_cafe_menu_url": "https://cdn.shopify.com/s/files/1/0876/8762/7053/files/Cafe_Menu__Lambruk_Pantry.pdf?v=1787897422",
     "page_text_color": "{{ settings.color_palette.foreground }}",
     "type_body_font": "geist_n4",
     "type_subheading_font": "instrument_serif_n4",

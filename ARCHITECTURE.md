@@ -1393,6 +1393,37 @@ Verified live at 1280px and 375px (mobile still stacks one-per-line, untouched) 
 
 ---
 
+## 49. Trust-badge tick colour: design source checked, found wrong on both counts — and a marquee built alongside the static row, gap-grouping solved, two gaps disclosed (2026-08-31)
+
+**Colour, investigated before touching anything, per instruction.** Jake's "same blue as the label text (#131A3E)" was a guess at the label's value, not a hex from him directly — checked against `LambrukPantry Desktop.dc.html` before applying it. Two things found, neither matching what was asked or what was built:
+
+- The label's own colour (`#4A5478`) **does** match the design source exactly (confirmed at `Desktop.dc.html:68-72`) — no drift there, nothing to fix on the label.
+- The tick does **not** match the label in the design, in either instance found in the source. `Desktop.dc.html:68-72` (this row) and `:775` (a second, unrelated four-item list) both use a fixed `stroke="#BF8C45"` on the checkmark regardless of the adjacent label's own colour — `#4A5478` in one case, `#131A3E` in the other. The design's intent is a consistent brand-gold tick, decoupled from label colour, not "match the label" — contradicting both the original build (`#131A3E`) and the proposed fix (`#4A5478`).
+
+Raw `#BF8C45` itself isn't usable directly — DESIGN-TOKENS.md's own earlier audit found it fails WCAG contrast (2.86:1). This project already built the accessible substitute for exactly this role: `--icon-accent: #8A6A32` (`assets/lambruk-tokens.css`, resolved 2026-08-18, one existing consumer in `lambruk-wholesale-enquiry-form.liquid`). Computed fresh against this row's actual background (`#F4F1EA`, not assumed): **4.44:1**, comfortably clearing the 3:1 non-text graphics bar. **Recommended value: `var(--icon-accent)`. Not applied — awaiting sign-off**, per instruction to report before changing. Comment left in `lambruk-tokens.css` marking the current `#131A3E` as confirmed wrong, not yet fixed.
+
+**Marquee — blocker solved before building, per instruction.** The risk: marquee's block model (`text`/`icon`/`logo`/`_divider` only, no `group`) means each tick+label pair is two flat siblings sharing one flex `gap` with every other child in the row — unscoped, five pairs read as ten evenly-spaced items once moving, and a reader can't tell which label belongs to which tick.
+
+**Approach:** set the marquee's own `gap_between_elements` small (8px — tight, icon-to-label), then add extra `margin-inline-start` to icon elements only, additive on top of the flex gap. This widens label→next-icon spacing without touching icon→its-own-label spacing, using only the block's existing setting plus one CSS rule — no Liquid fork, no new block type.
+
+**Cost, measured, not estimated — and corrected once, live:** first attempt targeted `svg.icon-default` directly and produced a flat 8px gap everywhere (silently wrong, caught by measuring rendered gaps rather than trusting the CSS). Cause: Shopify wraps every section block in a generic `<div class="shopify-block {type}-block">` — the SVG is a grandchild of the row, not a direct child, unlike the group-based static row where `icon.liquid`'s bare `<svg>` has no such wrapper. Retargeted to the wrapper div (`.icon-block`), re-measured: **8px icon→label, 40px label→next-icon**, confirmed via live `getBoundingClientRect()` on six consecutive children, not visual judgement alone. Total cost: **2 CSS rules (~15 lines with disclosure comments), one existing setting value, zero Liquid changes** — inside the 20-line budget.
+
+**Mobile — a real, disclosed behaviour change, not assumed acceptable.** Today's static row stacks five lines cleanly on mobile (confirmed screenshot, no wrap/overflow). The native marquee component has no separate mobile mode — same `overflow:hidden` + CSS animation at every viewport. Confirmed live at 375px: the marquee renders as one continuously scrolling line, same as desktop, replacing the five-line stack for this row specifically (once/if it replaces the static row — see below). Flagging before Jake discovers it rather than after.
+
+**Built alongside, not replacing — `section_proof_bar_marquee` added to `templates/index.json`, `section_proof_bar` untouched.** Both currently render on the homepage, in that order, for direct comparison. Content, labels, colours (matching the static row's current, not-yet-corrected `#131A3E`, so the two rows are visually consistent while the colour question is open — update both together once decided) all mirror the static row exactly; only layout mechanism differs.
+
+**Native mechanism reused as-is, verified live, not assumed from reading the JS:**
+- Seamless loop: automatic, `marquee.js`'s own `IntersectionObserver`-driven duplication — confirmed 2 content copies present without any Liquid-side list duplication.
+- Direction: default `movement_direction` (`"normal"`) already animates right-to-left — no setting change needed.
+- `prefers-reduced-motion`: untouched, native, gates the animation entirely.
+- Hover pause: confirmed via a **real** mouse hover (a synthetic `PointerEvent` dispatch did not trigger the component's listener — real input required for this test), `playbackRate` reached `0`.
+
+**Keyboard-focus pause — added, but found inert as shipped, disclosed rather than overstated.** Added `marquee-component:focus-within .marquee__wrapper { animation-play-state: paused; }`, sitewide (this is a gap in the native component itself, not scoped to one section). Checked whether it's actually reachable: **nothing inside this marquee is focusable, and `marquee-component` carries no `tabindex`** — a keyboard user currently has no way to Tab into it at all, so the CSS is correct but has no trigger to fire today. Real fix is a one-line `tabindex="0"` on the `marquee-component` element in `sections/marquee.liquid` itself — a stock file, which per this project's customisation hierarchy needs explicit sign-off before editing, not assumed. **Not applied. Awaiting decision.**
+
+`shopify theme check --path .` clean throughout.
+
+---
+
 ## Summary
 
 | Area | Path taken |

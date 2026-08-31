@@ -501,6 +501,29 @@
         "padding-block-end": 16
       }
     },
+    "section_proof_bar_marquee": {
+      "type": "marquee",
+      "blocks": {
+        "icon_1": { "type": "icon", "settings": { "icon": "check_box", "width": 20, "icon_color": "#131A3E" }, "blocks": {} },
+        "label_1": { "type": "text", "settings": { "text": "<p>Low FODMAP</p>", "text_color": "#4A5478", "width": "fit-content", "max_width": "normal", "alignment": "left", "type_preset": "custom", "font": "var(--font-body--family)", "font_size": "var(--text-3-size)", "line_height": "normal", "letter_spacing": "loose", "case": "uppercase", "wrap": "pretty", "background": false, "background_color": "#00000026", "corner_radius": 0, "padding-block-start": 0, "padding-block-end": 0, "padding-inline-start": 0, "padding-inline-end": 0 }, "blocks": {} },
+        "icon_2": { "type": "icon", "settings": { "icon": "check_box", "width": 20, "icon_color": "#131A3E" }, "blocks": {} },
+        "label_2": { "type": "text", "settings": { "text": "<p>Gluten-Free</p>", "text_color": "#4A5478", "width": "fit-content", "max_width": "normal", "alignment": "left", "type_preset": "custom", "font": "var(--font-body--family)", "font_size": "var(--text-3-size)", "line_height": "normal", "letter_spacing": "loose", "case": "uppercase", "wrap": "pretty", "background": false, "background_color": "#00000026", "corner_radius": 0, "padding-block-start": 0, "padding-block-end": 0, "padding-inline-start": 0, "padding-inline-end": 0 }, "blocks": {} },
+        "icon_3": { "type": "icon", "settings": { "icon": "check_box", "width": 20, "icon_color": "#131A3E" }, "blocks": {} },
+        "label_3": { "type": "text", "settings": { "text": "<p>Glyphosate-Free</p>", "text_color": "#4A5478", "width": "fit-content", "max_width": "normal", "alignment": "left", "type_preset": "custom", "font": "var(--font-body--family)", "font_size": "var(--text-3-size)", "line_height": "normal", "letter_spacing": "loose", "case": "uppercase", "wrap": "pretty", "background": false, "background_color": "#00000026", "corner_radius": 0, "padding-block-start": 0, "padding-block-end": 0, "padding-inline-start": 0, "padding-inline-end": 0 }, "blocks": {} },
+        "icon_4": { "type": "icon", "settings": { "icon": "check_box", "width": 20, "icon_color": "#131A3E" }, "blocks": {} },
+        "label_4": { "type": "text", "settings": { "text": "<p>No Artificial Sweeteners</p>", "text_color": "#4A5478", "width": "fit-content", "max_width": "normal", "alignment": "left", "type_preset": "custom", "font": "var(--font-body--family)", "font_size": "var(--text-3-size)", "line_height": "normal", "letter_spacing": "loose", "case": "uppercase", "wrap": "pretty", "background": false, "background_color": "#00000026", "corner_radius": 0, "padding-block-start": 0, "padding-block-end": 0, "padding-inline-start": 0, "padding-inline-end": 0 }, "blocks": {} },
+        "icon_5": { "type": "icon", "settings": { "icon": "check_box", "width": 20, "icon_color": "#131A3E" }, "blocks": {} },
+        "label_5": { "type": "text", "settings": { "text": "<p>Top 9 Allergen-Free</p>", "text_color": "#4A5478", "width": "fit-content", "max_width": "normal", "alignment": "left", "type_preset": "custom", "font": "var(--font-body--family)", "font_size": "var(--text-3-size)", "line_height": "normal", "letter_spacing": "loose", "case": "uppercase", "wrap": "pretty", "background": false, "background_color": "#00000026", "corner_radius": 0, "padding-block-start": 0, "padding-block-end": 0, "padding-inline-start": 0, "padding-inline-end": 0 }, "blocks": {} }
+      },
+      "block_order": ["icon_1", "label_1", "icon_2", "label_2", "icon_3", "label_3", "icon_4", "label_4", "icon_5", "label_5"],
+      "settings": {
+        "movement_direction": "normal",
+        "background_color": "#F4F1EA",
+        "padding-block-start": 16,
+        "padding-block-end": 16,
+        "gap_between_elements": 8
+      }
+    },
     "section_explore_by_category": {
       "type": "collection-list",
       "blocks": {
@@ -1875,6 +1898,7 @@
   "order": [
     "section_hero",
     "section_proof_bar",
+    "section_proof_bar_marquee",
     "section_explore_by_category",
     "section_lambruk_promise",
     "media_with_content_cafe_intro",

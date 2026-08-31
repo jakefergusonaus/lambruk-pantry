@@ -418,12 +418,69 @@ h1, h2, h3, h4, h5, h6 {
    (layout/theme.liquid's own <main data-template>, not a Shopify-generated
    section id) scopes this to the homepage only — check_box is also used on
    Wholesale's benefits list, a different colour, unrelated to this row, not
-   touched here. Size (14px→20px) and colour (#BF8C45 gold→#131A3E navy) are
-   set directly on the block's own width/icon_color settings in
+   touched here. Size (14px→20px) is set on the block's own width setting in
    templates/index.json, not here — only the box removal needs CSS, since
-   Horizon has no per-path settings. */
+   Horizon has no per-path settings.
+
+   Colour is #131A3E (navy) as of 2026-08-31 — CONFIRMED WRONG, left as-is
+   pending a decision, not fixed here. The design source's own checkmark
+   (LambrukPantry Desktop.dc.html:68-72, and again at :775) uses a fixed
+   `stroke="#BF8C45"` regardless of the adjacent label's colour (#4A5478 in
+   one instance, #131A3E in the other) — the tick is a consistent brand-gold
+   accent, not matched to label colour, contradicting both the original
+   build and Jake's proposed "match the label" fix. The raw #BF8C45 itself
+   fails WCAG contrast per this project's own earlier audit (DESIGN-TOKENS.md:
+   2.86:1); `--icon-accent: #8A6A32` (defined above, already consumed once by
+   lambruk-wholesale-enquiry-form.liquid) is this project's existing,
+   accessibility-corrected substitute for exactly this role, and computes to
+   4.44:1 against this row's own #F4F1EA background — clears the 3:1 non-text
+   graphics bar with margin. Recommended value once Jake confirms:
+   var(--icon-accent). Not applied without sign-off. */
 [data-template="index"] svg.icon-default path[d^="M18.5 1.5H1.5L1.5 18.5H18.5V1.5Z"] {
   display: none;
+}
+
+/* Trust-badge MARQUEE (section_proof_bar_marquee) — built alongside the
+   static row above, not replacing it yet, pending Jake's review (2026-08-31).
+   Native marquee (sections/marquee.liquid, blocks/_marquee.liquid,
+   assets/marquee.js) reused as-is: automatic seamless-loop duplication,
+   prefers-reduced-motion handling and overflow containment all native,
+   zero Liquid/JS changes needed for those. Two additions:
+
+   1. Icon-to-label vs pair-to-pair spacing. Marquee's own block model only
+      accepts text/icon/logo/_divider as direct children (no group), so each
+      tick+label pair is two flat siblings sharing ONE flex `gap` with every
+      other child — unscoped, that reads as ten evenly-spaced items in a
+      moving row, not five pairs (a reader can't tell which label a tick
+      belongs to once it's scrolling, unlike a static row where the eye can
+      still group them). Fixed without touching Liquid: gap_between_elements
+      set small (8px, tight icon-to-label) via the block's own existing
+      setting, then extra margin added only to icon elements — additive on
+      top of the flex gap, pushing each icon further from the PRECEDING
+      label without affecting its distance to its OWN, following label.
+      Both icon and text blocks render as direct children wrapped in a
+      generic `<div class="shopify-block {type}-block">` (Shopify's own
+      section-block wrapper, confirmed live — NOT the case for the group-
+      based static row above, where icon.liquid's bare <svg> is the direct
+      child; a section's `content_for 'blocks'` wraps every block, a
+      group's does not). Targets `.icon-block`, the wrapper div, not the
+      inner <svg> — a first attempt targeting `svg.icon-default` directly
+      matched nothing (wrong element depth) and silently produced a flat
+      8px gap everywhere, caught by measuring live rather than assuming
+      the CSS took effect.
+   2. Keyboard-focus pause — marquee.js's own pause mechanism is pointer-only
+      (pointerenter/pointerleave), no focus/blur handling at all, a WCAG
+      2.2.2 gap for any future marquee with focusable content. Fixed with an
+      immediate (non-eased, unlike the JS's hover ramp) CSS pause on
+      :focus-within — sitewide on marquee-component, not scoped to this one
+      section, since the gap is in the native component itself and any
+      future marquee should get the same fix, not need it re-added. */
+[data-template="index"] marquee-component .marquee__repeated-items > .icon-block {
+  margin-inline-start: 32px;
+}
+
+marquee-component:focus-within .marquee__wrapper {
+  animation-play-state: paused;
 }
 
 /* Shop All + category pages (Tea/Sauces & Chutneys/Pantry): 4-up at wide

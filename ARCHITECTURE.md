@@ -1432,6 +1432,8 @@ Raw `#BF8C45` itself isn't usable directly — DESIGN-TOKENS.md's own earlier au
 
 Verified live after both changes: tick colour `rgb(74, 84, 120)` on both the static row and the marquee, exact match to `#4A5478`; no `marquee-component:focus-within` rule present in any stylesheet. `shopify theme check --path .` clean.
 
+**Git note:** commit `060224d` (§50 — removes the static row, slows the scroll, widens the desktop pair-gap) was pushed with the subject line `Build marquee alongside static trust-badge row; flag tick colour as wrong`, an authoring mistake that duplicates commit `07954f4`'s actual title verbatim rather than describing `060224d`'s own content. Left uncorrected on purpose — not worth a force-push to `main` — so `git log` and this doc will disagree on that one line; §50 is the accurate record of what `060224d` did.
+
 ---
 
 ## 50. Static trust-badge row removed; marquee slowed and given wider desktop pair-gaps (2026-09-01)

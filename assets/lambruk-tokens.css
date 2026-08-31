@@ -403,8 +403,10 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Homepage trust-badge row ("Low FODMAP" etc, section_proof_bar): remove the
-   square outline from the check_box icon, enlarge and recolour the tick.
+/* Homepage trust-badge row ("Low FODMAP" etc — section_proof_bar_marquee;
+   originally built for a static section_proof_bar too, removed 2026-09-01
+   once Jake chose the marquee, see below): remove the square outline from
+   the check_box icon, enlarge and recolour the tick.
    Horizon's check_box icon (snippets/icon.liquid) is one <svg> with two
    <path> children — the box outline drawn first, the checkmark second, both
    painted the same `color` via the icon block's own icon_color setting
@@ -437,12 +439,15 @@ h1, h2, h3, h4, h5, h6 {
   display: none;
 }
 
-/* Trust-badge MARQUEE (section_proof_bar_marquee) — built alongside the
-   static row above, not replacing it yet, pending Jake's review (2026-08-31).
+/* Trust-badge MARQUEE (section_proof_bar_marquee) — built 2026-08-31
+   alongside the original static section_proof_bar for comparison; Jake
+   chose the marquee and the static section was removed from
+   templates/index.json on 2026-09-01 (ARCHITECTURE.md §50). This is now
+   the only trust-badge row on the homepage.
    Native marquee (sections/marquee.liquid, blocks/_marquee.liquid,
    assets/marquee.js) reused as-is: automatic seamless-loop duplication,
    prefers-reduced-motion handling and overflow containment all native,
-   zero Liquid/JS changes needed for those. Two additions:
+   zero Liquid/JS changes needed for those. Additions:
 
    1. Icon-to-label vs pair-to-pair spacing. Marquee's own block model only
       accepts text/icon/logo/_divider as direct children (no group), so each
@@ -457,36 +462,80 @@ h1, h2, h3, h4, h5, h6 {
       label without affecting its distance to its OWN, following label.
       Both icon and text blocks render as direct children wrapped in a
       generic `<div class="shopify-block {type}-block">` (Shopify's own
-      section-block wrapper, confirmed live — NOT the case for the group-
-      based static row above, where icon.liquid's bare <svg> is the direct
-      child; a section's `content_for 'blocks'` wraps every block, a
-      group's does not). Targets `.icon-block`, the wrapper div, not the
+      section-block wrapper, confirmed live — NOT the case for a `group`-
+      based icon+label row, e.g. the Cafe info card further down this same
+      template, where icon.liquid's bare <svg> is the direct child; a
+      section's `content_for 'blocks'` wraps every block, a group's does
+      not). Targets `.icon-block`, the wrapper div, not the
       inner <svg> — a first attempt targeting `svg.icon-default` directly
       matched nothing (wrong element depth) and silently produced a flat
       8px gap everywhere, caught by measuring live rather than assuming
       the CSS took effect.
-   2. Keyboard/touch pause — NOT implemented, deliberately, after trying and
-      reverting it (2026-08-31). marquee.js's own pause mechanism is
-      pointer-only (pointerenter/pointerleave); a `:focus-within` CSS pause
-      was added to cover keyboard users, but checked live and found nothing
-      inside this marquee is focusable and marquee-component itself carries
-      no `tabindex` — the rule had no way to ever fire, dead CSS pretending
-      to be a protection. The straightforward fix (`tabindex="0"` on
-      marquee-component) was rejected: making a non-interactive element
-      focusable creates a dead stop in the tab order — its own accessibility
-      problem — and does nothing for touch users, who can't hover either.
-      That trades one gap for two rather than closing one. A real fix (a
-      visible, always-focusable pause/play control) is a bigger build than
-      this task's scope and needs its own decision, not a CSS bolt-on.
-      Current, honest state: hover pauses it (mouse only, confirmed live via
-      a real hover — a synthetic PointerEvent did not trigger the native
-      component's listener). Keyboard and touch users have no way to pause
-      it. `prefers-reduced-motion: reduce` disables the animation entirely
-      regardless of input method (native, unchanged, confirmed above) — the
-      one mechanism that protects every user regardless of device. */
+
+      Desktop-only widening (2026-09-01, ARCHITECTURE.md §50): base rule
+      below stays 32px margin (40px total pair gap, 8+32) at every
+      viewport — this is the untouched, original, mobile-correct value.
+      A second rule at `min-width: 750px` (this file's existing desktop
+      cutoff, e.g. the Shop All padding fix above) raises it to 72px
+      margin (80px total) for wider viewports only. Icon-to-label spacing
+      (the 8px flex gap) is set once, on the block's own setting, and
+      isn't touched by either rule — identical at both breakpoints.
+   2. Scroll speed halved-again — deliberately slower (2026-09-01,
+      ARCHITECTURE.md §50). No schema setting exists for this on the
+      native section (checked sections/marquee.liquid directly): the only
+      speed lever is `data-speed-factor="25"`, a literal HTML attribute
+      hardcoded in that stock file, not a per-instance setting — changing
+      it means forking a core file for a SITEWIDE effect (every marquee
+      this theme ever adds), a worse trade than a scoped override for one
+      section. `--marquee-speed` (seconds per loop) is set dynamically by
+      marquee.js as `sqrt(numberOfCopies) * speedFactor`, inline on
+      `marquee-component`, recalculated on resize — so a flat override of
+      the variable itself would freeze the duration and break that
+      viewport-responsive scaling. Targeting `animation-duration` on the
+      wrapper instead, via `calc(var(--marquee-speed) * 1.5)`: the custom
+      property still inherits from its animated ancestor and keeps
+      updating on resize exactly as before, just uniformly 1.5× slower at
+      every viewport. Measured before/after at 1280px: 35.36s → 53.03s per
+      full loop (`sqrt(2) × 25` → `sqrt(2) × 25 × 1.5`, `numberOfCopies` 2
+      at this viewport specifically — the raw seconds figure is viewport-
+      dependent, the 1.5× slowdown is not). `!important` needed to win the
+      `animation-duration` sub-property over Horizon's own `animation`
+      shorthand on the same element, matching this file's established
+      precedent for specificity ties (§43, §45, §47). */
 [data-template="index"] marquee-component .marquee__repeated-items > .icon-block {
   margin-inline-start: 32px;
 }
+
+@media screen and (min-width: 750px) {
+  [data-template="index"] marquee-component .marquee__repeated-items > .icon-block {
+    margin-inline-start: 72px;
+  }
+}
+
+[data-template="index"] marquee-component .marquee__wrapper {
+  animation-duration: calc(var(--marquee-speed) * 1.5) !important;
+}
+
+/* Keyboard/touch pause — NOT implemented, deliberately, after trying and
+   reverting it (2026-08-31). marquee.js's own pause mechanism is
+   pointer-only (pointerenter/pointerleave); a `:focus-within` CSS pause
+   was added to cover keyboard users, but checked live and found nothing
+   inside this marquee is focusable and marquee-component itself carries
+   no `tabindex` — the rule had no way to ever fire, dead CSS pretending
+   to be a protection. The straightforward fix (`tabindex="0"` on
+   marquee-component) was rejected: making a non-interactive element
+   focusable creates a dead stop in the tab order — its own accessibility
+   problem — and does nothing for touch users, who can't hover either.
+   That trades one gap for two rather than closing one. A real fix (a
+   visible, always-focusable pause/play control) is a bigger build than
+   this task's scope and needs its own decision, not a CSS bolt-on.
+   Current, honest state: hover pauses it (mouse only, confirmed live via
+   a real hover — a synthetic PointerEvent did not trigger the native
+   component's listener). Keyboard and touch users have no way to pause
+   it. `prefers-reduced-motion: reduce` disables the animation entirely
+   regardless of input method (native, unchanged, confirmed above) — the
+   one mechanism that protects every user regardless of device. No CSS
+   rule here — this paragraph is the record, not a fix. */
 
 /* Shop All + category pages (Tea/Sauces & Chutneys/Pantry): 4-up at wide
    desktop, 3-up below that — ARCHITECTURE.md §47. Occasion pages stay 3-up

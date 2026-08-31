@@ -1434,6 +1434,32 @@ Verified live after both changes: tick colour `rgb(74, 84, 120)` on both the sta
 
 ---
 
+## 50. Static trust-badge row removed; marquee slowed and given wider desktop pair-gaps (2026-09-01)
+
+Jake chose the marquee (§49). Three changes: remove the static row, slow the scroll, widen desktop pair-gaps.
+
+**1. `section_proof_bar` removed from `templates/index.json`** — both the section definition (326 lines) and its `order` array entry. `section_proof_bar_marquee` is now the only trust-badge content on the homepage.
+
+**CSS audit, as instructed — no dead selectors found, three stale comments fixed.** Checked every rule that mentioned `section_proof_bar`: neither the box-hiding rule nor the pair-gap rule was ever scoped by that section's own id or class — both use `[data-template="index"]` plus element/attribute matchers, so both still correctly reach the marquee's icons and neither went dead when the section was removed. This is a different failure shape from the project's prior phantom-CSS incidents (the missing `.spacing-style` class, `.text-display-4`'s specificity loss) — those were rules that never worked; these are rules that kept working, just described in comments as if a second row still existed. Three comment fixes, no functional change: the box-hiding rule's opening line named `section_proof_bar` directly (updated to describe the marquee and note the removal); the marquee block's own header still said "built alongside the static row... not replacing it yet, pending Jake's review" (updated — decision's made, section's gone); the spacing rule's technical aside compared itself to "the static row above" (retargeted to the Cafe info card's `group`-based icon+label pattern, which still exists further down the same file and makes the same structural point).
+
+**2. Scroll speed — no native setting exists, confirmed by reading the schema directly, not assumed.** `sections/marquee.liquid`'s settings array has `movement_direction`, `background_color`, padding, and `gap_between_elements` — no speed control. The only speed lever is `data-speed-factor="25"`, a literal HTML attribute hardcoded in that stock file's markup, read by `marquee.js` to compute `--marquee-speed = sqrt(numberOfCopies) × speedFactor` (seconds per loop), set as an inline style on `marquee-component` and recalculated on resize. Changing that attribute means forking a stock file for a sitewide effect (every marquee this theme will ever have), not a scoped one — worse than a CSS override for a single section's need.
+
+Targeted `animation-duration` on `.marquee__wrapper` via `calc(var(--marquee-speed) * 1.5)` rather than overriding `--marquee-speed` itself directly: the variable is inherited reactively from the animated ancestor, so this preserves the JS's own viewport-responsive recalculation (a flat override would freeze the duration and break that). `!important` needed to win the sub-property over Horizon's own `animation` shorthand, matching this file's established precedent (§43, §45, §47).
+
+**Measured before, live: 35.36s per loop at 1280px** (`sqrt(2) × 25`, `numberOfCopies` 2 at that viewport — confirmed via `getComputedStyle(marquee).getPropertyValue('--marquee-speed')` and `wrapper.getAnimations()[0]`). **After: 53.03s** (same formula × 1.5). The 1.5× slowdown is constant at any viewport; the raw seconds figure isn't, since `numberOfCopies` is content-width-dependent.
+
+**Live re-verification hit a real environment wall, disclosed rather than papered over.** After this change (and again independently, in a clean re-test of the *unchanged* baseline mechanism), the marquee's own JS initialization stopped completing in this session's browser pane — `--marquee-speed` never got set, content never duplicated. Traced to the actual cause before concluding anything about the code: `document.hidden` was `true` and `document.visibilityState` was `"hidden"` for this session's Browser pane (confirmed directly), and an isolated `requestAnimationFrame` call — zero relation to marquee.js — also never fired. Chromium suspends the render/compositor pipeline for pages it considers backgrounded; `IntersectionObserver` callbacks (which `marquee.js`'s `#queryNumberOfCopies` depends on) and CSS animations are both casualties of that suspension. This is a property of the automation session's pane visibility at the time, not the marquee, not this change, and not this codebase — reproduced with a bare, from-scratch `IntersectionObserver({root: marquee}).observe(target)` that bypassed every line of marquee.js and still never fired. One measurement (the 35.36s baseline above) was captured earlier in the same session while the pane was actually visible; the 53.03s figure is derived from that measurement via the documented ×1.5, not independently re-observed live, since the pane could not be made visible again by any available tool. Everything NOT dependent on the animation actually running — static layout, gap spacing, DOM structure, the removed section, `theme check` — was re-verified live without issue, since static rendering isn't gated by page-visibility the way animation timing is.
+
+**3. Desktop-only pair-gap widening.** Measured first, both breakpoints, before changing anything: **40px at both 1280px and 375px** (8px flex gap + 32px margin-inline-start on the icon wrapper — confirmed identical at both, since no media query existed yet to differentiate them). Wrapped the existing 32px margin rule unchanged (this is now explicitly the mobile-and-below value) and added a `min-width: 750px` variant at 72px margin — this file's established desktop cutoff (matches the Shop All padding fix and the marquee's own new speed-comment references above). Icon-to-label spacing (8px, the block's own `gap_between_elements` setting) is unaffected by either rule — set once, not viewport-conditional.
+
+**Verified live, both breakpoints, after:**
+- 1280px: 8px icon→label, **80px** pair-to-pair (8 + 72).
+- 375px: 8px icon→label, **40px** pair-to-pair — byte-identical to the pre-change measurement, confirming mobile is untouched.
+
+Screenshots taken at both breakpoints, confirming: static row gone, one badge row only, visibly wider desktop pair-grouping, mobile unchanged. `shopify theme check --path .` clean throughout.
+
+---
+
 ## Summary
 
 | Area | Path taken |

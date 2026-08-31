@@ -1543,6 +1543,52 @@ Confirmed: this change touches nothing today beyond the hero (the other three ar
 
 ## 52. Stage 2 — remaining 20 display-scale blocks sitewide reconnected (2026-09-01)
 
+Approved once Stage 1's mechanism and the 1.13 override were both verified live. Same mechanism as §51, no further Liquid changes — every remaining `type_preset: "custom"` block whose `font_size` references a `--display-N-size` token had its `line_height` set to that token's paired `--display-N-line-height`, matching Stage 1's exact per-block pattern.
+
+**Scope, checked directly, not assumed:** re-ran the sitewide audit script after Stage 1 landed, filtering to display-scale blocks not yet opted into the `var()` passthrough — **exactly 20**, matching the prior turn's count precisely. One correction to the page list named when Stage 2 was approved: **404.json and the footer carry no display-scale headings at all** — their earlier appearance in the 94-block audit was `--text-N` (body-scale) tokens, a different, unaffected category. Nothing needed touching on either.
+
+**All 20, before/after, by page:**
+
+| Page | Heading | Font-size | Line-height token | Before | After |
+|---|---|---|---|---|---|
+| Wholesale | "Partner with Lambruk Pantry" (hero) | 56px | `--display-1-line-height` | 1.4 | **1.13** |
+| Wholesale | "Traceable to the grower" | 40px | `--display-3-line-height` | 1.4 | **1.08** |
+| Wholesale | "Who we supply" | 36px | `--display-module-line-height` | 1.4 | **1.1** |
+| Wholesale | "Available specifications" | 36px | `--display-module-line-height` | 1.4 | **1.1** |
+| Wholesale | "Tell us about your business" | 40px | `--display-3-line-height` | 1.4 | **1.08** |
+| Our Story | "From a family kitchen..." (hero) | 56px | `--display-1-line-height` | 1.4 | **1.13** |
+| Our Story | "A home cook who kept going" | 40px | `--display-3-line-height` | 1.4 | **1.08** |
+| Our Story | "How we make things" | 40px | `--display-3-line-height` | 1.4 | **1.08** |
+| Our Story | "Taste the range..." | 40px | `--display-3-line-height` | 1.4 | **1.08** |
+| Contact | "Talk to us about orders..." (hero) | 56px | `--display-1-line-height` | 1.4 | **1.13** |
+| Cafe | "High Tea worth lingering over" | 40px | `--display-3-line-height` | 1.4 | **1.08** |
+| Cafe | "Pull Up a Chair" | 40px | `--display-3-line-height` | 1.4 | **1.08** |
+| Cafe | "Subscribe to Seasonal Dispatches" | 32px | `--display-4-line-height` | 1.4 | **1.15** |
+| Shop All | "Sell the moment, not the label..." | 40px | `--display-3-line-height` | 1.4 | **1.08** |
+| Occasion | "Sell the moment, not the label..." | 40px | `--display-3-line-height` | 1.4 | **1.08** |
+| Product | Product title (`{{ closest.product.title }}`) | 48px | `--display-2-line-height` | 1.4 | **1.06** |
+| Product | "Sustainably sourced" | 32px | `--display-4-line-height` | 1.4 | **1.15** |
+| Product | "Freshness secured" | 32px | `--display-4-line-height` | 1.4 | **1.15** |
+| Product | "Low sugar" | 32px | `--display-4-line-height` | 1.4 | **1.15** |
+| Product | "From the same shelf" | 32px | `--display-4-line-height` | 1.4 | **1.15** |
+
+"Before" is stated, not re-measured by reverting — Stage 1's investigation already established this exact bug shape (`type_preset: "custom"` + var()-referenced `font_size` + non-blank `line_height`) deterministically produces `--line-height--body-normal` = 1.4 with no exceptions found across 28 display-scale blocks audited; re-confirming it 20 more times via revert would have re-proven an already-proven mechanism. "After" is live-measured for all 20, no exceptions.
+
+**Which pages visibly change today vs. which don't — real, disclosed gap, not glossed over.** Four of the eight pages above aren't actually rendering the template file that was just edited, on their live/default URL, for reasons already established elsewhere in this project (§37/§38's pre-publish template-assignment gap):
+- **Contact and Product pages: change is live now**, visible on the ordinary page URL.
+- **Our Story** (`/pages/lambruk-pantry-about-us`) — falls through to a different template; had to use `?view=our-story` to see the fix. Live page shows no change today.
+- **Cafe** (`/pages/cafe`) — same gap; used `?view=cafe`. Live page shows no change today.
+- **Wholesale** — page URL correctly renders `page.wholesale.json` directly, no `?view=` needed; change is live now.
+- **Shop All / Occasion** (`cta_sample_box`) — same collection-template-assignment gap already documented for the grid-column work (§47/§50); used `?view=all` / `?view=occasion`. Live pages show no change today.
+
+All fixes are correct and verified in the file that will render once each page/collection gets its real template assignment (a pre-existing, already-tracked blocker, not something this pass introduced). Jake should look at **Wholesale, Contact, and Product** to see the change live today; Our Story, Cafe, Shop All, and Occasion will show it once template assignment happens, not before.
+
+`shopify theme check --path .` clean throughout.
+
+---
+
+## Summary
+
 | Area | Path taken |
 |---|---|
 | Global fg/bg | Native `page_text_color`/`page_background_color` |

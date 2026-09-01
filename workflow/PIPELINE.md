@@ -200,5 +200,6 @@ Before reporting completion, inspect the final diff and state exactly:
 - static, runtime, visual and commerce evidence separately
 - blockers and unverified cases
 - preview/editor links returned by Shopify
+- **no `shopify theme dev` process is still running** (`ps aux | grep -i "shopify theme dev"`, expect no match) — checked and stated, not assumed. A dev server outliving the task it was started for is invisible: nothing in the transcript flags it, and it keeps silently overwriting anything the client does in the theme editor for as long as it runs. This is not "remember to stop it" — it is a check that gets run and its result reported, the same as Theme Check.
 
 Stop before publication.

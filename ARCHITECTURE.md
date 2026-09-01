@@ -1587,6 +1587,48 @@ All fixes are correct and verified in the file that will render once each page/c
 
 ---
 
+## 53. "Explore by category" scrim confined to a bottom band (2026-09-01)
+
+Jake's complaint: the scrim over these three cards darkened the whole photo; wanted it confined to the band behind the title so the photography reads at full brightness above.
+
+**Measured both sides first, per instruction, before touching anything.**
+
+**Current treatment.** Native Horizon mechanism, not custom CSS — `_collection-card-image`'s own `toggle_overlay`/`overlay_color`/`overlay_style`/`gradient_direction` settings (`templates/index.json`), rendered through the stock `snippets/overlay.liquid`. Computed background, confirmed live: `linear-gradient(to top, rgba(0,0,0,0.86), rgba(0,0,0,0))` — a flat **two-stop** gradient spanning the card's *entire* height, 86% opaque black at the bottom fading linearly all the way to 0% only at the very top. No plateau — even the top of the image carries some darkening, which is exactly "the whole photo is darkened."
+
+**Design source, measured, not read off the declaration.** `LambrukPantry Desktop.dc.html:86`: `linear-gradient(0deg, rgba(0,0,0,.86) 0%, rgba(0,0,0,.46) 44%, rgba(0,0,0,0) 72%)` — three stops, reaching full transparency at 72% of the card height and staying there — confined to roughly the bottom three-quarters, the rest genuinely untouched. Mobile source (`Mobile.dc.html:94`) uses a different crop (16:9, not 1:1) and a navy-tinted scrim (`rgba(13,16,36,…)`) at slightly different stops (0/.86, 48/.42, 76/0) — a real divergence from desktop, noted but not chased; our build has always used a 1:1 crop at both breakpoints (pre-existing, unrelated to this fix), so one gradient shape serves both here.
+
+Verified these numbers are real, not assumed: the design's own preview images wouldn't load in this session's sandboxed file:// preview (`naturalWidth: 0` on every `<img>`, confirmed — a sandbox limitation, not a design-source problem), so measured via direct pixel access to the source PNGs (Python/PIL) instead, replicating the exact CSS gradient math and `object-fit: cover` crop, sampled across the title's real rendered width. Design's gradient clears 4.5:1 comfortably on its own mockup photos, worst case ~11.5:1 (Pantry Staples) at desktop, ~7.4:1 at mobile — nowhere near the fail threshold, so no gate was triggered.
+
+**A methodology bug caught before it reached the report.** First pass at measuring the *current* build's contrast forgot to composite the overlay at all — sampled raw, undarkened photo pixels and got alarming numbers (min 1.19–1.79:1 across all three cards). Caught by cross-checking against the design-gradient simulation, which used correct compositing and produced very different results at a near-identical alpha — re-ran the current-build measurement with the actual overlay math applied and got the true baseline (below). Recorded here so the wrong numbers don't survive anywhere.
+
+**Current build, correctly composited, real uploaded photos, both breakpoints (baseline — already passing, not a legibility bug):**
+
+| | 1280px min contrast | 375px min contrast |
+|---|---|---|
+| Tea Collection | 13.32:1 | 10.99:1 |
+| Sauces & Chutneys | 12.45:1 | 12.40:1 |
+| Pantry Staples | 11.73:1 | 10.63:1 |
+
+The complaint was real but it was never a contrast failure — legibility was always fine; the issue was purely how much of the photo above the title got darkened along the way.
+
+**Fix — bottom-anchored gradient, transparent above.** Horizon's `overlay.liquid` only supports a flat two-stop gradient (one colour, same colour at 0 alpha) driven by a single `overlay_color` setting — no three-stop shape is reachable through the native setting at all. Added a scoped CSS override in `assets/lambruk-tokens.css` replacing the computed `background` directly, porting the design's exact desktop stops (`0% .86 / 44% .46 / 72% 0`, black) — additive CSS, no Liquid fork, no new setting. Scoped via `[data-template="index"] .collection-card--image-bg .overlay` — checked directly that `.collection-card--image-bg` occurs exactly once on the homepage (this one collection-list section), so no section-id fallback was needed, unlike §47/§48's hardened-ID pattern.
+
+**Verified against the REAL uploaded photos, live, both breakpoints, after:**
+
+| | 1280px min contrast | 375px min contrast |
+|---|---|---|
+| Tea Collection | **11.63:1** | **10.78:1** |
+| Sauces & Chutneys | **12.26:1** | **12.21:1** |
+| Pantry Staples | **11.35:1** | **10.42:1** |
+
+All comfortably clear of 4.5:1 — the design's gradient shape holds on our own photography without needing to be strengthened. Read the *live* computed `background-image` off the actual overlay element and parsed its real stops for this final pass, rather than trusting the CSS that was written — confirmed it matches exactly what was authored.
+
+Screenshot confirmed visually: Tea Collection's sky and grass — the pale, bright case the instruction specifically flagged — now render at full brightness above the title band.
+
+`shopify theme check --path .` clean. Dev server confirmed stopped before reporting done, per the new completion check.
+
+---
+
 ## Summary
 
 | Area | Path taken |

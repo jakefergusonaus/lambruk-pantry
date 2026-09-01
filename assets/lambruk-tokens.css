@@ -589,3 +589,42 @@ h1, h2, h3, h4, h5, h6 {
 .product-grid--template--25868165546285__main:is(.product-grid--grid) {
   --product-grid-columns-desktop: repeat(auto-fill, minmax(325px, 1fr)) !important;
 }
+
+/* Homepage "Explore by category" cards — scrim confined to a bottom band,
+   not the whole photo (2026-09-01). Native _collection-card-image overlay
+   (snippets/overlay.liquid) only supports a flat 2-stop gradient — one
+   colour at full alpha, the same colour at 0 alpha, nothing in between —
+   driven by a single overlay_color setting. That produces a LINEAR fade
+   across the entire card height with no plateau: even near the top of the
+   image there was still measurable darkening, which read as "the whole
+   photo is darkened," matching the complaint exactly. Can't reach a
+   3-stop gradient through the native setting at all, so this replaces the
+   computed background directly — additive CSS, no Liquid fork.
+
+   Stops taken from the design source's own desktop card
+   (LambrukPantry Desktop.dc.html:86): 0% #000 @ .86, 44% @ .46, 72% @ 0,
+   staying transparent from 72% to the top. Same shape used at both
+   breakpoints — our build keeps a 1:1 square crop at mobile too (the
+   design's own mobile uses a 16:9 crop instead, a pre-existing divergence
+   unrelated to this fix, not touched here), and the title sits at a
+   near-identical fractional height from the card bottom at both sizes
+   (9.6% at 1280px, 10.8% at 375px), so one gradient shape serves both.
+
+   Contrast verified against the REAL uploaded photos, not the design's
+   own mockup images, via pixel-accurate compositing (real image pixel ×
+   (1-alpha) + black × alpha) sampled across the title's actual rendered
+   width, both breakpoints: worst case 10.42:1 (Pantry Staples, 375px),
+   comfortably clear of 4.5:1 on all three cards at both sizes. Design's
+   own gradient shape holds on our photography — no strengthening needed.
+
+   `.collection-card--image-bg` only occurs once on the homepage (the one
+   collection-list section here) — checked directly, not assumed — so
+   `[data-template="index"]` scoping doesn't need a section-id fallback. */
+[data-template="index"] .collection-card--image-bg .overlay {
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.86) 0%,
+    rgba(0, 0, 0, 0.46) 44%,
+    rgba(0, 0, 0, 0) 72%
+  ) !important;
+}

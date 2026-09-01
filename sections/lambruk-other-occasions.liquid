@@ -185,23 +185,27 @@
     color: #131A3E;
   }
 
-  /* Bottom-anchored group (blurb + footer), not the title, so a wrapped
-     title (e.g. "Entertaining" at some widths, confirmed live — the design
-     source doesn't already handle this, checked directly: its own
-     margin-top: auto only anchors the footer, title/blurb are plain flow
-     right after each other) can't push this card's blurb to a different
-     y-position than its neighbours'. Cards are equal height already (CSS
-     Grid's default row-stretch), so anchoring this group to the bottom of
-     each card, rather than reserving a fixed title height, means every
-     card's blurb+footer lands at the same y-position regardless of how
-     many lines the title took above it — extends the same margin-top:auto
-     technique already used below for the footer, rather than introducing
-     a second, different mechanism (a guessed fixed title min-height). */
+  /* Blurb sits directly under the title — plain flow, no auto margin here.
+     `flex: 1` makes this group stretch to fill whatever's left of
+     card-content's height (title's own height varies card to card, e.g.
+     "Entertaining" wrapping at some widths — that's still absorbed, just
+     lower down: see card-footer's own margin-top: auto below, which is
+     the ONE place leftover space now collects). Reworked 2026-09-01 —
+     margin-top: auto used to live here, on the whole blurb+footer group,
+     which anchored the *group* to the card's bottom edge but let a
+     variable-height blurb (one line vs two) push its own top edge to a
+     different y-position on every card — a real, confirmed bug (24px
+     drift between a 1-line and 2-line blurb, live-measured). Moving the
+     auto margin down to just the footer fixes that: only the gap between
+     blurb and footer is now elastic, so the blurb's own top offset is
+     fixed relative to the title on every card, and only the footer
+     still floats to the bottom — same visual result for item-count,
+     different (correct) one for the blurb. */
   .lambruk-other-occasions__card-bottom {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-top: auto;
+    flex: 1;
   }
 
   .lambruk-other-occasions__card-blurb {
@@ -220,6 +224,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    margin-top: auto;
     padding-top: 14px;
     font-size: 13px;
     color: #8A8FA3;

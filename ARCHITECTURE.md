@@ -1676,6 +1676,8 @@ Also caught and corrected a bug in my own first measurement pass: `section.query
 
 `shopify theme check --path .` clean. Dev server confirmed stopped before reporting done.
 
+**Follow-up, same day, after §56's sweep confirmed these were the only invalid values in the theme: `image_ratio` on both blocks changed from `"custom"` to `"landscape"`, a zero-render-change edit.** The CSS override still sets `--ratio: 16 / 10` and still governs the rendered box — this wasn't a fix to any rendering problem, it was closing the gap between what the JSON claims (`"custom"`, not a real option, silently discarded) and what actually determines the render (the CSS). `"landscape"` was picked as the closest real option to what these cards should show if the override were ever removed — not 16/10 itself (11% off, `16/9`), but no longer a value that renders as an accidental square. Verified zero change before and after, both breakpoints, live on 182395437357: 357×223.125px desktop, 343×214.375px mobile, `1.600` ratio, `--ratio: 16 / 10` — identical in every measured number pre- and post-edit. **The JSON value and the CSS override are now consistent in intent** — both point at a 16-wide landscape treatment — rather than the JSON claiming a fallback (`custom`) that doesn't exist and quietly resolving to a `1:1` ratio no one chose.
+
 ---
 
 ## 56. Sweep for other `image_ratio`/`aspect_ratio`/`ratio` mismatches — scope report, nothing fixed (2026-09-01)

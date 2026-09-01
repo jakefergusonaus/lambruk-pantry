@@ -1818,7 +1818,7 @@
                   "type": "image",
                   "settings": {
                     "link": "",
-                    "image_ratio": "custom",
+                    "image_ratio": "landscape",
                     "width": "fill",
                     "custom_width": 100,
                     "width_mobile": "fill",
@@ -2000,7 +2000,7 @@
                   "settings": {
                     "image": "shopify://shop_images/DSC_1541.jpg",
                     "link": "",
-                    "image_ratio": "custom",
+                    "image_ratio": "landscape",
                     "width": "fill",
                     "custom_width": 100,
                     "width_mobile": "fill",

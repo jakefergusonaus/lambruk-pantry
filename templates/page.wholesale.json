@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "hero_wholesale": {
       "type": "section",
@@ -15,7 +16,6 @@
           "type": "text",
           "settings": {
             "text": "<p>Wholesale &amp; Hospitality Supply</p>",
-            "text_color": "#986A34",
             "width": "100%",
             "max_width": "normal",
             "alignment": "center",
@@ -26,6 +26,7 @@
             "letter_spacing": "eyebrow",
             "case": "uppercase",
             "wrap": "pretty",
+            "text_color": "#986A34",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -40,7 +41,6 @@
           "type": "text",
           "settings": {
             "text": "<p>Partner with Lambruk Pantry</p>",
-            "text_color": "#131A3E",
             "width": "100%",
             "max_width": "normal",
             "alignment": "center",
@@ -51,6 +51,7 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
+            "text_color": "#131A3E",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -115,7 +116,13 @@
           "blocks": {}
         }
       },
-      "block_order": ["eyebrow", "heading", "body", "cta", "divider"],
+      "block_order": [
+        "eyebrow",
+        "heading",
+        "body",
+        "cta",
+        "divider"
+      ],
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -153,7 +160,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>Australian Provenance</p>",
-                "text_color": "#986A34",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -164,6 +170,7 @@
                 "letter_spacing": "eyebrow",
                 "case": "uppercase",
                 "wrap": "pretty",
+                "text_color": "#986A34",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -178,7 +185,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>Traceable to the grower</p>",
-                "text_color": "#131A3E",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -189,6 +195,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "#131A3E",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -271,7 +278,15 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {
-                    "icon": { "type": "icon", "settings": { "icon": "check_box", "width": 14, "icon_color": "#986A34" }, "blocks": {} },
+                    "icon": {
+                      "type": "icon",
+                      "settings": {
+                        "icon": "check_box",
+                        "width": 14,
+                        "icon_color": "#986A34"
+                      },
+                      "blocks": {}
+                    },
                     "label": {
                       "type": "text",
                       "settings": {
@@ -297,7 +312,10 @@
                       "blocks": {}
                     }
                   },
-                  "block_order": ["icon", "label"]
+                  "block_order": [
+                    "icon",
+                    "label"
+                  ]
                 },
                 "row_2": {
                   "type": "group",
@@ -323,7 +341,15 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {
-                    "icon": { "type": "icon", "settings": { "icon": "check_box", "width": 14, "icon_color": "#986A34" }, "blocks": {} },
+                    "icon": {
+                      "type": "icon",
+                      "settings": {
+                        "icon": "check_box",
+                        "width": 14,
+                        "icon_color": "#986A34"
+                      },
+                      "blocks": {}
+                    },
                     "label": {
                       "type": "text",
                       "settings": {
@@ -349,7 +375,10 @@
                       "blocks": {}
                     }
                   },
-                  "block_order": ["icon", "label"]
+                  "block_order": [
+                    "icon",
+                    "label"
+                  ]
                 },
                 "row_3": {
                   "type": "group",
@@ -375,7 +404,15 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {
-                    "icon": { "type": "icon", "settings": { "icon": "check_box", "width": 14, "icon_color": "#986A34" }, "blocks": {} },
+                    "icon": {
+                      "type": "icon",
+                      "settings": {
+                        "icon": "check_box",
+                        "width": 14,
+                        "icon_color": "#986A34"
+                      },
+                      "blocks": {}
+                    },
                     "label": {
                       "type": "text",
                       "settings": {
@@ -401,7 +438,10 @@
                       "blocks": {}
                     }
                   },
-                  "block_order": ["icon", "label"]
+                  "block_order": [
+                    "icon",
+                    "label"
+                  ]
                 },
                 "row_4": {
                   "type": "group",
@@ -427,7 +467,15 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {
-                    "icon": { "type": "icon", "settings": { "icon": "check_box", "width": 14, "icon_color": "#986A34" }, "blocks": {} },
+                    "icon": {
+                      "type": "icon",
+                      "settings": {
+                        "icon": "check_box",
+                        "width": 14,
+                        "icon_color": "#986A34"
+                      },
+                      "blocks": {}
+                    },
                     "label": {
                       "type": "text",
                       "settings": {
@@ -453,16 +501,28 @@
                       "blocks": {}
                     }
                   },
-                  "block_order": ["icon", "label"]
+                  "block_order": [
+                    "icon",
+                    "label"
+                  ]
                 }
               },
-              "block_order": ["row_1", "row_2", "row_3", "row_4"]
+              "block_order": [
+                "row_1",
+                "row_2",
+                "row_3",
+                "row_4"
+              ]
             }
           },
-          "block_order": ["eyebrow", "heading", "body", "checklist"]
+          "block_order": [
+            "eyebrow",
+            "heading",
+            "body",
+            "checklist"
+          ]
         }
       },
-      "block_order": ["media", "content"],
       "settings": {
         "media_position": "left",
         "media_width": "medium",
@@ -481,7 +541,6 @@
           "type": "text",
           "settings": {
             "text": "<p>Wholesale Benefits</p>",
-            "text_color": "#131A3E",
             "width": "100%",
             "max_width": "normal",
             "alignment": "center",
@@ -492,6 +551,7 @@
             "letter_spacing": "eyebrow",
             "case": "uppercase",
             "wrap": "pretty",
+            "text_color": "#131A3E",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -538,26 +598,33 @@
                 "width": "fill",
                 "height": "fit",
                 "background_media": "none",
+                "background_color": "#FFFFFF",
                 "video_position": "cover",
                 "background_image_position": "cover",
                 "border": "solid",
                 "border_width": 1,
-                "border_color": "#E3D6C5",
                 "border_opacity": 100,
+                "border_color": "#E3D6C5",
                 "border_radius": 16,
-                "background_color": "#FFFFFF",
                 "padding-block-start": 24,
                 "padding-block-end": 24,
                 "padding-inline-start": 24,
                 "padding-inline-end": 24
               },
               "blocks": {
-                "icon": { "type": "icon", "settings": { "icon": "leaf", "width": 24, "icon_color": "#986A34" }, "blocks": {} },
+                "icon": {
+                  "type": "icon",
+                  "settings": {
+                    "icon": "leaf",
+                    "width": 24,
+                    "icon_color": "#986A34"
+                  },
+                  "blocks": {}
+                },
                 "heading": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Custom tea blending</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -566,6 +633,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -601,7 +669,11 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["icon", "heading", "body"]
+              "block_order": [
+                "icon",
+                "heading",
+                "body"
+              ]
             },
             "item_supply": {
               "type": "group",
@@ -615,26 +687,33 @@
                 "width": "fill",
                 "height": "fit",
                 "background_media": "none",
+                "background_color": "#FFFFFF",
                 "video_position": "cover",
                 "background_image_position": "cover",
                 "border": "solid",
                 "border_width": 1,
-                "border_color": "#E3D6C5",
                 "border_opacity": 100,
+                "border_color": "#E3D6C5",
                 "border_radius": 16,
-                "background_color": "#FFFFFF",
                 "padding-block-start": 24,
                 "padding-block-end": 24,
                 "padding-inline-start": 24,
                 "padding-inline-end": 24
               },
               "blocks": {
-                "icon": { "type": "icon", "settings": { "icon": "box", "width": 24, "icon_color": "#986A34" }, "blocks": {} },
+                "icon": {
+                  "type": "icon",
+                  "settings": {
+                    "icon": "box",
+                    "width": 24,
+                    "icon_color": "#986A34"
+                  },
+                  "blocks": {}
+                },
                 "heading": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Reliable batch supply</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -643,6 +722,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -678,7 +758,11 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["icon", "heading", "body"]
+              "block_order": [
+                "icon",
+                "heading",
+                "body"
+              ]
             },
             "item_formats": {
               "type": "group",
@@ -692,26 +776,33 @@
                 "width": "fill",
                 "height": "fit",
                 "background_media": "none",
+                "background_color": "#FFFFFF",
                 "video_position": "cover",
                 "background_image_position": "cover",
                 "border": "solid",
                 "border_width": 1,
-                "border_color": "#E3D6C5",
                 "border_opacity": 100,
+                "border_color": "#E3D6C5",
                 "border_radius": 16,
-                "background_color": "#FFFFFF",
                 "padding-block-start": 24,
                 "padding-block-end": 24,
                 "padding-inline-start": 24,
                 "padding-inline-end": 24
               },
               "blocks": {
-                "icon": { "type": "icon", "settings": { "icon": "serving_dish", "width": 24, "icon_color": "#986A34" }, "blocks": {} },
+                "icon": {
+                  "type": "icon",
+                  "settings": {
+                    "icon": "serving_dish",
+                    "width": 24,
+                    "icon_color": "#986A34"
+                  },
+                  "blocks": {}
+                },
                 "heading": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Formats for every service</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -720,6 +811,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -755,10 +847,18 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["icon", "heading", "body"]
+              "block_order": [
+                "icon",
+                "heading",
+                "body"
+              ]
             }
           },
-          "block_order": ["item_blending", "item_supply", "item_formats"]
+          "block_order": [
+            "item_blending",
+            "item_supply",
+            "item_formats"
+          ]
         },
         "divider": {
           "type": "_divider",
@@ -773,7 +873,11 @@
           "blocks": {}
         }
       },
-      "block_order": ["heading", "row", "divider"],
+      "block_order": [
+        "heading",
+        "row",
+        "divider"
+      ],
       "settings": {
         "section_width": "page-width",
         "background_color": "#F4F1EA",
@@ -848,7 +952,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Suitable Business Partners</p>",
-                    "text_color": "#986A34",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -859,6 +962,7 @@
                     "letter_spacing": "eyebrow",
                     "case": "uppercase",
                     "wrap": "pretty",
+                    "text_color": "#986A34",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -873,7 +977,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Who we supply</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -884,6 +987,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -946,7 +1050,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>01</p>",
-                            "text_color": "#986A34",
                             "width": "fit-content",
                             "max_width": "normal",
                             "alignment": "left",
@@ -957,6 +1060,7 @@
                             "letter_spacing": "loose",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#986A34",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -971,7 +1075,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>Hotels, motels and accommodation groups</p>",
-                            "text_color": "#131A3E",
                             "width": "fill",
                             "max_width": "normal",
                             "alignment": "left",
@@ -982,6 +1085,7 @@
                             "letter_spacing": "normal",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#131A3E",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -993,7 +1097,10 @@
                           "blocks": {}
                         }
                       },
-                      "block_order": ["num", "label"]
+                      "block_order": [
+                        "num",
+                        "label"
+                      ]
                     },
                     "row_2": {
                       "type": "group",
@@ -1023,7 +1130,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>02</p>",
-                            "text_color": "#986A34",
                             "width": "fit-content",
                             "max_width": "normal",
                             "alignment": "left",
@@ -1034,6 +1140,7 @@
                             "letter_spacing": "loose",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#986A34",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1048,7 +1155,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>Cafes, restaurants and caterers</p>",
-                            "text_color": "#131A3E",
                             "width": "fill",
                             "max_width": "normal",
                             "alignment": "left",
@@ -1059,6 +1165,7 @@
                             "letter_spacing": "normal",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#131A3E",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1070,7 +1177,10 @@
                           "blocks": {}
                         }
                       },
-                      "block_order": ["num", "label"]
+                      "block_order": [
+                        "num",
+                        "label"
+                      ]
                     },
                     "row_3": {
                       "type": "group",
@@ -1100,7 +1210,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>03</p>",
-                            "text_color": "#986A34",
                             "width": "fit-content",
                             "max_width": "normal",
                             "alignment": "left",
@@ -1111,6 +1220,7 @@
                             "letter_spacing": "loose",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#986A34",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1125,7 +1235,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>Country stores, providores and gift retailers</p>",
-                            "text_color": "#131A3E",
                             "width": "fill",
                             "max_width": "normal",
                             "alignment": "left",
@@ -1136,6 +1245,7 @@
                             "letter_spacing": "normal",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#131A3E",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1147,7 +1257,10 @@
                           "blocks": {}
                         }
                       },
-                      "block_order": ["num", "label"]
+                      "block_order": [
+                        "num",
+                        "label"
+                      ]
                     },
                     "row_4": {
                       "type": "group",
@@ -1177,7 +1290,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>04</p>",
-                            "text_color": "#986A34",
                             "width": "fit-content",
                             "max_width": "normal",
                             "alignment": "left",
@@ -1188,6 +1300,7 @@
                             "letter_spacing": "loose",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#986A34",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1202,7 +1315,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>Corporate gifting and event planners</p>",
-                            "text_color": "#131A3E",
                             "width": "fill",
                             "max_width": "normal",
                             "alignment": "left",
@@ -1213,6 +1325,7 @@
                             "letter_spacing": "normal",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#131A3E",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1224,13 +1337,25 @@
                           "blocks": {}
                         }
                       },
-                      "block_order": ["num", "label"]
+                      "block_order": [
+                        "num",
+                        "label"
+                      ]
                     }
                   },
-                  "block_order": ["row_1", "row_2", "row_3", "row_4"]
+                  "block_order": [
+                    "row_1",
+                    "row_2",
+                    "row_3",
+                    "row_4"
+                  ]
                 }
               },
-              "block_order": ["eyebrow", "heading", "list"]
+              "block_order": [
+                "eyebrow",
+                "heading",
+                "list"
+              ]
             },
             "packaging_formats_col": {
               "type": "group",
@@ -1260,7 +1385,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Packaging Formats</p>",
-                    "text_color": "#986A34",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1271,6 +1395,7 @@
                     "letter_spacing": "eyebrow",
                     "case": "uppercase",
                     "wrap": "pretty",
+                    "text_color": "#986A34",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1285,7 +1410,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Available specifications</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1296,6 +1420,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1358,7 +1483,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>Retail jars, 260g</p>",
-                            "text_color": "#131A3E",
                             "width": "100%",
                             "max_width": "normal",
                             "alignment": "left",
@@ -1369,6 +1493,7 @@
                             "letter_spacing": "normal",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#131A3E",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1404,7 +1529,10 @@
                           "blocks": {}
                         }
                       },
-                      "block_order": ["title", "desc"]
+                      "block_order": [
+                        "title",
+                        "desc"
+                      ]
                     },
                     "spec_2": {
                       "type": "group",
@@ -1434,7 +1562,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>Single-serve jars, 100g and 100ml</p>",
-                            "text_color": "#131A3E",
                             "width": "100%",
                             "max_width": "normal",
                             "alignment": "left",
@@ -1445,6 +1572,7 @@
                             "letter_spacing": "normal",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#131A3E",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1480,7 +1608,10 @@
                           "blocks": {}
                         }
                       },
-                      "block_order": ["title", "desc"]
+                      "block_order": [
+                        "title",
+                        "desc"
+                      ]
                     },
                     "spec_3": {
                       "type": "group",
@@ -1510,7 +1641,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>Tea, bagged and loose leaf</p>",
-                            "text_color": "#131A3E",
                             "width": "100%",
                             "max_width": "normal",
                             "alignment": "left",
@@ -1521,6 +1651,7 @@
                             "letter_spacing": "normal",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#131A3E",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1556,7 +1687,10 @@
                           "blocks": {}
                         }
                       },
-                      "block_order": ["title", "desc"]
+                      "block_order": [
+                        "title",
+                        "desc"
+                      ]
                     },
                     "spec_4": {
                       "type": "group",
@@ -1586,7 +1720,6 @@
                           "type": "text",
                           "settings": {
                             "text": "<p>Custom and gift packaging</p>",
-                            "text_color": "#131A3E",
                             "width": "100%",
                             "max_width": "normal",
                             "alignment": "left",
@@ -1597,6 +1730,7 @@
                             "letter_spacing": "normal",
                             "case": "none",
                             "wrap": "pretty",
+                            "text_color": "#131A3E",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1632,19 +1766,37 @@
                           "blocks": {}
                         }
                       },
-                      "block_order": ["title", "desc"]
+                      "block_order": [
+                        "title",
+                        "desc"
+                      ]
                     }
                   },
-                  "block_order": ["spec_1", "spec_2", "spec_3", "spec_4"]
+                  "block_order": [
+                    "spec_1",
+                    "spec_2",
+                    "spec_3",
+                    "spec_4"
+                  ]
                 }
               },
-              "block_order": ["eyebrow", "heading", "specs"]
+              "block_order": [
+                "eyebrow",
+                "heading",
+                "specs"
+              ]
             }
           },
-          "block_order": ["who_we_supply_col", "packaging_formats_col"]
+          "block_order": [
+            "who_we_supply_col",
+            "packaging_formats_col"
+          ]
         }
       },
-      "block_order": ["divider", "columns"],
+      "block_order": [
+        "divider",
+        "columns"
+      ],
       "settings": {
         "section_width": "page-width",
         "background_color": "{{ settings.color_palette.background }}",
@@ -1719,7 +1871,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Partnership Enquiry</p>",
-                    "text_color": "#986A34",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1730,6 +1881,7 @@
                     "letter_spacing": "eyebrow",
                     "case": "uppercase",
                     "wrap": "pretty",
+                    "text_color": "#986A34",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1744,7 +1896,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Tell us about your business</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1755,6 +1906,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1793,7 +1945,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Bronze medal, Melbourne Royal 2024 Australian Food Awards, for the Tomato &amp; Capsicum Relish</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "narrow",
                     "alignment": "left",
@@ -1804,6 +1955,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1818,7 +1970,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Stocked across country retailers and hospitality venues in the Northern Rivers</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "narrow",
                     "alignment": "left",
@@ -1829,6 +1980,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1855,7 +2007,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Direct</p>",
-                    "text_color": "#986A34",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1866,6 +2017,7 @@
                     "letter_spacing": "eyebrow",
                     "case": "uppercase",
                     "wrap": "pretty",
+                    "text_color": "#986A34",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1880,7 +2032,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>sales@lambrukpantry.com · 02 6684 1066</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1891,6 +2042,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1905,7 +2057,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Dispatch</p>",
-                    "text_color": "#986A34",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1916,6 +2067,7 @@
                     "letter_spacing": "eyebrow",
                     "case": "uppercase",
                     "wrap": "pretty",
+                    "text_color": "#986A34",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1930,7 +2082,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Australia wide from Mullumbimby NSW</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1941,6 +2092,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1952,7 +2104,18 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["eyebrow", "heading", "body", "award", "stocked", "contact_divider", "direct_label", "direct_value", "dispatch_label", "dispatch_value"]
+              "block_order": [
+                "eyebrow",
+                "heading",
+                "body",
+                "award",
+                "stocked",
+                "contact_divider",
+                "direct_label",
+                "direct_value",
+                "dispatch_label",
+                "dispatch_value"
+              ]
             },
             "form_col": {
               "type": "group",
@@ -1966,14 +2129,14 @@
                 "width": "fill",
                 "height": "fit",
                 "background_media": "none",
+                "background_color": "#FBFAF7",
                 "video_position": "cover",
                 "background_image_position": "cover",
                 "border": "solid",
                 "border_width": 1,
-                "border_color": "#E3D6C5",
                 "border_opacity": 100,
+                "border_color": "#E3D6C5",
                 "border_radius": 16,
-                "background_color": "#FBFAF7",
                 "padding-block-start": 36,
                 "padding-block-end": 36,
                 "padding-inline-start": 36,
@@ -1986,13 +2149,21 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["form"]
+              "block_order": [
+                "form"
+              ]
             }
           },
-          "block_order": ["info_col", "form_col"]
+          "block_order": [
+            "info_col",
+            "form_col"
+          ]
         }
       },
-      "block_order": ["divider", "columns"],
+      "block_order": [
+        "divider",
+        "columns"
+      ],
       "settings": {
         "section_width": "page-width",
         "background_color": "#F4F1EA",

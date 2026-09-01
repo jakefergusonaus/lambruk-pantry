@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "cafe_hero": {
       "type": "hero",
@@ -15,7 +16,6 @@
           "type": "text",
           "settings": {
             "text": "<p>Cafe</p>",
-            "text_color": "#A07037",
             "width": "100%",
             "max_width": "normal",
             "alignment": "center",
@@ -26,6 +26,7 @@
             "letter_spacing": "eyebrow",
             "case": "uppercase",
             "wrap": "pretty",
+            "text_color": "#A07037",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -40,7 +41,6 @@
           "type": "text",
           "settings": {
             "text": "<h1>The Lambruk Kitchen &amp; Tearoom</h1>",
-            "text_color": "#F7F5F2",
             "width": "100%",
             "max_width": "normal",
             "alignment": "center",
@@ -51,6 +51,7 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
+            "text_color": "#F7F5F2",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -65,7 +66,6 @@
           "type": "text",
           "settings": {
             "text": "<p>Located in coastal Ballina, Northern Rivers. An elegant celebration of country produce, native plants and artisan loose leaf tea.</p>",
-            "text_color": "#F7F5F2D9",
             "width": "100%",
             "max_width": "wide",
             "alignment": "center",
@@ -76,6 +76,7 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
+            "text_color": "#F7F5F2D9",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -146,7 +147,10 @@
               "blocks": {}
             }
           },
-          "block_order": ["book_table", "view_menu"]
+          "block_order": [
+            "book_table",
+            "view_menu"
+          ]
         },
         "heading_style": {
           "type": "custom-liquid",
@@ -157,7 +161,13 @@
           "blocks": {}
         }
       },
-      "block_order": ["eyebrow", "heading", "body", "button_row", "heading_style"],
+      "block_order": [
+        "eyebrow",
+        "heading",
+        "body",
+        "button_row",
+        "heading_style"
+      ],
       "settings": {
         "media_type_1": "image",
         "content_direction": "column",
@@ -213,9 +223,9 @@
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
+                "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "flex-start",
-                "align_baseline": false,
                 "gap": 0,
                 "width": "fill",
                 "height": "fit",
@@ -243,7 +253,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Find Us In Ballina</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -254,6 +263,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -268,7 +278,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Shop 8, 216–234 River Street, Ballina NSW 2478, Northern Rivers Australia</p>",
-                    "text_color": "#4A5478",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -279,6 +288,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#4A5478",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -293,7 +303,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>[Parking and access details]</p>",
-                    "text_color": "#8A8FA3",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -304,6 +313,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#8A8FA3",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -315,20 +325,26 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["map_placeholder", "find_us_heading", "address_full", "parking_note"]
+              "block_order": [
+                "map_placeholder",
+                "find_us_heading",
+                "address_full",
+                "parking_note"
+              ]
             },
             "reserve_card": {
               "type": "group",
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
+                "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "flex-start",
-                "align_baseline": false,
                 "gap": 0,
                 "width": "fill",
                 "height": "fit",
                 "background_media": "none",
+                "background_color": "#FBFAF7",
                 "video_position": "cover",
                 "background_image_position": "cover",
                 "border": "solid",
@@ -336,7 +352,6 @@
                 "border_opacity": 100,
                 "border_color": "#E3D6C5",
                 "border_radius": 16,
-                "background_color": "#FBFAF7",
                 "padding-block-start": 32,
                 "padding-block-end": 32,
                 "padding-inline-start": 32,
@@ -347,7 +362,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<h2>Reserve your table</h2>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -358,6 +372,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -379,7 +394,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Walk-ins welcome when available</p>",
-                    "text_color": "#8A8FA3",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -390,6 +404,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#8A8FA3",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -407,9 +422,7 @@
                     "divider_color": "#E3D6C5",
                     "width_percent": 100,
                     "padding-block-start": 0,
-                    "padding-block-end": 22,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
+                    "padding-block-end": 22
                   },
                   "blocks": {}
                 },
@@ -417,7 +430,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Bookings are taken by phone or text, seven days. Tell us your date, time, group size and whether it is high tea.</p>",
-                    "text_color": "#4A5478",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -428,6 +440,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#4A5478",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -449,7 +462,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Call or SMS · replies within the day</p>",
-                    "text_color": "#4A5478",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -460,6 +472,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#4A5478",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -490,10 +503,16 @@
               ]
             }
           },
-          "block_order": ["find_us", "reserve_card"]
+          "block_order": [
+            "find_us",
+            "reserve_card"
+          ]
         }
       },
-      "block_order": ["anchor", "row"],
+      "block_order": [
+        "anchor",
+        "row"
+      ],
       "settings": {
         "content_direction": "column",
         "section_width": "page-width",
@@ -526,7 +545,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>Saturday &amp; Sunday Rituals</p>",
-                "text_color": "#986A34",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -537,6 +555,7 @@
                 "letter_spacing": "eyebrow",
                 "case": "uppercase",
                 "wrap": "pretty",
+                "text_color": "#986A34",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -551,7 +570,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>High Tea worth lingering over</p>",
-                "text_color": "#131A3E",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -562,6 +580,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "#131A3E",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -624,7 +643,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>Sittings: [times]. Bookings essential.</p>",
-                "text_color": "#686D84",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -635,6 +653,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "#686D84",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -699,13 +718,22 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["book", "view_menu"]
+              "block_order": [
+                "book",
+                "view_menu"
+              ]
             }
           },
-          "block_order": ["eyebrow", "heading", "body", "meta_price", "meta_sittings", "cta_group"]
+          "block_order": [
+            "eyebrow",
+            "heading",
+            "body",
+            "meta_price",
+            "meta_sittings",
+            "cta_group"
+          ]
         }
       },
-      "block_order": ["media", "content"],
       "settings": {
         "media_position": "left",
         "media_width": "medium",
@@ -740,7 +768,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>Cafe</p>",
-                "text_color": "#986A34",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -751,6 +778,7 @@
                 "letter_spacing": "eyebrow",
                 "case": "uppercase",
                 "wrap": "pretty",
+                "text_color": "#986A34",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -765,7 +793,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>Pull Up a Chair</p>",
-                "text_color": "#131A3E",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -776,6 +803,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "#131A3E",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -821,7 +849,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>Walk-ins always welcome.</p>",
-                "text_color": "#686D84",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -832,6 +859,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "#686D84",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -882,13 +910,21 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["view_menu"]
+              "block_order": [
+                "view_menu"
+              ]
             }
           },
-          "block_order": ["eyebrow", "heading", "body", "meta_hours", "meta_walkins", "cta_group"]
+          "block_order": [
+            "eyebrow",
+            "heading",
+            "body",
+            "meta_hours",
+            "meta_walkins",
+            "cta_group"
+          ]
         }
       },
-      "block_order": ["media", "content"],
       "settings": {
         "media_position": "right",
         "media_width": "medium",
@@ -907,7 +943,6 @@
           "type": "text",
           "settings": {
             "text": "<p>Gallery</p>",
-            "text_color": "#A07037",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -918,6 +953,7 @@
             "letter_spacing": "eyebrow",
             "case": "uppercase",
             "wrap": "pretty",
+            "text_color": "#A07037",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -932,7 +968,6 @@
           "type": "text",
           "settings": {
             "text": "<h2>Inside Lambruk Kitchen</h2>",
-            "text_color": "#131A3E",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -943,6 +978,7 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
+            "text_color": "#131A3E",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -957,7 +993,6 @@
           "type": "text",
           "settings": {
             "text": "<p>A glimpse of our space, seasonal plates, and the people behind them.</p>",
-            "text_color": "#4A5478",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -968,6 +1003,7 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
+            "text_color": "#4A5478",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -979,7 +1015,11 @@
           "blocks": {}
         }
       },
-      "block_order": ["eyebrow", "heading", "body"],
+      "block_order": [
+        "eyebrow",
+        "heading",
+        "body"
+      ],
       "settings": {
         "padding-block-start": 88,
         "padding-block-end": 88
@@ -994,9 +1034,9 @@
           "settings": {
             "content_direction": "column",
             "vertical_on_mobile": true,
+            "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "center",
-            "align_baseline": false,
             "gap": 8,
             "width": "fill",
             "height": "fit",
@@ -1017,7 +1057,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>Shop For Your Pantry</p>",
-                "text_color": "#A07037",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -1028,6 +1067,7 @@
                 "letter_spacing": "eyebrow",
                 "case": "uppercase",
                 "wrap": "pretty",
+                "text_color": "#A07037",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -1039,7 +1079,6 @@
               "type": "text",
               "settings": {
                 "text": "<h2>Bring the Lambruk experience home</h2>",
-                "text_color": "#131A3E",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -1050,6 +1089,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "#131A3E",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -1061,7 +1101,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>All loose leaf teas, relishes, chutneys and pantry favourites featured on our cafe menu are packed on site and available for online purchase.</p>",
-                "text_color": "#4A5478",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -1072,6 +1111,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "#4A5478",
                 "padding-block-start": 12,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -1094,7 +1134,12 @@
               "blocks": {}
             }
           },
-          "block_order": ["eyebrow", "heading", "body", "browse_shop"]
+          "block_order": [
+            "eyebrow",
+            "heading",
+            "body",
+            "browse_shop"
+          ]
         },
         "static-collection-card": {
           "type": "_collection-card",
@@ -1137,7 +1182,6 @@
                 "tile_label": {
                   "type": "collection-title",
                   "settings": {
-                    "text_color": "#131A3E",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1148,6 +1192,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "padding-block-start": 0,
                     "padding-block-end": 0,
                     "padding-inline-start": 0,
@@ -1157,24 +1202,37 @@
                 },
                 "arrow": {
                   "type": "icon",
-                  "settings": { "icon": "arrow", "width": 14, "icon_color": "#BF8C45" },
+                  "settings": {
+                    "icon": "arrow",
+                    "width": 14,
+                    "icon_color": "#BF8C45"
+                  },
                   "blocks": {}
                 }
               },
-              "block_order": ["tile_label", "arrow"]
+              "block_order": [
+                "tile_label",
+                "arrow"
+              ]
             }
           },
-          "block_order": ["row"]
+          "block_order": [
+            "row"
+          ]
         }
       },
-      "block_order": ["header"],
+      "block_order": [
+        "header"
+      ],
       "settings": {
-        "collection_list": ["tea", "condiments", "pantry"],
+        "collection_list": [
+          "tea",
+          "condiments",
+          "pantry"
+        ],
         "layout_type": "grid",
         "columns": 3,
         "mobile_columns": "1",
-        "columns_gap_horizontal": 20,
-        "columns_gap_vertical": 20,
         "section_width": "page-width",
         "background_color": "#F4F1EA",
         "padding-block-start": 88,
@@ -1236,7 +1294,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<h2>Subscribe to Seasonal Dispatches</h2>",
-                    "text_color": "#131A3E",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1247,6 +1304,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "padding-block-start": 0,
                     "padding-block-end": 0,
                     "padding-inline-start": 0,
@@ -1258,7 +1316,6 @@
                   "type": "text",
                   "settings": {
                     "text": "<p>Receive recipes, partner crop-reports, and first access to seasonal small-batch releases.</p>",
-                    "text_color": "#4A5478",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1269,6 +1326,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#4A5478",
                     "padding-block-start": 0,
                     "padding-block-end": 0,
                     "padding-inline-start": 0,
@@ -1277,23 +1335,31 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["heading", "body"]
+              "block_order": [
+                "heading",
+                "body"
+              ]
             },
             "signup": {
               "type": "email-signup",
               "settings": {
-                "heading": "",
-                "label": "Subscribe",
                 "width": "custom",
-                "custom_width": 60
+                "custom_width": 60,
+                "heading": "",
+                "label": "Subscribe"
               },
               "blocks": {}
             }
           },
-          "block_order": ["content", "signup"]
+          "block_order": [
+            "content",
+            "signup"
+          ]
         }
       },
-      "block_order": ["row"],
+      "block_order": [
+        "row"
+      ],
       "settings": {
         "content_direction": "column",
         "section_width": "page-width",

@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "hero_our_story": {
       "type": "section",
@@ -15,7 +16,6 @@
           "type": "text",
           "settings": {
             "text": "<p>Our Story</p>",
-            "text_color": "#986A34",
             "width": "100%",
             "max_width": "normal",
             "alignment": "center",
@@ -26,6 +26,7 @@
             "letter_spacing": "eyebrow",
             "case": "uppercase",
             "wrap": "pretty",
+            "text_color": "#986A34",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -40,7 +41,6 @@
           "type": "text",
           "settings": {
             "text": "<p>From a family kitchen in the Northern Rivers</p>",
-            "text_color": "#131A3E",
             "width": "100%",
             "max_width": "normal",
             "alignment": "center",
@@ -51,6 +51,7 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
+            "text_color": "#131A3E",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -86,7 +87,11 @@
           "blocks": {}
         }
       },
-      "block_order": ["eyebrow", "heading", "body"],
+      "block_order": [
+        "eyebrow",
+        "heading",
+        "body"
+      ],
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -128,7 +133,10 @@
           "blocks": {}
         }
       },
-      "block_order": ["image", "mobile_ratio_override"],
+      "block_order": [
+        "image",
+        "mobile_ratio_override"
+      ],
       "settings": {
         "section_width": "page-width",
         "background_color": "{{ settings.color_palette.background }}",
@@ -160,7 +168,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>Meet Paige</p>",
-                "text_color": "#986A34",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -171,6 +178,7 @@
                 "letter_spacing": "eyebrow",
                 "case": "uppercase",
                 "wrap": "pretty",
+                "text_color": "#986A34",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -185,7 +193,6 @@
               "type": "text",
               "settings": {
                 "text": "<p>A home cook who kept going</p>",
-                "text_color": "#131A3E",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -196,6 +203,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "#131A3E",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -279,10 +287,15 @@
               "blocks": {}
             }
           },
-          "block_order": ["eyebrow", "heading", "body_1", "body_2", "body_3"]
+          "block_order": [
+            "eyebrow",
+            "heading",
+            "body_1",
+            "body_2",
+            "body_3"
+          ]
         }
       },
-      "block_order": ["media", "content"],
       "settings": {
         "media_position": "left",
         "media_width": "medium",
@@ -301,7 +314,6 @@
           "type": "text",
           "settings": {
             "text": "<p>The Lambruk Promise</p>",
-            "text_color": "#986A34",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -312,6 +324,7 @@
             "letter_spacing": "eyebrow",
             "case": "uppercase",
             "wrap": "pretty",
+            "text_color": "#986A34",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -326,7 +339,6 @@
           "type": "text",
           "settings": {
             "text": "<p>How we make things</p>",
-            "text_color": "#131A3E",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -337,6 +349,7 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
+            "text_color": "#131A3E",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -395,12 +408,19 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "icon": { "type": "icon", "settings": { "icon": "none", "image_upload": "shopify://shop_images/Lambruk-Illustration.png", "width": 48 }, "blocks": {} },
+                "icon": {
+                  "type": "icon",
+                  "settings": {
+                    "icon": "none",
+                    "image_upload": "shopify://shop_images/Lambruk-Illustration.png",
+                    "width": 48
+                  },
+                  "blocks": {}
+                },
                 "heading": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Straight from the farm</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -409,6 +429,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -444,7 +465,11 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["icon", "heading", "body"]
+              "block_order": [
+                "icon",
+                "heading",
+                "body"
+              ]
             },
             "item_fruit": {
               "type": "group",
@@ -470,12 +495,19 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "icon": { "type": "icon", "settings": { "icon": "none", "image_upload": "shopify://shop_images/Lambruk-Illustration-4.png", "width": 48 }, "blocks": {} },
+                "icon": {
+                  "type": "icon",
+                  "settings": {
+                    "icon": "none",
+                    "image_upload": "shopify://shop_images/Lambruk-Illustration-4.png",
+                    "width": 48
+                  },
+                  "blocks": {}
+                },
                 "heading": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Made with real fruit</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -484,6 +516,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -519,7 +552,11 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["icon", "heading", "body"]
+              "block_order": [
+                "icon",
+                "heading",
+                "body"
+              ]
             },
             "item_batches": {
               "type": "group",
@@ -545,12 +582,19 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "icon": { "type": "icon", "settings": { "icon": "none", "image_upload": "shopify://shop_images/Lambruk-Illustration-8.png", "width": 48 }, "blocks": {} },
+                "icon": {
+                  "type": "icon",
+                  "settings": {
+                    "icon": "none",
+                    "image_upload": "shopify://shop_images/Lambruk-Illustration-8.png",
+                    "width": 48
+                  },
+                  "blocks": {}
+                },
                 "heading": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Small batches, tested</p>",
-                    "text_color": "#131A3E",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -559,6 +603,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "text_color": "#131A3E",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -594,13 +639,25 @@
                   "blocks": {}
                 }
               },
-              "block_order": ["icon", "heading", "body"]
+              "block_order": [
+                "icon",
+                "heading",
+                "body"
+              ]
             }
           },
-          "block_order": ["item_farm", "item_fruit", "item_batches"]
+          "block_order": [
+            "item_farm",
+            "item_fruit",
+            "item_batches"
+          ]
         }
       },
-      "block_order": ["eyebrow", "heading", "row"],
+      "block_order": [
+        "eyebrow",
+        "heading",
+        "row"
+      ],
       "settings": {
         "section_width": "page-width",
         "background_color": "{{ settings.color_palette.background }}",
@@ -615,7 +672,6 @@
           "type": "text",
           "settings": {
             "text": "<p>Taste the range, or bring it into your own venue.</p>",
-            "text_color": "#F7F5F2",
             "width": "100%",
             "max_width": "narrow",
             "alignment": "left",
@@ -626,6 +682,7 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
+            "text_color": "#F7F5F2",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -695,10 +752,16 @@
               "blocks": {}
             }
           },
-          "block_order": ["shop_now", "become_a_stockist"]
+          "block_order": [
+            "shop_now",
+            "become_a_stockist"
+          ]
         }
       },
-      "block_order": ["heading", "buttons"],
+      "block_order": [
+        "heading",
+        "buttons"
+      ],
       "settings": {
         "content_direction": "row",
         "vertical_on_mobile": true,

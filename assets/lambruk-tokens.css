@@ -601,21 +601,24 @@ h1, h2, h3, h4, h5, h6 {
    3-stop gradient through the native setting at all, so this replaces the
    computed background directly — additive CSS, no Liquid fork.
 
-   Stops taken from the design source's own desktop card
-   (LambrukPantry Desktop.dc.html:86): 0% #000 @ .86, 44% @ .46, 72% @ 0,
-   staying transparent from 72% to the top. Same shape used at both
-   breakpoints — our build keeps a 1:1 square crop at mobile too (the
-   design's own mobile uses a 16:9 crop instead, a pre-existing divergence
-   unrelated to this fix, not touched here), and the title sits at a
-   near-identical fractional height from the card bottom at both sizes
-   (9.6% at 1280px, 10.8% at 375px), so one gradient shape serves both.
+   Stops originally taken from the design source's own desktop card
+   (LambrukPantry Desktop.dc.html:86): 0% #000 @ .86, 44% @ .46, 72% @ 0.
+   Same shape used at both breakpoints — our build keeps a 1:1 square crop
+   at mobile too (the design's own mobile uses a 16:9 crop instead, a
+   pre-existing divergence unrelated to this fix, not touched here), and
+   the title sits at a near-identical fractional height from the card
+   bottom at both sizes (9.6% at 1280px, 10.8% at 375px), so one gradient
+   shape serves both.
 
-   Contrast verified against the REAL uploaded photos, not the design's
-   own mockup images, via pixel-accurate compositing (real image pixel ×
-   (1-alpha) + black × alpha) sampled across the title's actual rendered
-   width, both breakpoints: worst case 10.42:1 (Pantry Staples, 375px),
-   comfortably clear of 4.5:1 on all three cards at both sizes. Design's
-   own gradient shape holds on our photography — no strengthening needed.
+   Compressed 2026-09-01, Jake's call after seeing the 72% version against
+   the real photography: still too much of the photo darkened. Scaled the
+   SAME curve proportionally to reach 45% instead of 72% (0.46 stop moves
+   from 44% to 44×45/72≈27%) rather than inventing a new shape — bottom
+   stop (0% @ .86) unchanged, so density right behind the title is
+   identical; only the ramp is shorter. See DESIGN-TOKENS.md §2 for why
+   this diverges from the design source (mockup photos were shot/graded
+   darker than what actually shipped, so 72% read heavier in practice
+   than intended) and the contrast re-verification this required.
 
    `.collection-card--image-bg` only occurs once on the homepage (the one
    collection-list section here) — checked directly, not assumed — so
@@ -624,7 +627,7 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(
     0deg,
     rgba(0, 0, 0, 0.86) 0%,
-    rgba(0, 0, 0, 0.46) 44%,
-    rgba(0, 0, 0, 0) 72%
+    rgba(0, 0, 0, 0.46) 27%,
+    rgba(0, 0, 0, 0) 45%
   ) !important;
 }

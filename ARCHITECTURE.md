@@ -1629,6 +1629,28 @@ Screenshot confirmed visually: Tea Collection's sky and grass — the pale, brig
 
 ---
 
+## 54. Explore-by-category scrim compressed further, 72% → 45% (2026-09-01)
+
+§53 ported the design's gradient verbatim (0% .86 → 44% .46 → 72% 0) and it measured well clear of 4.5:1 — but once live against the real, brighter photography, Jake wanted the darkening confined lower still.
+
+**Compressed the same curve proportionally, not a new shape**, per instruction: bottom stop unchanged (0% @ .86 — density right behind the title identical to before), midpoint scaled 44×45/72≈27%, top stop moved from 72% to 45%. `assets/lambruk-tokens.css`'s override updated in place.
+
+**Re-verified, same method as §53 — real uploaded photos, live computed gradient (not the authored value), both breakpoints, worst case per card:**
+
+| | 1280px min | 375px min |
+|---|---|---|
+| Tea Collection | 9.64:1 | 8.44:1 |
+| Sauces & Chutneys | 10.35:1 | 10.18:1 |
+| Pantry Staples | **9.34:1** | **8.15:1** |
+
+All clear of 4.5:1 with real margin — no adjustment needed, nothing to report as a constraint hit. Screenshotted both breakpoints for Jake to judge whether 45% is right or he wants it tighter still — not treated as settled by this pass.
+
+**Why the design's own 72% needed compressing at all, recorded in `design/DESIGN-TOKENS.md`:** the mockup's category photos are darker/lower-key than what was actually shot — the huge contrast headroom the design's gradient produced on its own mockup images (~11.5:1, §53) was partly a function of those images already being dark, not just the gradient shape. The same gradient reads as covering more of the photo once applied to brighter, higher-key real photography. Logged as the second deliberate departure from the design source for this component, same footing as the hero line-height override (§51/§52).
+
+`shopify theme check --path .` clean. Dev server confirmed stopped before reporting done.
+
+---
+
 ## Summary
 
 | Area | Path taken |

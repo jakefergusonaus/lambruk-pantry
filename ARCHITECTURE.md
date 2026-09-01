@@ -1696,6 +1696,39 @@ Nothing fixed in this pass, per instruction — scope report only. `REVIEW-NOTES
 
 ---
 
+## 57. Two-up cards: unequal height when body copy wraps to a different line count (2026-09-01)
+
+Jake, from a screenshot: "Wholesale partnerships" sat visibly taller than "A high tea worth travelling for," button baselines not level. Measured before touching anything, per instruction.
+
+**Cause, confirmed live before any fix:** `section_two_up_cards`'s `row` block is a flex row (`content_direction: "row"`) with its own `vertical_alignment: "flex-start"` — mapped straight through to `align-items: flex-start` by `.layout-panel-flex--row` in `assets/base.css`. No native "stretch" option exists on this setting (`blocks/group.liquid`'s schema only offers top/center/bottom). With `align-items: flex-start`, each card's outer box (`height: "fit"`, which resolves to `height: auto` — see §55's note on the invalid `--size-style-height: fit` value falling back to the property's initial value) sizes independently to its own content, with no relationship to its sibling. At 1280px: Wholesale 617.45px, High Tea 593.45px — the 24px gap is exactly one extra wrapped line of body copy. Headings and body text were already top-aligned identically between the two cards (both start at 398.25px / 447.05px from the card's own top) — the fixed 16/10 image above them (§55) pins everything above the body text to the same offset regardless of card height; only the space *after* the body text, and therefore the button position, diverged.
+
+**Design source confirms equal height is intended, not incidental:** `Desktop.dc.html`'s equivalent markup (`<div style="...display:grid;grid-template-columns:1fr 1fr;gap:28px">`) uses CSS Grid, which stretches grid items to the tallest row member by default — the mockup never had to solve this because Grid solves it for free. `Mobile.dc.html`'s equivalent is `display:flex;flex-direction:column` (stacked), with no equal-height concept at all — confirming the fix is desktop/two-up-only.
+
+**Fix shape matched what was actually there, not assumed:** stretching the row alone isn't sufficient, because both cards' own top-level flex (`image` + `content`) carries `vertical_alignment_flex_direction_column: "center"` — simply stretching the outer card would centre the shorter card's (image + content) block in the new extra space, shifting its heading down and breaking the "headings top-aligned" requirement the moment the two cards' natural heights differ. Three-part CSS override in `assets/lambruk-tokens.css`, scoped `@media (min-width: 750px)` and `[id$="__section_two_up_cards"]`:
+1. Row: `align-items: stretch` — both cards now take the taller card's height.
+2. Each card's own top-level flex: `justify-content: flex-start` (overriding the "center" setting) — keeps `image` + `content` pinned to the top rather than centring into the newly-added space.
+3. The `content` sub-group (heading/body/button stack): `flex-grow: 1`, so it — not the outer card — absorbs all the added height; its own button gets `margin-block-start: auto`, so that space collects immediately above the button rather than spreading between heading and body.
+
+Prototyped live via an injected `<style>` tag before writing any file, confirmed the exact target numbers, then wrote the real CSS, pushed, and re-measured against the deployed file (not the prototype) to confirm it matches.
+
+**Verified live, 1280px, before → after:**
+
+| | Wholesale (before) | High Tea (before) | Wholesale (after) | High Tea (after) |
+|---|---|---|---|---|
+| Card height | 617.45px | 593.45px | 617.45px | 617.45px |
+| Heading offset from card top | 398.25px | 398.25px | 398.25px | 398.25px |
+| Body offset from card top | 447.05px | 447.05px | 447.05px | 447.05px |
+| Button bottom (viewport) | 5002.16px | 4978.16px | 5002.16px | 5002.16px |
+| Button offset from card bottom | 32px | 32px | 32px | 32px |
+
+Heading and body offsets are unchanged by design — the fix only ever had to move the button. Image size unaffected (586×366.25px, still exactly 16/10, both cards, before and after).
+
+**Verified live, 375px, before → after — confirming mobile is untouched, per instruction:** both cards 453.77px before and after (button-offset-from-bottom 16.4px / 28.4px before and after) — identical numbers, the `min-width: 750px` scope holds. Mobile stacks in a column (`.mobile-column`, `assets/base.css`) where equal height would mean padding the shorter card with dead space for no reason; the design's own mobile mockup doesn't call for it either.
+
+`shopify theme check --path .` clean. Dev server confirmed stopped before reporting done.
+
+---
+
 ## Summary
 
 | Area | Path taken |

@@ -674,3 +674,60 @@ h1, h2, h3, h4, h5, h6 {
 [data-template="index"] .placeholder-image {
   --ratio: 16 / 10 !important;
 }
+
+/* Two-up cards rendering at different heights when their body copy
+   wraps to a different number of lines (2026-09-01, Jake's report —
+   screenshot showed "Wholesale partnerships" a full line taller than
+   "A high tea worth travelling for"). Confirmed the cause before
+   touching anything: the row (`section_two_up_cards`'s `row` block)
+   is a flex row with `align-items: flex-start` (native "Position"
+   setting, no "stretch" option in blocks/group.liquid's schema) — so
+   each card sizes to its own content independently, with no relation
+   to its sibling's height. Design source confirms equal height is
+   intended: Desktop.dc.html's equivalent markup uses CSS Grid
+   (`display:grid; grid-template-columns:1fr 1fr`), which stretches
+   grid items to match the tallest by default.
+
+   Three-part fix, since equal height alone would just centre the
+   shorter card's content in the extra space (both cards' own
+   "content" sub-group carries `vertical_alignment_flex_direction_column:
+   "center"`), not pin the button to a shared baseline:
+   1. Row stretches so both cards take the taller card's height.
+   2. Each card's own top-level flex (image + content) stops
+      centring — pinned to flex-start instead, so the image and the
+      "content" sub-group both stay put.
+   3. The "content" sub-group (heading/body/button stack) grows to
+      fill whatever height the stretch added, and the button gets
+      `margin-block-start: auto` so it — not the heading or body —
+      absorbs that space, sitting flush at the bottom of the now-taller
+      card.
+
+   Verified live at 1280px: both cards 617.45px (previously 617.45px /
+   593.45px), headings and body copy at identical offsets from the
+   card top in both (398.25px / 447.05px, unchanged from before — the
+   fix doesn't move them), buttons at an identical baseline
+   (top 4947.76px, bottom 5002.16px, 32px from the card's own bottom
+   padding in both). Scoped to `min-width: 750px` and confirmed
+   unchanged at 375px (453.77px both, matching the pre-fix baseline
+   exactly) — mobile stacks the cards in a column
+   (`.mobile-column`, `assets/base.css`), where equal height would
+   mean padding the shorter card with dead space for no reason; the
+   design's own mobile mockup doesn't ask for it either
+   (`flex-direction:column`, no grid). */
+@media (min-width: 750px) {
+  [id$="__section_two_up_cards"] .layout-panel-flex--row {
+    align-items: stretch;
+  }
+
+  [id$="__section_two_up_cards"] .layout-panel-flex--row > .group-block > .group-block-content {
+    justify-content: flex-start;
+  }
+
+  [id$="__section_two_up_cards"] .layout-panel-flex--row > .group-block > .group-block-content > .group-block {
+    flex-grow: 1;
+  }
+
+  [id$="__section_two_up_cards"] .layout-panel-flex--row .button-secondary {
+    margin-block-start: auto;
+  }
+}

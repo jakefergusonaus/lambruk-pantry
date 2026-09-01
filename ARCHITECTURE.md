@@ -1651,6 +1651,33 @@ All clear of 4.5:1 with real margin — no adjustment needed, nothing to report 
 
 ---
 
+## 55. Two-up card images: square → 16/10, matching the design exactly (2026-09-01)
+
+Jake: "Wholesale partnerships" and "A high tea worth travelling for" images far too tall. Measured both sides before touching anything, per instruction.
+
+**Build, live-measured:** both cards 1:1 square — 586×586px at 1280px, 343×343px at 375px. `--ratio: 1`. Root cause: both blocks set `image_ratio: "custom"` in `templates/index.json` — not a real option. `blocks/image.liquid`'s schema only defines `adapt`/`portrait`/`square`/`landscape` (checked directly); `"custom"` isn't among them, and no companion custom-ratio value is stored anywhere either. The block's own `case` statement (`blocks/image.liquid:7-14`) doesn't match `"custom"`, so `ratio` never gets assigned and falls through to its hard-coded default, `assign ratio = 1` — square by accident, not by any setting actually in effect.
+
+**Design source, live-measured, not read off the declaration:** `Desktop.dc.html:256/266` and `Mobile.dc.html:214/222` both specify `aspect-ratio:16/10` for these same two cards, at both breakpoints (no mobile-specific divergence this time, unlike §53's category cards). Measured on the rendered desktop mockup: 586×366.3px at the same 586px width the build uses — exactly 16/10.
+
+**Build was 1.6× taller than the design at an identical width — a defect, not a style question**, so matched to the design exactly rather than steering toward the nearest native option: none of the four real `image_ratio` values is 16/10 (`landscape` is 16/9 ≈ 1.78, still 11% off). Added a scoped CSS override in `assets/lambruk-tokens.css`, `[data-template="index"] .image-block__image, [data-template="index"] .placeholder-image { --ratio: 16 / 10 !important; }` — `type: "image"` occurs exactly twice on the homepage (checked directly), both these cards, so no further scoping needed.
+
+**First attempt targeted the wrong element, caught by measuring rather than trusting the CSS.** Overriding `--ratio` on the outer `.image-block` wrapper changed the custom property there (confirmed) but left the rendered box unchanged (586×586, still square) — `image_border_style` sets a *second*, separate inline `--ratio` directly on `.image-block__image` (the real `<img>`) and `.placeholder-image` (the no-image case) via `image_tag`'s own `style:` parameter, and that direct inline value wins over anything inherited from an ancestor regardless of the ancestor's own specificity. Retargeted both elements directly, re-verified.
+
+**Verified live, both breakpoints, after, matching the design exactly:**
+
+| | 1280px | 375px |
+|---|---|---|
+| Build | 586 × 366.3px | 343 × 214.4px |
+| Design | 586 × 366.3px | (16/10 confirmed; absolute px unreliable — mobile mockup only rendered in this session's sandboxed preview at a scaled-down size, ratio itself unaffected) |
+
+Also caught and corrected a bug in my own first measurement pass: `section.querySelector(...)` scoped to the whole two-up section returns the *first* match across *both* cards, not the one belonging to whichever heading was searched from — an early check reported "Wholesale partnerships" rendering `DSC_1541.jpg` (High Tea's own image), which was actually High Tea's element caught by an unscoped query. Rescoped to each card's own `color-custom-…__wholesale_card` / `__high_tea_card` container before trusting any measurement from it.
+
+**Found in passing, not fixed here, per instruction to keep findings separate:** "Wholesale partnerships" has no image assigned at all (`templates/index.json`'s `wholesale_card.image` block has no `"image"` key) — confirmed via a fresh pull showing zero diff, so this isn't a stale local copy, it's genuinely unset live. Renders as Horizon's own placeholder SVG at the correct new 16/10 box. Logged in `REVIEW-NOTES.md`.
+
+`shopify theme check --path .` clean. Dev server confirmed stopped before reporting done.
+
+---
+
 ## Summary
 
 | Area | Path taken |

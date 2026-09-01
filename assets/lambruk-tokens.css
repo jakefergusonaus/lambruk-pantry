@@ -631,3 +631,46 @@ h1, h2, h3, h4, h5, h6 {
     rgba(0, 0, 0, 0) 45%
   ) !important;
 }
+
+/* Two-up card images ("Wholesale partnerships" / "A high tea worth
+   travelling for") rendering square (1:1), far taller than intended
+   (2026-09-01). Root cause: both blocks are set to `image_ratio: "custom"`
+   in templates/index.json — not a real option. blocks/image.liquid's
+   schema only defines adapt/portrait/square/landscape (checked directly);
+   "custom" isn't one of them, and there's no accompanying custom-ratio
+   value stored anywhere either. The block's own `case` statement
+   (blocks/image.liquid:7-14) doesn't match "custom", so `ratio` never
+   gets assigned and falls through to its hard-coded default,
+   `assign ratio = 1` (line 5) — square, by accident, not by any setting
+   actually chosen. Confirmed live both breakpoints: 586×586px at 1280px,
+   343×343px at 375px, `--ratio: 1` both times.
+
+   Design source (Desktop.dc.html:256/266, Mobile.dc.html:214/222) uses
+   `aspect-ratio:16/10` for both cards at both breakpoints — measured live
+   on the desktop mockup: 586×366.3px at the same 586px width the build
+   uses, exactly 16/10. Build was rendering 1.6× taller than the design
+   at an identical width — a defect, not a style choice, so matched to
+   the design exactly rather than picking the nearest native option:
+   none of the four real `image_ratio` values is 16/10 (`landscape` is
+   16/9 ≈ 1.78, still 11% off), so this sets `--ratio` directly via CSS
+   instead of steering toward an approximate native setting.
+
+   `type: "image"` occurs exactly twice on the homepage — checked
+   directly — both are these two cards, so this selector needs no
+   further scoping within `[data-template="index"]`.
+
+   Targets `.image-block__image` and `.placeholder-image` directly, not
+   the outer `.image-block` wrapper — `--ratio` is set as a SECOND,
+   separate inline declaration on each of those two (the actual <img>,
+   or the placeholder <div> when no image is assigned) via
+   `image_border_style`, not just inherited from the wrapper. A first
+   attempt overriding only the wrapper's `--ratio` was confirmed live to
+   change the custom property there but leave the rendered box
+   unchanged (586×586, still 1:1) — the img's own direct inline value
+   wins over inheritance from an ancestor regardless of what the
+   ancestor's value is, so both locations need the override, not just
+   one. */
+[data-template="index"] .image-block__image,
+[data-template="index"] .placeholder-image {
+  --ratio: 16 / 10 !important;
+}

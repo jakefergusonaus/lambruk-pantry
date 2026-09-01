@@ -1678,6 +1678,22 @@ Also caught and corrected a bug in my own first measurement pass: `section.query
 
 ---
 
+## 56. Sweep for other `image_ratio`/`aspect_ratio`/`ratio` mismatches — scope report, nothing fixed (2026-09-01)
+
+§55's `image_ratio: "custom"` bug is the sixth confirmed instance of this project's standing pattern (a setting that reads as configured and is silently discarded by the render path, with no error anywhere — the other five: `--spacing-scale`'s missing `.spacing-style` class, `.text-display-3`'s specificity loss, `type_preset != "custom"` §44; inert `vertical_alignment` §46/`REVIEW-NOTES.md` row 26; heading line-height classification §51). Jake asked for a full sweep before deciding whether to fix anything else — scope only, no fixes in this pass.
+
+**Method.** Enumerated every block schema that defines a ratio-shaped setting: 9 files with `"id": "image_ratio"` (`blocks/_product-card-gallery.liquid`, `_featured-blog-posts-image.liquid`, `comparison-slider.liquid`, `_featured-product-gallery.liquid`, `_cart-products.liquid`, `_collection-image.liquid`, `image.liquid`, `_collection-card-image.liquid`, `_blog-post-featured-image.liquid`), plus 7 similarly-named settings across 6 more files (`video.liquid`'s `aspect_ratio`, `_product-media-gallery.liquid`'s, `_featured-product-information-carousel.liquid`'s, `_card.liquid`'s, `_image.liquid`'s `ratio`, `_header-menu.liquid`'s two — `featured_products_aspect_ratio` and `featured_collections_aspect_ratio`). For each, read the block's own schema `select` options directly (not assumed from naming convention — caught myself transcribing two of them wrong on the first pass, see below) and, separately, its actual `case`/`if` handling logic, since `_collection-image.liquid` legitimately supports `"custom"` (explicit handling plus companion `custom_image_ratio`-style fields) where `image.liquid` doesn't — excluded it from the invalid-value search on that basis, not by name alone.
+
+Wrote a script (adapting the recursive JSON-walker built for the §51 line-height audit) to parse every file under `templates/` and `sections/` — stripping Shopify's leading `/* ... */` comment before `json.loads()` — walk every block, track its `type`, and flag any of the 16 settings above whose stored value isn't in that block type's own valid set.
+
+**Caught two false positives in my own first pass, before reporting anything:** transcribed `_header-menu.liquid`'s options as hyphenated (`4-5`, `16-9`, `1-1`) from memory instead of re-reading the raw schema text, which actually uses `"4 / 5"`, `"16 / 9"`, `"1 / 1"` (slash-with-spaces) — and made the same mistake for `video.liquid`/`_product-media-gallery.liquid`/`_featured-product-information-carousel.liquid` (slash, no spaces: `"9/16"`, `"1/1.25"`, not hyphens). Both would have shown live, correctly-configured settings as false "invalid" findings. Re-extracted every option string directly from each schema with `awk`/`grep` rather than trusting a paraphrase, then re-ran the scan.
+
+**Result: the two instances already fixed in §55 are the only ones in the theme.** Every other usage of every one of the 16 settings, across every `templates/*.json` and `sections/*.json` file, already uses one of that block's real schema options. No unmapped block types turned up either (every block carrying one of these keys matched a known type), so the schema reference table itself isn't missing a case.
+
+Nothing fixed in this pass, per instruction — scope report only. `REVIEW-NOTES.md` row 11 (the image_ratio finding) closed out to reflect §55's fix, since it had gone stale (was still `[ ]`, citing a `custom_image_ratio: 1.6` value that isn't actually a field this block reads); rows 11, 26, and 35 now each carry the full six-instance list so the pattern is findable from any of them, per instruction.
+
+---
+
 ## Summary
 
 | Area | Path taken |

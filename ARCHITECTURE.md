@@ -1729,6 +1729,25 @@ Heading and body offsets are unchanged by design — the fix only ever had to mo
 
 ---
 
+## House rules
+
+Patterns worth applying on sight, distilled out of repeated incidents rather than re-derived from scratch each time they come up again.
+
+### Card rows: stretch, top-align, push the last element down
+
+Stretch the row so all cards take the tallest height, top-align the content, and push the last element (button, meta line) down with `margin-block-start: auto`. Never distribute the free space through the stack — that's what makes one card's text sit lower than its neighbour's.
+
+**Desktop only.** When cards stack to one per row, equal height just pads the shorter one with dead space for no reason — check the design source's own mobile mockup before carrying this into a stacked layout; it usually doesn't ask for it.
+
+**Applied so far:**
+- **Occasion cards' blurb/item-count** — "Set another table," `sections/lambruk-other-occasions.liquid`. CSS Grid's own default stretch (`grid-template-columns: repeat(3, 1fr)`) plus `margin-top: auto` on the footer (item-count) row only. First attempt put the auto margin on the whole blurb+footer group, which anchored the *group* to the card's bottom edge but let a variable-length blurb (1 line vs 2) push its own top offset 24px lower on the shorter-blurb card — moving the margin down to just the footer fixed it: the blurb now sits at a fixed offset under the heading regardless of its own line count, and only the footer still floats. Commit `35b7835`, not written up as its own numbered section here.
+- **Product grid rows** — Shop All / category / occasion product cards, `blocks/_lambruk-add-button.liquid`. No manual override needed: CSS Grid's native `align-items: stretch` already keeps every card in a shared row equal-height, confirmed live before relying on it (forced one card into a wrapped, two-line state and measured its untouched neighbour growing to match, bottoms staying aligned) — §45.
+- **Two-up card heights** — "Wholesale partnerships" / "A high tea worth travelling for," `assets/lambruk-tokens.css`. This block's own Position setting has no "stretch" option, so all three parts of the rule are a scoped CSS override rather than a native mechanism — §57.
+
+**Checked for a fourth instance and didn't find one.** Swept every file for `margin-top: auto`/`margin-block-start: auto` and `align-items: stretch` before writing this rule — the only other hits are pristine, unmodified Horizon internals (`blocks/filters.liquid`'s sticky drawer footer, `snippets/cart-drawer.liquid`, `snippets/quick-add-modal-styles.liquid`, `snippets/slideshow.liquid`, `blocks/email-signup.liquid`, `sections/quick-order-list.liquid`) — none of them a card row, none of them ours. If a fourth applied instance exists, it isn't findable by this pattern; flag it if one comes to mind so this list stays accurate.
+
+---
+
 ## Summary
 
 | Area | Path taken |

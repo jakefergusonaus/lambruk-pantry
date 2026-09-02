@@ -190,13 +190,22 @@
                 "shop_now",
                 "visit_cafe"
               ]
+            },
+            "award_badge": {
+              "type": "_lambruk-award-badge",
+              "settings": {
+                "image": "",
+                "alt_text": "Melbourne Royal 2024 Australian Food Awards, Bronze"
+              },
+              "blocks": {}
             }
           },
           "block_order": [
             "eyebrow",
             "heading",
             "body",
-            "button_row"
+            "button_row",
+            "award_badge"
           ]
         }
       },

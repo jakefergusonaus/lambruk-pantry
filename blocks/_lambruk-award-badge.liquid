@@ -1,0 +1,136 @@
+
+
+{% liquid
+  assign badge_image = block.settings.image
+  assign alt_text = block.settings.alt_text | default: 'Melbourne Royal 2024 Australian Food Awards, Bronze'
+%}
+
+{% if badge_image != blank %}
+  <div class="lambruk-award-badge" {{ block.shopify_attributes }}>
+    {{
+      badge_image
+      | image_url: width: 336
+      | image_tag:
+        width: 112,
+        height: 112,
+        widths: '84, 112, 168, 224, 252, 336',
+        sizes: '(min-width: 750px) 112px, 84px',
+        class: 'lambruk-award-badge__image',
+        alt: alt_text,
+        loading: 'lazy'
+    }}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  /*
+    Corner badge overlaid on the hero photo (Melbourne Royal award,
+    Jake's request 2026-09-02). Only ever a child of _content-without-
+    appearance.liquid's content column (registered there explicitly,
+    see that file's schema) -- it reaches across into the media column
+    by escaping its own positioned ancestor, not by living inside media
+    itself. Renders nothing with no image assigned -- same pattern as
+    the Cafe "View menu" button and the occasion card blurb, no
+    placeholder box.
+
+    Positioning depends on sections/media-with-content.liquid's own
+    grid geometry, verified live (getBoundingClientRect against the
+    real rendered hero, both --media-right and default orientations,
+    both breakpoints) before writing these values -- not assumed from
+    reading the stylesheet:
+
+    - .media-with-content and .media-with-content__content are both
+      already position:relative natively in Horizon's own CSS, so
+      nothing needed adding there.
+    - Below 750px the grid always stacks media above content,
+      regardless of media_position -- content's own top edge lands
+      exactly on media's bottom edge, and both share identical
+      left/right edges. So the mobile offsets below are fixed pixel
+      values with no dependency on any column-width setting at all.
+    - At >=750px, media and content sit side by side with zero gap
+      between them (columnGap confirmed 0 live). Which edge of content
+      touches which edge of the image depends on media_position:
+        - media_position "left" (default, no --media-right class):
+          content's own left edge = the image's right edge already --
+          the corner we want is the shared boundary, so this only
+          needs a small, FIXED offset (-96px = -(112px badge width -
+          16px overhang)), independent of media_width.
+        - media_position "right" (media-with-content--media-right):
+          content's own right edge = the image's LEFT edge -- the
+          corner we want (image's bottom-RIGHT) is on the FAR side of
+          the media column, so the badge has to cross the whole media
+          track. That's only expressible as `right: calc(-100% - 16px)`,
+          which is correct ONLY because content and media happen to be
+          equal width under media_width: "medium" (today's live
+          setting). If media_width is ever changed to "narrow" or
+          "wide" while media_position stays "right", this value will
+          land the badge in the wrong place -- there is no fixed-pixel
+          equivalent for that combination the way there is for
+          media-left. See the guard below and REVIEW-NOTES.md ("award
+          badge appears in the wrong place on the homepage hero").
+    - media-with-content--media-extend (media spanning extra grid
+      columns) changes this geometry again and was NOT tested --
+      guarded off defensively below rather than assumed safe.
+  */
+  .lambruk-award-badge {
+    position: absolute;
+    z-index: 2;
+    width: 84px;
+    height: 84px;
+    top: -66px;
+    right: 12px;
+  }
+
+  .lambruk-award-badge__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lambruk-award-badge {
+      width: 112px;
+      height: 112px;
+      top: auto;
+      right: auto;
+      bottom: -24px;
+    }
+
+    .media-with-content:not(.media-with-content--media-extend):not(.media-with-content--media-right)
+      .lambruk-award-badge {
+      left: -96px;
+    }
+
+    .media-with-content--medium.media-with-content--media-right:not(.media-with-content--media-extend)
+      .lambruk-award-badge {
+      right: calc(-100% - 16px);
+    }
+
+    /* Unsupported combinations -- hide rather than render at a
+       position the geometry above doesn't actually support. */
+    .media-with-content--media-extend .lambruk-award-badge,
+    .media-with-content--media-right:not(.media-with-content--medium) .lambruk-award-badge {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Award badge",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Badge image"
+    },
+    {
+      "type": "text",
+      "id": "alt_text",
+      "label": "Alt text",
+      "default": "Melbourne Royal 2024 Australian Food Awards, Bronze"
+    }
+  ]
+}
+{% endschema %}

@@ -1748,6 +1748,48 @@ Stretch the row so all cards take the tallest height, top-align the content, and
 
 ---
 
+## 58. Homepage hero award badge (2026-09-02)
+
+Jake wants the Melbourne Royal Bronze award badge in the bottom-right of the hero image, already uploaded to Shopify Files. Checked the previously-reported "unassigned badge" claim first, per instruction — it was wrong: no badge mechanism existed at all. `section_hero` (`media-with-content`) is a fixed two-slot section (`media` + `content`, both `content_for 'block'` calls marked `static: true`, no third slot), and its `media` block (`_media-without-appearance`) has no `"blocks"` key in its own schema — no nested overlay possible either. A theme-wide `grep` for "badge" turned up only Horizon's unrelated native product sale/sold-out badge system.
+
+**Design measurements, from source directly:** desktop (`Desktop.dc.html`, 1240px container) — badge 112×112px (source asset 531×531px, perfectly square), `right:-16px; bottom:-24px` on the image's own box — genuinely overhanging the corner, not inset. Mobile (`Mobile.dc.html`) uses a **different** treatment, not a scaled copy: badge 84×84px, `right:12px` (inset, inside the edge) `bottom:-18px` (still overhanging). The hero's own image aspect-ratio also differs by breakpoint (16/13 desktop, 4/3 mobile).
+
+**Three options assessed before building (requested explicitly, not offered unprompted):** (1) settings added to `_media-without-appearance.liquid` directly — a shared Horizon block, core edit, needs sign-off; (2) fork `media-with-content.liquid` into a Lambruk-specific section — avoids touching Horizon's file, costs an upgrade-tracked fork of a section used four times, for something needed once; (3) a new private theme block registered on the *content* column via one additive schema line, positioned over the media column with CSS. Assessed (3) live before committing to it — see below — and it worked, so it's what got built.
+
+**Assessment, verified live before writing any file:**
+- `_content-without-appearance.liquid`'s schema already has a real `"blocks"` array (`@theme`, `@app`, `text`, `icon`, `image`, `button`, `video`, `group`, `spacer`, `_divider`). `@theme` doesn't cover underscore-prefixed blocks (Shopify's "private block" convention, already used throughout this project — `_lambruk-add-button`, `_product-card-group`), so a new `_lambruk-award-badge` needs the same explicit-line treatment `_lambruk-add-button` got on `_product-card-group.liquid` — confirmed by reading both schemas, not assumed from the naming pattern.
+- `.media-with-content` and `.media-with-content__content` are **already `position: relative`, natively, in Horizon's own CSS** — verified via `getComputedStyle` on the live rendered hero. Nothing needed adding. Proved the escape works by injecting a real absolutely-positioned test element as a child of content's own block-content wrapper and measuring it against the real image: `right: calc(-100% - 16px); bottom: -24px` landed at exactly 16px/24px overhang, matching the design pixel-for-pixel; screenshot confirmed correct paint order (content is later in DOM order than media regardless of which side it displays on).
+- Below 750px, `grid-template-areas` stacks unconditionally to media-then-content **regardless of `media_position`** (verified live) — content's own top edge lands exactly on media's bottom edge, both share identical left/right edges, so the mobile badge only needs fixed pixel values (`top: -66px; right: 12px`) with zero column-width dependency.
+- Tested both `media_position` orientations live by toggling the real `media-with-content--media-right` class and re-measuring. **Real asymmetry found:** `media_position: "left"` (default) needs only a fixed `left: -96px` (content's own left edge already touches the image's right edge — the corner we want is the shared boundary, independent of `media_width`). `media_position: "right"` (today's live setting) needs `right: calc(-100% - 16px)` — correct **only** because `media_width` is `"medium"` today, where content and media happen to be equal width; there's no fixed-pixel equivalent for that orientation. This is the one real fragility in the whole approach — documented below and in `REVIEW-NOTES.md`, titled by symptom ("award badge appears in the wrong place on the homepage hero").
+- Collision check, as asked: at 1280px the image's own bottom edge sits 80px above the next section (`section_proof_bar_marquee`, the hero's own `padding-block-end: 80`) — a 24px overhang leaves 56px clear. At 375px there's 643px of hero text between the stacked image and the marquee. No collision at either breakpoint, verified live.
+
+**Build.** New `blocks/_lambruk-award-badge.liquid`:
+- Renders nothing with no image assigned (`{% if badge_image != blank %}`) — same pattern as the Cafe "View menu" button and the occasion card blurb, no placeholder box. Confirmed live: zero `.lambruk-award-badge` elements with the block's `image` setting blank.
+- Real `<img>`, not a link, not a CSS background — a credibility claim needs to be readable by a screen reader. `alt_text` is a block setting (`text`, not hardcoded), defaulting to "Melbourne Royal 2024 Australian Food Awards, Bronze".
+- Image sizing uses Shopify's `image_tag` filter directly with explicit `width`/`height`/`widths`/`sizes` (not `snippets/image.liquid`'s DPI-only helper, which has no `sizes` mechanism and would over-fetch for two different fixed breakpoint sizes) — `widths: "84, 112, 168, 224, 252, 336"` (1x/2x/3x for each of the two rendered sizes), **`sizes: "(min-width: 750px) 112px, 84px"`**. Confirmed live: `srcset` carries all six candidates, `currentSrc` resolves to a width matched to the actual rendered box, not the 531px source.
+- One additive line in `_content-without-appearance.liquid`'s `"blocks"` array (`{"type": "_lambruk-award-badge"}`) — nothing else in that file touched.
+- Block instance added to `templates/index.json`'s hero `content` (`award_badge`, appended to `block_order`), settings `image: ""`, `alt_text` at its default — exists and is ready, but renders nothing until Jake assigns the image in the editor.
+- `media_width`/`media_position` guard: `.media-with-content--media-right:not(.media-with-content--medium) .lambruk-award-badge, .media-with-content--media-extend .lambruk-award-badge { display: none; }` — the specific combination the geometry above doesn't support hides the badge rather than rendering it in the wrong place. Confirmed live by toggling `--medium` off while `--media-right` stayed on: `display: none` fired correctly. `media-with-content--media-extend` (media spanning extra grid columns) is guarded off the same way, defensively — that combination was not tested at all, not assumed safe.
+
+**Verified live, both breakpoints, both orientations, with a temporary stand-in image** (`shopify://shop_images/DSC_2479.jpg` — the hero's own photo, reused purely to exercise the real render pipeline; reverted to blank and re-pushed before committing, matching this project's established "temporary test value, reverted before shipping" pattern from the Cafe menu button build):
+
+| | Desktop, `media-right` (live) | Desktop, `media-left` (simulated) | Mobile |
+|---|---|---|---|
+| Badge size | 112×112px | 112×112px | 84×84px |
+| Right overhang / inset | +16px (overhang) | +16px (overhang) | -12px (inset) |
+| Bottom overhang | +24px | +24px | +18px |
+| Paints above photo | yes | yes | yes |
+| `alt` | "Melbourne Royal 2024 Australian Food Awards, Bronze" | — | — |
+| `sizes` | `(min-width: 750px) 112px, 84px` | — | — |
+
+Screenshots taken at both breakpoints (both orientations at desktop) confirming the above visually, not just numerically. Guard behaviour (badge disappears, not misplaced) also confirmed live by forcing the unsupported `--media-right` + `--narrow` combination.
+
+`shopify theme check --path .` clean throughout. Dev server confirmed stopped before reporting done.
+
+**One incident worth recording: `shopify theme pull` (no `--only` flag) deleted the new, uncommitted `blocks/_lambruk-award-badge.liquid` and reverted the two uncommitted edits back to their last-pushed state**, mid-build, when pulled per the standing "pull before touching anything" rule. A full pull syncs in both directions — it doesn't just bring down remote changes, it also deletes local files that don't exist on the remote and overwrites local edits that haven't been pushed yet. No data was actually lost (the files were re-created from this session's own context, not re-derived), but it cost a redo. **Lesson for next time: commit local work before running a bare `shopify theme pull`, or scope the pull with `--only` to the specific files being coordinated on, not the whole theme.** The standing rule itself (pull before Admin-adjacent work) is still correct — this is a refinement to *how*, not a reason to skip it.
+
+---
+
 ## Summary
 
 | Area | Path taken |

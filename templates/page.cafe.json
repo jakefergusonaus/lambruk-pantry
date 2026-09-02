@@ -1058,7 +1058,7 @@
               },
               "blocks": {
                 "view_catering_menu": {
-                  "type": "button",
+                  "type": "_lambruk-link-button",
                   "settings": {
                     "label": "View Catering Menu",
                     "link": "",

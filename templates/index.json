@@ -194,7 +194,7 @@
             "award_badge": {
               "type": "_lambruk-award-badge",
               "settings": {
-                "image": "",
+                "image": "shopify://shop_images/MR_AFA_Bronze_2024_angled.png",
                 "alt_text": "Melbourne Royal 2024 Australian Food Awards, Bronze"
               },
               "blocks": {}

@@ -1821,6 +1821,39 @@ Found the exact 24-gap-plus-16-padding shape in **six places**: homepage hero, h
 
 ---
 
+## 60. Eyebrow-to-heading gap standardised to 24px, same six modules (2026-09-02)
+
+Follow-up to §59, same instruction shape: Jake wants the padding above headings removed too. Scoped before touching anything.
+
+**Source, confirmed on the rendered page:** identical mechanism to §59, mirrored — the heading block's own `padding-block-start` (20px on the homepage hero, 8px on the other five) stacks on top of the content group's `gap: 24` (made explicit in §59), producing 44px/32px live where the group gap alone would already be 24px. Checked what sits above each heading, since it isn't uniform: an eyebrow in the same flex group for nine of the ten headings checked, but the two-up cards ("Wholesale partnerships"/"A high tea worth travelling for") have no eyebrow at all — an image in a separate column, and the space there (32px) is the *content group's own* `padding-block-start`, not the heading's, a genuinely different mechanism left untouched.
+
+**Swept sitewide again** (homepage, Cafe, Our Story, Contact, Wholesale, occasion, Shop All) — five of seven pages needed `?view=<suffix>` to reach their real template, one more than §59's sweep found: **`/collections/all` alone serves the generic `collection.json`** (`data-template="collection"`), not `collection.all.json` — only reachable via `?view=all`. Confirms the instruction's warning was warranted; a bare-URL sweep would have missed Shop All's own heading entirely, not just undercounted two pages.
+
+Found the exact same six modules as §59 carrying this stacked-padding shape: homepage hero, homepage Cafe intro, Cafe's `media_with_content_high_tea` and `media_with_content_pull_up_a_chair`, Our Story's `media_with_content_meet_paige`, Wholesale's `media_with_content_traceable`. Design's own eyebrow-margin-bottom values: 22px (hero), 20px (Cafe intro), 18px (the other four) — none of them on this project's own spacing scale (`tokens/spacing.css`: 20 and 24 are; 18 and 22 aren't), read the same way as §59's 20/22px spread: drift, not intent.
+
+**Decision (Jake's call, same reasoning as §59): remove the heading's own padding on all six, leave the group gap untouched.** Explicitly not chasing the per-module 18/20/22px — doing so would mean giving eyebrow-to-heading a different padding value from heading-to-body on the same block, which is exactly the stacked-independent-sources shape that produced both §59 and this one. **Net effect of §59 and §60 together: these six content groups are now governed by their own `gap: 24` alone — no per-element `padding-block-start` left anywhere in the eyebrow/heading/body stack.** One number describes the whole thing, and there's nothing left to drift out of sync with it.
+
+**Fix: `padding-block-start` → `0` on the `heading` block in all six** — `templates/index.json` (hero: was 20; cafe-intro: was 8), `templates/page.cafe.json` (both: was 8), `templates/page.our-story.json` (was 8), `templates/page.wholesale.json` (was 8). Group gaps (already explicit at 24 from §59) untouched.
+
+**Verified live, both breakpoints, all six — eyebrow-to-heading AND heading-to-body:**
+
+| Module | 1280px eyebrow→heading | 1280px heading→body | 375px eyebrow→heading | 375px heading→body |
+|---|---|---|---|---|
+| Homepage hero | 24px | 24px | 24px | 24px |
+| Homepage Cafe intro | 24px | 24px | 24px | 24px |
+| Cafe "High Tea worth lingering over" | 24px | 24px | 24px | 24px |
+| Cafe "Pull Up a Chair" | 24px | 24px | 24px | 24px |
+| Our Story "A home cook who kept going" | 24px | 24px | 24px | 24px |
+| Wholesale "Traceable to the grower" | 24px | 24px | 24px | 24px |
+
+**Confirmed unchanged, both breakpoints:** Cafe hero (18px), Wholesale hero (22px), Contact hero (20px) — all three already reach their own design value through a section-level `gap` with no heading padding at all, i.e. the exact mechanism the six above just moved *to*. None of the three needed or received any change.
+
+**Flagged, not fixed, per instruction:** the two-up cards' 32px (content group's own `padding-block-start`, no eyebrow — different mechanism, not measurable against a design value since that component is a design-system import with no inline styles); Cafe Gallery's "Inside Lambruk Kitchen" at 10px against a 14px design value — under, not over, the opposite direction from every other finding across both this pass and §59. Logged in `REVIEW-NOTES.md` and `design/DESIGN-TOKENS.md`.
+
+`shopify theme check --path .` clean. `shopify theme pull --only` run before pushing — confirmed it again just reverted this session's own not-yet-pushed commit, no Admin-side drift, restored via `git checkout HEAD`, pushed. Dev server confirmed stopped before reporting done.
+
+---
+
 ## Summary
 
 | Area | Path taken |

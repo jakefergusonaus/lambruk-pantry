@@ -1061,7 +1061,7 @@
                   "type": "_lambruk-link-button",
                   "settings": {
                     "label": "View Catering Menu",
-                    "link": "",
+                    "link": "https://cdn.shopify.com/s/files/1/0876/8762/7053/files/catering_menu_Ballina.pdf?v=1788326004",
                     "open_in_new_tab": true,
                     "style_class": "button-secondary",
                     "width": "fit-content",

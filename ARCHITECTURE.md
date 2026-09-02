@@ -1898,6 +1898,26 @@ Jake wants every secondary CTA's border to match the form field border colour. S
 
 ---
 
+## 62. New Catering module, Cafe page (2026-09-02)
+
+Jake supplied a standalone handoff (`design/handoffs/catering-module-handoff.md`, moved there from Downloads so it's durable and lives alongside the rest of `design/` — the project's stated single source of truth shouldn't have a load-bearing file sitting outside it) for a new section: image + eyebrow + heading + body + "View Catering Menu" link, to go between "Pull Up a Chair" and "Gallery" on the Cafe page.
+
+**Mechanism was straightforward — this is structurally identical to two sections already on the page.** `templates/page.cafe.json`'s `media_with_content_high_tea` and `media_with_content_pull_up_a_chair` are the exact same shape the handoff describes: same grid, same `4/3` image ratio, same `88px` section padding, same eyebrow/heading/body/button block structure. New section `media_with_content_catering`, mirrored from those two block-for-block rather than authored from scratch, inserted into the `order` array between them and `cafe_gallery`.
+
+**Two deliberate deviations from the handoff's own literal values, confirmed with Jake before building, not assumed either way:**
+1. **Eyebrow colour.** Handoff specifies `#A07037`. But this module's immediate neighbours — the two sections it sits directly between — both use `#986A34` for their own eyebrows (confirmed by reading both directly: `media_with_content_high_tea`'s "Saturday & Sunday Rituals" and `media_with_content_pull_up_a_chair`'s "Cafe," both `#986A34`). `#A07037` is real and used elsewhere (page-hero-level eyebrows), just not by this module's own local siblings. Built at `#986A34`.
+2. **Button treatment.** Handoff styles "View Catering Menu" as a raw `<a>` with a literal `border:1px solid #E3D6C5` — the sitewide neutral border token, not a CTA colour. Built instead as a native `button` block, `style_class: "button-secondary"`, which inherits the `#A07037` gold every other secondary CTA sitewide was just moved to (§61, same day) — matching the standing decision rather than introducing a fourth border colour purely because this particular handoff predates that decision and doesn't know about it.
+
+**Not the `_lambruk-view-menu-button` block, deliberately.** That block reads a single sitewide theme setting (`settings.lambruk_cafe_menu_url`) and always says "View menu" — reusing it here would have pointed this button at the *Cafe* menu PDF, not a catering one. A plain native `button` block (its own `link`/`label`/`open_in_new_tab` settings) is the correct native mechanism for a second, independent PDF link.
+
+**No real assets exist yet — built to render gracefully without them, same pattern as every other pending-image module in this build.** No catering photo (media block has no `image` key — renders Horizon's placeholder SVG, same as the two-up cards' still-pending Wholesale image). No hosted PDF (`link: ""`) — confirmed live this does **not** produce a dead `href=""`; Horizon's own `snippets/button.liquid` renders `role="link" aria-disabled="true"` with no `href` attribute at all when the link is blank, the same graceful-degradation the rest of this build already relies on for CTAs with no destination yet.
+
+**Verified live, both breakpoints:** section renders in the correct position (`order` confirmed: `..., media_with_content_pull_up_a_chair, media_with_content_catering, cafe_gallery, ...`), eyebrow colour `#986A34`, button border `#A07037`, button `target="_blank"` and `aria-disabled="true"` (no link set), placeholder image block present. `shopify theme check --path .` clean. `shopify theme pull --only` run before pushing — reverted this session's own not-yet-pushed commit as expected, no Admin drift, restored and re-pushed. Dev server confirmed stopped before reporting done.
+
+**Still needed from Jake:** real catering photography (to replace the placeholder) and a hosted catering menu PDF (to fill the button's `link`) — same "assign in the editor, then pull and commit" flow as every other pending asset in this build.
+
+---
+
 ## Summary
 
 | Area | Path taken |

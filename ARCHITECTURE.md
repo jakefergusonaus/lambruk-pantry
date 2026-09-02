@@ -1790,6 +1790,37 @@ Screenshots taken at both breakpoints (both orientations at desktop) confirming 
 
 ---
 
+## 59. Heading-to-body gap standardised to 24px, six instances (2026-09-02)
+
+Jake: wants 24px total between a heading and its body copy; measured 40px. Scoped before touching anything, per instruction.
+
+**Root cause, both components named on the rendered page, not assumed from JSON:** the visible 40px is two independent things stacking, not one setting read wrong. The content group's own `gap` (flex `gap` on `.group-block-content`) supplies 24px between the heading and body boxes; the body text block's own `padding-block-start: 16` then adds another 16px *inside* the body block's own box, before its text starts — invisible to a div-to-div measurement (which reads 24px, matching the group gap exactly) and only visible when measuring to the actual rendered text node inside the body div. First measurement pass on this task used div-to-div rects and got the wrong number (24, not 40) for exactly this reason — caught by remeasuring to the inner `<p>` before reporting anything.
+
+**Swept every heading-immediately-followed-by-body pair sitewide** (homepage, Cafe, Our Story, Contact, Wholesale, occasion, Shop All) with a generic live-DOM scan (any element ≥20px font-size, its next sibling under 24px font-size and >10 characters, measured heading-bottom to inner-text-top) rather than grepping JSON for literal `<h*>` tags — several of the pages in scope (Cafe, Our Story, Contact, Wholesale) turned out to have no literal heading tag in their JSON at all, and a JSON-only sweep would have silently skipped all four. **Also surfaced, in passing: none of those four pages' own custom templates are actually assigned in Admin** — the same pre-publish template-assignment gap already documented for occasion collections (§29-ish precedent) — a bare visit to `/pages/cafe` etc. renders Horizon's generic default template, not ours. Used `?view=<suffix>` to measure the real templates; without it this entire sweep would have under-counted.
+
+Found the exact 24-gap-plus-16-padding shape in **six places**: homepage hero, homepage Cafe intro (`media_with_content_cafe_intro`), Cafe's `media_with_content_high_tea` and `media_with_content_pull_up_a_chair`, Our Story's `media_with_content_meet_paige`, Wholesale's `media_with_content_traceable`. Checked design source for each: only the homepage hero specifies 24px (`Desktop.dc.html:50`, `margin:24px 0 32px`); the other five specify 20–22px each (`margin:20px 0 22px`/`24px` on the four 42px-heading modules, the heading's own `margin:0 0 22px` on "A home cook who kept going"). **Decision (Jake's call, recorded in `design/DESIGN-TOKENS.md`): standardise all six to 24px rather than chase each module's own 20/22/24px** — a 2–4px spread on an identical relationship across six otherwise-parallel modules reads as mockup drift, not intent, and the one instance most likely drawn on purpose (the hero) is already exactly 24px.
+
+**Fix: removed `padding-block-start: 16` (→ `0`) on the body block in all six** — `templates/index.json` (hero, cafe-intro), `templates/page.cafe.json` (both), `templates/page.our-story.json` (`body_1` — the *first* of that section's three flowing paragraphs only; the other two share this same padding value between themselves, which governs paragraph-to-paragraph spacing, a different relationship Jake didn't ask about and wasn't touched), `templates/page.wholesale.json`. Where the 24px gap was only ever an unset `"gap"` key falling back to `_content-without-appearance.liquid`'s schema default (Cafe's two sections, Our Story, Wholesale — confirmed via direct JSON read, no explicit `"gap"` present) rather than a stated value, added `"gap": 24` explicitly — same reasoning as §56's `image_ratio: "custom"` → `"landscape"`: stop the JSON carrying an accident of what happens to be unset.
+
+**Verified live, both breakpoints, all six, before → after:**
+
+| Heading | Before | After (1280px) | After (375px) |
+|---|---|---|---|
+| Homepage hero | 40px | **24px** | **24px** |
+| Homepage Cafe intro | 40px | **24px** | **24px** |
+| Cafe "High Tea worth lingering over" | 40px | **24px** | **24px** |
+| Cafe "Pull Up a Chair" | 40px | **24px** | **24px** |
+| Our Story "A home cook who kept going" | 40px | **24px** | **24px** |
+| Wholesale "Traceable to the grower" | 40px | **24px** | **24px** |
+
+**Confirmed untouched, both breakpoints:** Cafe's own hero (20px — already matched its own design value, never part of this pattern), homepage/Cafe "Subscribe to Seasonal Dispatches" (8px), homepage "Curated for every occasion" cards (6px), the occasion page's "Set another table" cards (10px, fixed in an earlier session's own work). None of these moved.
+
+**Flagged, not fixed, per instruction — different mechanism, someone should decide separately:** Our Story's own hero at 22px live against a 26px design value (`margin:26px 0 0` on the body `<p>`, no group-gap-plus-padding involved at all — a single-source gap that's just short of its own target); Cafe's "Bring the Lambruk experience home" at 20px live (8px gap + 12px body padding) against a 10px design value (the heading's own `margin:0 0 10px`, body margin 0). Both real, both off, neither is an instance of the pattern this pass addressed. Logged in `REVIEW-NOTES.md`.
+
+`shopify theme check --path .` clean. `shopify theme pull --only` (scoped to the four affected files) run before pushing, per the hardened rule — confirmed it just reverted this session's own not-yet-pushed commit (no Admin-side drift), restored from `git checkout HEAD`, then pushed. Dev server confirmed stopped before reporting done.
+
+---
+
 ## Summary
 
 | Area | Path taken |

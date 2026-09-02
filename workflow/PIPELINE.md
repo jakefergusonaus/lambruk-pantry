@@ -139,7 +139,26 @@ For changes made outside that session:
 3. Apply only explicitly named files.
 4. If the same file is locally modified, do not overwrite it; merge manually.
 
-Never pull a remote theme blindly into a dirty worktree.
+**Never run `shopify theme pull` (no `--only`) against a dirty working tree.** It
+syncs in both directions: it deletes local files absent from the remote and
+overwrites local edits that haven't been pushed, not just downloads remote
+changes. "Never pull into a dirty worktree" as a bare statement failed once
+already — it describes the danger but not the check, so it was followed right
+up to the point of running the command. The check, run every time,
+immediately before the pull:
+
+1. `git status --short`.
+2. If anything is uncommitted: commit it, or `git stash -u` if it's not ready
+   to commit. Never proceed with a dirty tree.
+3. If only one file needs the remote's state (the common case — a specific
+   setting or image Jake just changed in Admin), use
+   `shopify theme pull --only <path>` instead of a full pull. It still
+   overwrites that one file's local state, so step 1-2 still apply to it, but
+   it can't touch anything else in the tree.
+
+CLAUDE.md records the incident this came from (a full pull deleted an
+in-progress, uncommitted block file mid-build) — read it there for the
+concrete case, not just the rule.
 
 ## 8. Verification contract
 
@@ -201,5 +220,6 @@ Before reporting completion, inspect the final diff and state exactly:
 - blockers and unverified cases
 - preview/editor links returned by Shopify
 - **no `shopify theme dev` process is still running** (`ps aux | grep -i "shopify theme dev"`, expect no match) — checked and stated, not assumed. A dev server outliving the task it was started for is invisible: nothing in the transcript flags it, and it keeps silently overwriting anything the client does in the theme editor for as long as it runs. This is not "remember to stop it" — it is a check that gets run and its result reported, the same as Theme Check.
+- **every `shopify theme pull` run during this task was preceded by a clean working tree, or was scoped with `--only`** (§7) — stated per pull, not assumed clean by the time of handoff. A full pull run against a dirty tree deletes local-only files and overwrites unpushed edits; this has already happened once (CLAUDE.md records the incident). If a pull in this task wasn't preceded by `git status --short` confirming a clean tree, say so explicitly rather than reporting the task done.
 
 Stop before publication.

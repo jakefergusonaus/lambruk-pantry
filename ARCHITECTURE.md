@@ -1854,6 +1854,50 @@ Found the exact same six modules as §59 carrying this stacked-padding shape: ho
 
 ---
 
+## 61. Secondary CTA border colour moved to `#A07037`, matching the form field gold (2026-09-02)
+
+Jake wants every secondary CTA's border to match the form field border colour. Scoped before touching anything, per instruction.
+
+**Source of the form colour, confirmed live:** `settings.palette_input_border` — a genuine Horizon colour-picker theme setting, `#A07037`, flowing through `--color-input-border` to `input, textarea { border-color: ... }` in `assets/base.css`. Verified on a rendered Contact form: every input's computed `border-color` is `rgb(160, 112, 55)` exactly.
+
+**Where secondary buttons got their border from, before this change — three independent sources, not one:**
+1. `settings.palette_secondary_button_border` — also a genuine theme setting, but configured as a *dynamic reference*, `"{{ settings.color_palette.foreground }}"`, resolving to `#4A5478`. Covers every `style_class: "button-secondary"` instance sitewide via `--color-secondary-button-border` (rendered as an inset `box-shadow`, not a real `border` — worth knowing for any future CSS-level override attempt).
+2. `_lambruk-view-menu-button`'s own `custom_button_border` setting — schema default `#D4BA9C`, but the two live Cafe instances ("High Tea worth lingering over," "Pull Up a Chair") had it set *explicitly* in their JSON, not relying on the default at all — confirmed by reading both, since a schema-only fix wouldn't have reached them.
+3. `_lambruk-add-button`'s border hardcoded directly in its own `{% stylesheet %}`, `#D4BA9C` — no setting at all.
+
+**Design source specifies neither `#4A5478` (the build's prior default) nor `#A07037` (Jake's request).** `Button.jsx`: `secondary: { borderColor: 'var(--border-strong)' }`, and `--border-strong: var(--gold-300)` = `#D4BA9C` — confirmed against every `variant="secondary"` instance in `Desktop.dc.html`. The build's prior `#4A5478` was already a departure from the design before this task touched anything. This move is Jake overriding the design a second time, to a third value — recorded as a deliberate departure in `design/DESIGN-TOKENS.md`, not silently treated as "matching."
+
+**Contrast (WCAG 1.4.11, 3:1): `#A07037` clears every background checked** — 4.13:1 cream, 4.31:1 white card, 3.82:1 light beige, 3.91:1 navy panel. **The design's own `#D4BA9C` does not** — 1.78:1 cream, 1.86:1 white card, well under 3:1. This is the same shape as the `--icon-accent` correction already on record (`#BF8C45` → `#8A6A32`, 2026-08-18) — a design colour that fails contrast gets corrected here as established practice, not a fresh exception each time it recurs. Given as the reason for including the Add button in this change, per instruction, rather than leaving it as a special case.
+
+**Build: three edits, one exception.**
+- `config/settings_data.json`: `palette_secondary_button_border` in the active (`"current"`) config, `"{{ settings.color_palette.foreground }}"` → `"#A07037"` — a literal now, deliberately no longer tracking foreground. The stock `"Horizon"` preset block further down the same file was left untouched (inactive, not the live config — see `.claude/rules/theme-config-locales.md`'s guidance against unrelated `settings_data.json` churn).
+- `blocks/_lambruk-view-menu-button.liquid`: schema default `#D4BA9C` → `#A07037`.
+- `templates/page.cafe.json`: the two explicit `"custom_button_border": "#D4BA9C"` instances (High Tea, Pull Up a Chair) → `#A07037`.
+- `blocks/_lambruk-add-button.liquid`: both CSS occurrences (base state and the hover-state border, which was already deliberately kept unchanged from the base state per an existing comment) → `#A07037`.
+- **Exception, left untouched on purpose:** the Cafe hero's own "View menu" instance — explicit `custom_button_border: "#FBFAF7"` desktop, `mobile_custom_button_border: "#131A3E"` mobile. A dark gold border on a dark/photo background would be close to invisible; this predates and is independent of the gold-conversion reasoning entirely. **This hero currently has no real image assigned** (confirmed: no image key in `cafe_hero`'s own settings; what renders is Horizon's placeholder SVG) — so this exact colour pairing has never actually been contrast-checked against final content. Logged in `REVIEW-NOTES.md` so it isn't forgotten once a real photo lands there.
+
+**Verified live, both breakpoints, every instance in the §-report's sweep table:**
+
+| Instance | 1280px | 375px |
+|---|---|---|
+| Homepage "Visit Our Cafe" | `#A07037` | `#A07037` |
+| Homepage two-up "Become a Stockist" | `#A07037` | `#A07037` |
+| Homepage two-up "View High Tea" | `#A07037` | `#A07037` |
+| Cafe "Text to Book" | `#A07037` | `#A07037` |
+| Cafe hero "View menu" (exception) | `#FBFAF7` | `#131A3E` (its own pre-existing mobile override, untouched) |
+| Cafe "High Tea worth lingering over" View menu | `#A07037` | `#A07037` |
+| Cafe "Pull Up a Chair" View menu | `#A07037` | `#A07037` |
+| Contact "Cafe Details" / "Wholesale Details" | `#A07037` | `#A07037` |
+| Occasion "Shop All Products" | `#A07037` | `#A07037` |
+| Product card "Add" button (Shop All) | `#A07037` | `#A07037` |
+| Form input border (Contact, sanity check) | `#A07037` (unchanged) | — |
+
+**Also flagged, not acted on:** the site now carries two dark golds side by side — `#A07037` on borders (this change) and `#8A6A32` (`--icon-accent`) on icon strokes, a separate, earlier correction for a different failing design colour. Both pass their own contrast thresholds and do different jobs; not asserted as a problem, just close enough in hue to be worth Jake seeing next to each other before the palette's called settled. Logged in `REVIEW-NOTES.md`.
+
+`shopify theme check --path .` clean. `shopify theme pull --only` run before pushing — confirmed it again just reverted this session's own not-yet-pushed commit, no Admin-side drift, restored via `git checkout HEAD`, pushed. Dev server confirmed stopped before reporting done.
+
+---
+
 ## Summary
 
 | Area | Path taken |

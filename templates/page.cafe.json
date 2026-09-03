@@ -111,23 +111,6 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "book_table": {
-              "type": "button",
-              "settings": {
-                "label": "Book a table",
-                "link": "#cafe-booking",
-                "open_in_new_tab": false,
-                "style_class": "button-custom",
-                "custom_button_background": "#F7F5F2",
-                "custom_button_text": "#131A3E",
-                "custom_button_border": "#F7F5F2",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fill",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
-            },
             "view_menu": {
               "type": "_lambruk-view-menu-button",
               "settings": {
@@ -145,7 +128,6 @@
             }
           },
           "block_order": [
-            "book_table",
             "view_menu"
           ]
         },

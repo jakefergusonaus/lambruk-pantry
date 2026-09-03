@@ -302,7 +302,7 @@
                 "parking_note": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>[Parking and access details]</p>",
+                    "text": "<p>Wheelchair accessible.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",

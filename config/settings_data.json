@@ -13,6 +13,8 @@
     "logo_inverse": "shopify://shop_images/Lambruk_Logo_Horizontal_white.svg",
     "logo_height": 60,
     "logo_height_mobile": 44,
+    "lambruk_cafe_hours": "Monday – Tuesday 8:30 AM – 4:00 PM\nWednesday – Sunday 8:30 AM – 5:00 PM",
+    "lambruk_cafe_closure": "Closed public holidays and 23 Dec – 3 Jan",
     "lambruk_cafe_menu_url": "https://cdn.shopify.com/s/files/1/0876/8762/7053/files/Cafe_Menu__Lambruk_Pantry.pdf?v=1787897422",
     "page_text_color": "{{ settings.color_palette.foreground }}",
     "type_body_font": "geist_n4",

@@ -70,10 +70,17 @@
         "default": "0458 370 757"
       },
       {
-        "type": "text",
+        "type": "textarea",
         "id": "lambruk_cafe_hours",
         "label": "t:settings.lambruk_cafe_hours",
-        "default": "8:30 AM – 5:00 PM"
+        "info": "t:info.lambruk_cafe_hours",
+        "default": "Monday – Tuesday 8:30 AM – 4:00 PM\nWednesday – Sunday 8:30 AM – 5:00 PM"
+      },
+      {
+        "type": "text",
+        "id": "lambruk_cafe_closure",
+        "label": "t:settings.lambruk_cafe_closure",
+        "info": "t:info.lambruk_cafe_closure"
       },
       {
         "type": "url",

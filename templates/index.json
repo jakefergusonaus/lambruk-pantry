@@ -939,7 +939,7 @@
                     "label": {
                       "type": "custom-liquid",
                       "settings": {
-                        "custom_liquid": "<p style=\"margin:0;font-family:var(--font-body--family);font-size:0.875rem;\">{{ settings.lambruk_cafe_hours }}</p>"
+                        "custom_liquid": "<p style=\"margin:0;font-family:var(--font-body--family);font-size:0.875rem;\">{{ settings.lambruk_cafe_hours | newline_to_br }}</p>{% if settings.lambruk_cafe_closure != blank %}<p style=\"margin:4px 0 0;font-family:var(--font-body--family);font-size:0.75rem;color:#8A8FA3;\">{{ settings.lambruk_cafe_closure }}</p>{% endif %}"
                       },
                       "blocks": {}
                     }

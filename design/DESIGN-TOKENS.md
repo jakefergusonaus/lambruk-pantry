@@ -311,6 +311,26 @@ Body copy generally wraps narrower still — `SectionHeading`'s description caps
 
 Restrained, never blobby. Cards 16px; buttons and inputs 6px; chips, pills and the cart badge full pill.
 
+**Built, 2026-09-03 — full ladder defined in `assets/lambruk-tokens.css`, three steps consumed.** Corner-radius audit (same date) found no native Horizon setting reaches image or card-container corners at all — the only theme-level radius settings are predictive-search-scoped (`product_corner_radius`, `card_corner_radius`) or badge-scoped (`badge_corner_radius`), neither touching a real content image anywhere on the site. All five tokens above are now defined in CSS (`--radius-xs` through `--radius-pill`, verbatim from `design-system-tokens/spacing.css:13-14`) even though this build only consumes `--radius-lg` (content images and card containers), `--radius-sm` (the cart line-item thumbnail, via the existing native `cart_thumbnail_border_radius` theme setting), and `--radius-pill` (already native, unrelated to this pass). `--radius-xs` and `--radius-md` are carried for whatever next needs them, not pre-applied speculatively.
+
+**Two design-source contradictions found in the audit, both resolved in favour of 16px, not re-litigated per-instance:**
+1. **Category tiles at the same rendered width, two different design values (16px on the homepage's "Explore by category," 10px on the Cafe page's "Bring the Lambruk experience home," both ~371-373px wide, same three photos).** Built at 16px sitewide.
+2. **The Shop-grid product card: 16px on desktop (`ProductCard.jsx`'s own `--radius-lg`, confirmed in source) vs. 10px on mobile (`LambrukPantry Mobile.dc.html:277`, hand-authored outside the component).** Built at 16px on both breakpoints — the component source, not the mobile page's own literal, is treated as the correct value.
+
+**Mechanism note:** components with their own `border_radius` schema field (`_collection-card-image.liquid`, `blocks/image.liquid`) can't have that field *read* the token — Shopify range-setting defaults are static numbers, not CSS custom-property references — so the field is set to a literal `16` per JSON instance, with the schema default also moved to `16` for forward-safety. This is a **documented cross-check, not a token-defaulted value**: if `--radius-lg` ever changes, every instance below needs a manual pass, this entry is the checklist. Same caveat applies to `config/settings_data.json`'s `cart_thumbnail_border_radius: 6`.
+
+Cross-check list (literal `16`, must move together if the token does):
+- `templates/index.json` — `section_explore_by_category`'s collection-card-image, `section_top_sellers`'s product-card-gallery, `section_two_up_cards`'s two card images
+- `templates/collection.all.json` — product-card-gallery
+- `templates/list-collections.json` — collection-card + collection-card-image
+- `templates/page.our-story.json` — `story_image` section's image block
+- `templates/article.json` — blog-post-image
+- `config/settings_data.json` — `cart_thumbnail_border_radius: 6` (moves with `--radius-sm`, not `--radius-lg`)
+
+Components reading `var(--radius-lg)` directly (no cross-check needed — token change propagates automatically): `.media-block` (`snippets/media.liquid`), `snippets/card-gallery.liquid`'s placeholder, `blocks/lambruk-occasion-card.liquid`, `sections/lambruk-cafe-gallery.liquid`.
+
+Excluded, no radius, by design: the Cafe hero (full-bleed, `sections/hero.liquid`, no radius in source either), the 404 illustration (`templates/404.json`, explicit `border_radius: 0` so it doesn't inherit `blocks/image.liquid`'s new default), the award badge (transparent PNG, and structurally outside any radius-bearing wrapper — see `ARCHITECTURE.md`).
+
 ---
 
 ## 5. Borders

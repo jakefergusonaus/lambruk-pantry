@@ -793,3 +793,30 @@ h1, h2, h3, h4, h5, h6 {
 [data-template="product"] media-gallery :where(:not(.dialog-zoomed-gallery)) > .product-media-container {
   aspect-ratio: 4 / 3;
 }
+
+/* Cafe "Bring the Lambruk experience home" tiles: bottom hairline under
+   each label+arrow row (Desktop.dc.html:701/704/708 and the Mobile
+   equivalent both specify border-bottom: 1px solid #E3D6C5 here) --
+   not schema-representable. The tile row is a group block
+   (templates/page.cafe.json, cafe_shop_pantry > static-collection-card >
+   row), and a group's native "border" setting (blocks/group.liquid,
+   consumed via assets/base.css's .border-style class) is a single
+   border-style/-width/-color/-radius applied to all four sides at once --
+   there is no per-side option, so turning it on would draw a full box
+   around the row, not the bottom-only hairline the design specifies.
+   Left as "border": "none" in the JSON (correct -- the native mechanism
+   is simply the wrong shape for this), decorative divider added here
+   instead. #E3D6C5 verbatim, no contrast substitution: this is a
+   decorative hairline, not a UI component, so WCAG 1.4.11's 3:1 doesn't
+   apply.
+
+   Scoped via [id$="__cafe_shop_pantry"], the same section-key-suffix
+   convention used elsewhere in this file, since .group-block and
+   .collection-card__content are both generic classes reused all over the
+   theme -- .collection-card__content narrows to this module's tile rows
+   specifically (the only "row"-shaped group nested inside a collection
+   card's content on this page), and the section scope keeps it from
+   ever matching a same-shaped row on another page. */
+[id$="__cafe_shop_pantry"] .collection-card__content .group-block {
+  border-bottom: 1px solid #E3D6C5;
+}

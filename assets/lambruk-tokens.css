@@ -731,3 +731,37 @@ h1, h2, h3, h4, h5, h6 {
     margin-block-start: auto;
   }
 }
+
+/* ==========================================================================
+   RADIUS
+
+   Horizon has no theme-level "image corner radius" setting — confirmed by
+   audit (ARCHITECTURE.md, corner-radius audit, 2026-09-03): the only native
+   radius settings are predictive-search-scoped (product_corner_radius,
+   card_corner_radius), badge-scoped (badge_corner_radius), or a per-block
+   field on individual block types with no shared source. This is therefore
+   a level-2 token system by necessity, not preference — see the
+   customisation hierarchy in CLAUDE.md.
+
+   Full ladder from design/design_handoff_website/design-system-tokens/
+   spacing.css:13-14, named to match the design exactly. All five are
+   defined even though this build currently only consumes three
+   (--radius-lg for content images/cards, --radius-sm for buttons/inputs/
+   the cart thumbnail, --radius-pill already in native use for chips/pins)
+   — this is the design's documented ladder, not a build-scoped subset, so
+   the file carries it whole for whatever needs xs/md next.
+
+   Decision, approved 2026-09-03: every content image and card container
+   is --radius-lg (16px), even where the design source itself splits
+   16/10 at the same rendered width (category tiles) or 16/10 between
+   desktop and mobile (product card) — both resolved in favour of 16,
+   see DESIGN-TOKENS.md. Excluded: the Cafe hero (full-bleed), the 404
+   illustration, and the award badge (transparent PNG, radius does
+   nothing) — none of these consume this token. */
+:root {
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+}

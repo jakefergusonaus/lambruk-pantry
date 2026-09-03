@@ -765,3 +765,31 @@ h1, h2, h3, h4, h5, h6 {
   --radius-lg: 16px;
   --radius-pill: 999px;
 }
+
+/* PDP main media slot: fixed 4/3 crop (2026-09-03), matching the design's
+   productImageStyle (Desktop.dc.html:1442) — not a schema-representable
+   value (blocks/_product-media-gallery.liquid's aspect_ratio option list is
+   adapt / 1-1.25 / 1 / 2-1 only), so this is a level-2 override, scoped as
+   narrowly as the markup allows.
+
+   Scoped to the <media-gallery> custom element specifically, not just
+   [data-template="product"] -- that element only ever wraps the PDP's own
+   main gallery; product cards use an entirely different element
+   (.card-gallery, no <media-gallery> tag, a different block type with no
+   aspect_ratio/media_fit fields of its own) and are unreachable by
+   construction, not by this selector's own care. The
+   :where(:not(.dialog-zoomed-gallery)) > guard is copied verbatim from
+   Horizon's own base rule in product-media-container-styles.liquid --
+   same exclusion, so the full-screen zoom view keeps showing the whole
+   uncropped image at its own natural ratio, untouched by this override.
+
+   This fully supersedes the aspect_ratio: "adapt" / --tallest sizing
+   mechanism for this element -- the container's aspect-ratio is set here
+   directly rather than through --media-preview-ratio, so it wins on
+   specificity regardless of which image the block's own Liquid computed
+   as "tallest". That Liquid computation still runs (harmless, just
+   unused for sizing purposes here) -- reversible by deleting this rule,
+   nothing else to unwind. */
+[data-template="product"] media-gallery :where(:not(.dialog-zoomed-gallery)) > .product-media-container {
+  aspect-ratio: 4 / 3;
+}

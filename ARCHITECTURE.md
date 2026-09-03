@@ -2054,6 +2054,18 @@ Also logged in `REVIEW-NOTES.md`, unrelated to this crop work but found while me
 
 ---
 
+## 68. Cafe hero: "Book a table" removed, "View menu" is the sole CTA (2026-09-03)
+
+Jake's instruction, immediately following §67: the hero should carry one CTA, not two. **Build:** `cafe_hero.button_row`'s `book_table` block deleted outright (settings + `block_order` entry); `view_menu` untouched — same solid navy treatment as §67 left it, now alone in the row. `button_row`'s own `gap: 14`/`horizontal_alignment: center` were left as-is; with one child the gap is inert and centring still holds.
+
+**Checked before deleting: is `#cafe-booking` orphaned?** No — it's linked from two other places on the same page: the High Tea section's "Book High Tea" button, and the anchor sits directly on the "Reserve your table" section itself, which remains fully built and reachable by scrolling. Removing the hero shortcut removes a shortcut, not the destination.
+
+**Verified live, both breakpoints, screenshots.** 1280px: "View menu" alone, centred, solid navy. 375px: full-width, same solid navy, no gap where "Book a table" used to sit. `shopify theme check --path .` clean. Pull-check-push followed; pull reverted the not-yet-pushed commit as expected, restored via `git checkout HEAD --`, pushed. No dev server running.
+
+**REVIEW-NOTES.md's Cafe-hero row updated** to describe one button, not two — the placeholder-vs-real-photo contrast recheck it tracks still applies, now to "View menu" only.
+
+---
+
 ## Summary
 
 | Area | Path taken |

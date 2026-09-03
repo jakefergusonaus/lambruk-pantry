@@ -1744,6 +1744,15 @@ Stretch the row so all cards take the tallest height, top-align the content, and
 - **Product grid rows** — Shop All / category / occasion product cards, `blocks/_lambruk-add-button.liquid`. No manual override needed: CSS Grid's native `align-items: stretch` already keeps every card in a shared row equal-height, confirmed live before relying on it (forced one card into a wrapped, two-line state and measured its untouched neighbour growing to match, bottoms staying aligned) — §45.
 - **Two-up card heights** — "Wholesale partnerships" / "A high tea worth travelling for," `assets/lambruk-tokens.css`. This block's own Position setting has no "stretch" option, so all three parts of the rule are a scoped CSS override rather than a native mechanism — §57.
 
+### Spacing above/below a CTA (or any block): verify by rect, not by setting
+
+A JSON padding/gap value is not the rendered gap. Two things break the 1:1 assumption, both native Horizon behaviour, not bugs:
+
+1. **A block's own padding-block-* stacks with its parent's flex `gap`.** The rendered distance is always both added together, never one alone. Read the parent's `gap` before touching a child's padding to hit a target number.
+2. **`snippets/spacing-style.liquid` fluid-scales padding values above 20, and leaves values at or under 20 as flat literals.** `max(20px, calc(var(--spacing-scale) * value))` above 20 (floors to exactly 20px below 990px); the raw value, unscaled at every breakpoint, at or under 20. A `group` block's own flex `gap` setting does **not** go through this snippet and never fluid-scales — same word, different mechanism, only one of them moves with viewport width.
+
+Consequence: the only way to know what a spacing change actually produced is `getBoundingClientRect()` on the real elements, at both breakpoints, after pushing. Reading the settings back — even doing the arithmetic by hand — isn't verification; it's a second guess with more steps. Cost two rounds on the Cafe CTA spacing before this was written down (§69's first pass, corrected in §70).
+
 **Checked for a fourth instance and didn't find one.** Swept every file for `margin-top: auto`/`margin-block-start: auto` and `align-items: stretch` before writing this rule — the only other hits are pristine, unmodified Horizon internals (`blocks/filters.liquid`'s sticky drawer footer, `snippets/cart-drawer.liquid`, `snippets/quick-add-modal-styles.liquid`, `snippets/slideshow.liquid`, `blocks/email-signup.liquid`, `sections/quick-order-list.liquid`) — none of them a card row, none of them ours. If a fourth applied instance exists, it isn't findable by this pattern; flag it if one comes to mind so this list stays accurate.
 
 ---
@@ -2085,6 +2094,41 @@ Section-level `gap` (header block → grid) set explicitly to 32 (was unset, fal
 **Horizontal scrollbar, reported in Jake's screenshot — investigated, not reproduced or fixed here.** `document.documentElement.scrollWidth` vs `window.innerWidth`: no overflow found at 375, 768, or 1280px, before or after this fix. Ruled out a hidden carousel: `sections/collection-list.liquid`'s `carousel_on_mobile` schema default is `false` and Cafe's JSON never sets it, and `snippets/resource-list.liquid`'s mobile-carousel branch (`{% if settings.layout_type != 'carousel' and settings.carousel_on_mobile %}`) doesn't render when that's false — confirmed no duplicate carousel markup exists for this instance, live. Most likely explanation, not confirmed live in this tool: `assets/base.css:325`'s `--full-page-margin-inline-offset: calc(((100vw - var(--full-page-grid-central-column-width)) / 2) * -1)` — Horizon's own full-bleed-section mechanism (the Cafe hero is `section_width: "full-width"`), which is a classic `100vw`-includes-scrollbar-gutter overflow source on any browser/OS that reserves layout space for a vertical scrollbar. This environment's browser pane appears not to reserve that space (no overflow reproduced at any width tested), so this couldn't be confirmed directly — but it would explain a scrollbar appearing regardless of scroll position (dockable at the window's own bottom edge, not tied to any specific module) and would be sitewide, not something introduced by or fixable within this module. Not actioned here; worth confirming on Jake's own browser if he wants it chased further.
 
 `shopify theme check --path .` clean throughout (two pushes — the second correcting item 3's spacing). Pull-check-push followed for both; each pull reverted the not-yet-pushed commit as expected, restored via `git checkout HEAD --`, pushed. No dev server running.
+
+**Correction, 2026-09-03 — the scrollbar paragraph above named the wrong mechanism.** A follow-up investigation (same day, §70) found `assets/base.css:325`'s `100vw` calc is consumed *only* by `blocks/_marquee.liquid` — confirmed the sole reference sitewide — and no marquee exists anywhere on the rendered Cafe page. Horizon's actual general-purpose full-width-section mechanism (`.section--full-width`, what the Cafe hero's `section_width: "full-width"` actually uses) is CSS Grid with `width: 100%` and `minmax(var(--page-margin), 1fr)` margin columns — no `vw` unit anywhere, immune to the scrollbar-gutter bug by construction. The "most likely explanation" above doesn't hold up; see §70 for the corrected investigation, which also could not identify a real source with the tools available.
+
+---
+
+## 70. Cafe CTA spacing normalised to 28px rendered — three modules, plus the mechanism that cost two rounds to find (2026-09-03)
+
+**The fix, by rendered result, not setting.** High Tea, Pull Up a Chair and Catering's `cta_group` block each had a different `padding-block-start` (20/24/24) sitting inside a parent group with its own `gap: 24` — none of which are the same number as what actually renders, because the two stack. Changed all three to `padding-block-start: 4`, so each renders **28px** — matching High Tea and Pull Up a Chair's own design source (`Desktop.dc.html:635`/`652`, both specify 28px there) and giving Catering, which has no design source of its own (grepped both design files for "Catering"/"Lambruk on your table" — zero matches, this module was built without one), the same number as its siblings rather than inventing a fourth value. Cafe hero (32, matches design), Reserve panel (22, matches design — a text-block mechanism, not a `cta_group`, deliberately untouched) and Bring the Lambruk experience home (24, matches design, §69) were already correct and left alone.
+
+**Verified live by `getBoundingClientRect`, both breakpoints, all six CTAs on the page — not by reading settings:**
+
+| CTA | 1280px | 375px |
+|---|---|---|
+| Cafe hero | 32 | 22.4 |
+| Reserve panel | 22 | 22 |
+| High Tea | 28 | 28 |
+| Pull Up a Chair | 28 | 28 |
+| Catering | 28 | 28 |
+| Bring the Lambruk experience home | 24 | 24 |
+
+**The anticipated mobile drift didn't happen — better than planned, not a surprise to chase.** Going in, the expectation (padding 4 + a parent `gap: 24` assumed to floor toward 20 on mobile like padding does) was 24px at 375px, a 4px undershoot against the design's own 20 there, accepted as not worth restructuring three parent gaps that also govern eyebrow/heading/body spacing in the same column. Live measurement shows 28 at *both* breakpoints, no drift at all: a `group` block's own flex `gap` setting does not fluid-scale the way `padding-block-start` does (below) — it's a flat literal at every viewport. The acceptance called for in the brief turned out to be unnecessary; recorded here so the next person doesn't go looking for a drift that isn't there.
+
+**Why a JSON padding value is never the rendered gap — the mechanism, so this doesn't cost a third round.** `snippets/spacing-style.liquid`:
+```liquid
+if value > scale_min   " scale_min = 20
+  echo 'max(' scale_min 'px, calc(var(--spacing-scale) * ' value 'px))'
+else
+  echo value 'px'
+endif
+```
+Any `padding-block-start`/`-end`/`-inline-start`/`-inline-end` value **greater than 20** renders as `max(20px, spacing-scale × value)` — `--spacing-scale` is `1.0` above 990px, `0.7` below, so anything above 20 gets fluid-scaled toward a hard floor of exactly 20px on mobile. Any value **at or under 20** renders as a flat literal, unscaled, at every breakpoint. This is why High Tea's old 20 never moved, why Pull Up a Chair/Catering's old 24 used to float down to 20 on mobile, and why all three now sitting at the literal-mode value of 4 don't move either. **This threshold is specific to `padding-block-*`/`padding-inline-*` via this one snippet** — confirmed separately that a `group` block's own flex `gap` setting does not route through it and never fluid-scales (see above). Two different spacing mechanisms share the word "gap"/"padding" in the settings UI; only one of them is fluid.
+
+**And the padding always stacks with the parent's own gap — it is never the whole story.** A `cta_group`'s `padding-block-start` adds space *inside* its own box; the parent flex container's `gap` adds space *between* it and its previous sibling. Both apply simultaneously. The rendered distance from the last line of body copy to a button is always `parent gap + cta_group padding`, never one or the other. This is the exact thing that cost two rounds here: the first attempt at this normalisation (§69) set Bring-the-Lambruk's `cta_group` padding to the design's literal 24 and it rendered 32, because the header group's own `gap: 8` was added on top and nobody had checked the rect first. See the house rule below — this is now a standing check, not a one-off lesson.
+
+`shopify theme check --path .` clean. Pull-check-push followed; the pull reverted the not-yet-pushed commit as expected, restored via `git checkout HEAD --`, pushed. No dev server running.
 
 ---
 

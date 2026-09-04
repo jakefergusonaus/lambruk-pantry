@@ -2197,6 +2197,12 @@ Title 24px→16px (line-height 1.35) and price 16px→14px below 750px, across a
 
 `shopify theme check --path .` clean. Pull-check-push followed; the pull reverted the not-yet-pushed commit as expected, restored via `git checkout HEAD --`, pushed. No dev server running.
 
+**Addendum, same day — title-to-price gap raised 6px → 12px, same component, same override family, same three templates.** Reported first, then built: measured the rendered gap between title bottom and the price/Add row (by rect, both breakpoints) and found it identical everywhere — **6px** on sold-out cards and Add-button cards alike, at both 375px and 1280px. The gap itself had never changed; what changed was what occupied the row below it. Traced to `price_row`'s own `padding-block-start: 6` (the `_product-card-group` block wrapping price + Add button) — the parent flex column has `gap: 0`, and the title's own `padding-block-end` is `0`, so this one setting is the entire mechanism, the same "one block's own padding, not a group gap" shape the card uses everywhere (image→title is built the same way, via the title's own `padding-block-start: 20`). 6px was sized for a line of price text; `_lambruk-add-button` (this project's own block, no settings of its own) renders a real 36px-tall control into that same slot, so a gap that read fine next to text read cramped next to a button — same 6px number both times, confirmed live, not a regression that crept in.
+
+Raised to **12px**, uniformly — not scoped to `:has(.lambruk-add-button)` cards only, deliberately: a split value would leave adjacent cards in the same grid row with their price rows sitting at different heights depending on stock status, which is worse than a sold-out card gaining 6px of harmless extra space. Not raised to 20 (the card's own image→title value) — that would make the title bind to its own price as loosely as it binds to the photo above it, collapsing a hierarchy the card already expresses on purpose. 12 sits on the card's existing 6/12/20 rhythm and keeps title→price visibly tighter than image→title.
+
+Verified live, `getComputedStyle`, both card types, both breakpoints: **12px** on a sold-out card and an Add-button card, at 375px and at 1280px — four confirmations, one number. `shopify theme check --path .` clean. Pull-check-push followed; pull reverted the not-yet-pushed commit as expected, restored via `git checkout HEAD --`, pushed. No dev server running.
+
 ---
 
 ## Summary

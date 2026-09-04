@@ -587,15 +587,48 @@ h1, h2, h3, h4, h5, h6 {
    Checked before building, per instruction: does the row's own
    vertical-alignment: center (`_product-card-group`'s JSON setting)
    mean min-height alone can't align the price TEXT, only the row's own
-   box? Reasoned through and confirmed live, post-fix: once BOTH the
-   row's height (via min-height) and its bottom edge (via margin-top:
-   auto, landing on the now-equalised column bottom) are forced equal
-   across cards, the row's top is equal too (top = bottom − height,
-   both terms now identical) -- and centring price text inside two
-   boxes of identical height at an identical position lands the text
-   identically either way. No need for the bottom-alignment alternative
-   this file's own convention would otherwise reach for here --
-   centring stays correct once the row itself stops varying in size.
+   box? Reasoned through and reported as a non-issue on the theory that
+   equal row height + equal row bottom implies equal row top, so
+   centring inside two now-identical boxes would land the text
+   identically either way -- **wrong, caught only at verification, not
+   at reasoning.** The reported "vertical-alignment: center" was the
+   JSON *setting*; the live *computed* `align-items` on this row is
+   `baseline`, not `center` -- a different, pre-existing, already-
+   documented override at `blocks/_product-card-group.liquid`'s own
+   `.product-card .group-block-content.layout-panel-flex--row {
+   align-items: baseline }`, deliberately built for a different
+   consumer (the homepage Top Sellers rail, `[data-template="index"]`,
+   where price needs to sit on a wrapped title's FIRST line) but scoped
+   broadly enough (`.product-card`, no template guard) to reach this
+   row too -- that file's own comment already named the risk exactly:
+   "a copy or font change could open the gap with no warning, because
+   nothing is actually reading that [center] setting." This min-height
+   change is that event: previously ~1.2px and left alone as
+   negligible, now ~7.6px and visibly wrong, confirmed live on a sold-
+   out/Add-button pair in the same grid row before touching anything
+   further.
+
+   Baseline alignment also means part 2's own min-height doesn't reach
+   the text the way it looks like it should: `.group-block` (outer) is
+   plain `display: block`, so a shorter block child (price text alone,
+   19.6px) does NOT stretch to fill the 36px content-box that
+   min-height:68 creates -- it just sits at the content-box's own top,
+   full stop, min-height or not. The Add-button row only ever looked
+   "handled" because its own content (button + price, baseline-
+   aligned) happens to fill that same 36px on its own.
+
+   Fixed with two more rules, scoped to the same three templates so the
+   original Top Sellers consumer is untouched (confirmed live it's the
+   only other `_product-card-group` consumer, `templates/index.json`):
+   `display: flex` added to the outer `.group-block` so its single
+   child actually stretches to the min-height'd box (flexbox's own
+   default `align-items: stretch`, nothing extra needed), and the inner
+   row's `align-items` overridden `baseline` → `flex-end` so price
+   (and Add button, when present) sit at the bottom of that now-
+   uniform-height row instead of wherever their own baselines put them.
+   Tested by temporary style injection before writing this rule, not
+   assumed: sold-out/Add-button pair and 2-line/3-line pair both landed
+   on the identical price-top coordinate once both new rules were live.
 
    Consequence, not a regression: this turns the 12px title→price gap
    from a fixed value into a floor. A short single-line title on a
@@ -608,6 +641,13 @@ h1, h2, h3, h4, h5, h6 {
 [data-template="collection"] .product-card__content > .group-block {
   margin-top: auto;
   min-height: 68px;
+  display: flex;
+}
+
+[data-template="collection.all"] .product-card .group-block-content.layout-panel-flex--row,
+[data-template="collection.occasion"] .product-card .group-block-content.layout-panel-flex--row,
+[data-template="collection"] .product-card .group-block-content.layout-panel-flex--row {
+  align-items: flex-end;
 }
 
 /* Homepage trust-badge row ("Low FODMAP" etc — section_proof_bar_marquee;

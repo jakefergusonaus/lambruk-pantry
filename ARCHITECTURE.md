@@ -2211,6 +2211,22 @@ Verified by rect, both required row pairs, both breakpoints: a 1-line/2-line tit
 
 ---
 
+## 73. Homepage hero: mobile top padding reduced 50.4px → 32px (2026-09-04)
+
+Reported before building: at 375px, the gap between the sticky header's bottom edge (`y=60`) and the hero image's top edge was **50px**, all of it coming from one source — `section_hero`'s own `padding-block-start: 72` ([templates/index.json:219](templates/index.json:219)), scaled by Horizon's native responsive-spacing utility ([snippets/spacing-style.liquid](snippets/spacing-style.liquid:22-27): `max(20px, calc(var(--spacing-scale) * value))`) at `--spacing-scale-md: 0.7` below 990px ([snippets/theme-styles-variables.liquid:434](snippets/theme-styles-variables.liquid:434)). `72 × 0.7 = 50.4`. No wrapper margin, no other contributor — confirmed live via `getComputedStyle` on every element between the header and the `<img>`.
+
+Desktop's 72px matches the design exactly (`Desktop.dc.html:45`, `padding:72px 0 80px`) — not touched. The design's own mobile hero doesn't give a like-for-like number: `Mobile.dc.html:60-74` puts the image *last*, after the text and button stack, with the section's own 32px top padding landing on the eyebrow text, not the image (image separated from the button row by its own `margin-top:28px` instead). The built page orders image-first on mobile regardless — Horizon's `media-with-content` section stacks in block order (`media` before `content` in the JSON) at narrow widths independent of the `media_position` setting, which only reorders columns at the desktop breakpoint. 32px was carried over from the design's own top-padding number since there's no better source, with this order difference named rather than silently assumed away.
+
+The 72px JSON value is `section_hero`'s own, independent setting — not shared with any other homepage section (every section on the page carries its own distinct `padding-block-start`: 16, 32, 56, 72, 80, 88, 96 all appear once). Reducing it doesn't move anything else on the page; what *is* shared is the scaling mechanism itself (`--spacing-scale`, the `max(20px, …)` clamp), used by effectively every section and many blocks sitewide — not touched here.
+
+**Built as a scoped CSS override**, `assets/lambruk-tokens.css`, `@media (max-width: 749px)`, per instruction: JSON stays at 72 throughout. Overrides the `--padding-block-start` custom property (the one `spacing-style.liquid` sets inline via `style=""`), not the final `padding-block-start` property — same reasoning as §72's font-size override, and `!important` is required for the same reason: beating an inline value needs it. Scoped to `[id$="__section_hero"] > .section` — a direct-child combinator, deliberately *not* `.spacing-style` generally, since that class is reused by every block inside this section (eyebrow, heading, body, button row) for their own padding via the same utility; confirmed live the shopify-section wrapper's direct children are a `<style>` tag, the section-background div, and this one `.section` div, so the selector can't reach anything else. Recorded at the override site in full — same JSON-value-≠-rendered-value split as §72, same reason: `templates/index.json` reads 72 at every width; the number actually on screen below 750px comes from this file.
+
+**750–989px deliberately left untouched, on Horizon's own scaled 50.4px** — not extended to match, because that band exists independent of this fix: Horizon's own `--spacing-scale` switches at 990px, while this project's other mobile overrides use 750px, so a genuine middle band sits between the two thresholds regardless of what this rule does. Result is three deliberate steps, not a cliff-then-jump: 32px (<750px) → 50.4px (750–989px, Horizon's own scale) → 72px (≥990px, the JSON value, unscaled).
+
+Verified live by rect at all four boundaries: **32px** at 375px, **32px** at 749px, **50.4px** at exactly 750px, **72px** at 1280px — the middle-band snap confirmed to the decimal. `shopify theme check --path .` clean. Pull-check-push followed; the post-push pull matched exactly, no revert needed this time. No dev server running.
+
+---
+
 ## Summary
 
 | Area | Path taken |

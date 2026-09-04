@@ -2132,6 +2132,45 @@ Any `padding-block-start`/`-end`/`-inline-start`/`-inline-end` value **greater t
 
 ---
 
+## 71. Mobile page margins: gutter to 20px, collection grid, Cafe hero text (2026-09-04)
+
+One token change and two independent bugs it exposed, following a report-only sweep of all eight page types at 375px.
+
+**1. Gutter: `--page-margin` 16px → 20px below 750px.** `assets/lambruk-tokens.css`, scoped `@media (max-width: 749px)`, same selector list as the rule it overrides (`assets/base.css:269/277`) — base.css itself untouched, level 2. Design specifies 20px in 73 places across every page type in `Mobile.dc.html`; Horizon's native 16px had no design basis, and the earlier "accept Horizon's 16px" concession (`DESIGN-TOKENS.md`, approved 2026-08-19) is reversed here — see that file's corrected entry.
+
+**Checked before building, per instruction: does anything hardcode 16 expecting it to match the gutter?** One real hit — `snippets/spacing-padding-surface.liquid` (this project's own fluid-padding snippet for the "surfaces" pattern, quote-panel's only consumer), whose own doc comment said its 16px inline floor "matches Horizon's own --page-margin concession." Left alone, quote-panel's inline padding would have floored at the old value while everything else moved to the new one — a new, self-inflicted 4px mismatch. Changed to 20 in the same commit; doc comment corrected to point at the new override instead of the reversed concession. Nothing else found on a broader grep for 16px tied to margin/gutter/inset — the rest were unrelated (button padding, icon sizes, popover offsets).
+
+**2. Collection grid, filter row, item count — two separate sibling bugs, not one shared container, confirmed only by measuring after the first fix, not by trusting the plan.**
+
+`full_width_on_mobile` set `true` → `false` on all three collection templates that use `sections/main-collection.liquid` (`collection.all.json`, `collection.occasion.json`, `collection.json` — the bare default; the brief named one, all three carried the identical setting from the same origin, so all three were fixed together, flagged here rather than assumed). Horizon's own schema default is `true`, never chosen.
+
+**Checked before building: does `--margin-lg` match `--page-margin`?** No — `--margin-lg` (`theme-styles-variables.liquid:404`) is a flat `1rem`/16px with no responsive component at all, confirmed live (`getComputedStyle`, both properties read at once: `--margin-lg: 1rem`, root font-size 16px, `--page-margin: 20px`). `full_width_on_mobile: false` alone would have made `snippets/product-grid.liquid` emit `--grid--margin--mobile: 0 var(--margin-lg)` — insetting the grid 4px less than the heading above it and everything else on the newly-20px page, a smaller version of the bug it was meant to fix. Repointed at `--page-margin` directly via a scoped `!important` override on `#ResultsList.main-collection-grid` (`!important` needed because the value it replaces is itself an inline style, not a stylesheet rule).
+
+**Verified live rather than assumed fixed: this alone did not "bring the filter row, item count and grid in together."** Product cards measured correctly inset (left 20, right 355) after the `#ResultsList` fix — but the "Filter" button and the category chips still measured flush (left 0, and 13 for the Filter icon specifically) on the same page load. Traced why: `#ResultsList` (the grid), `.facets-toggle` (Filter button + view-density toggle) and `.lambruk-tag-filter` (this project's own chip/count block, `blocks/lambruk-tag-filter.liquid`) are three **siblings** inside `.collection-wrapper`, not nested inside each other — fixing one sibling's own margin mechanism does nothing for the other two. Neither `.facets-toggle` (stock Horizon) nor `.lambruk-tag-filter` (this project's block) had ever carried any horizontal padding of its own; both simply assumed a margin-respecting grid column that `.product-grid-container`'s own `display: block` below 750px (`snippets/product-grid.liquid` — deliberate, the same reason `#ResultsList` needs its own inline padding rather than relying on the section grid) never gives them. Fixed with a second, plain `padding-inline: var(--page-margin)` rule on both selectors, no `!important` needed (nothing else sets it).
+
+**3. Cafe hero text.** `sections/hero.liquid:506` ties the content wrapper's class directly to the section's own `section_width` setting — only two values exist, `page-width` or `full-width` (`:1093-1104`), no third "full-bleed background, margined text" option. `.hero__content-wrapper.page-width` gets `grid-column: 2/3` (`:586`, the margin-respecting column); plain `.hero__content-wrapper` — what `full-width` emits, correctly, since the photo has to bleed — gets none. Choosing full-width for the photo takes the text down with it by construction. Confirmed sitewide (grep across every `templates/*.json`) that Cafe is currently the only `"type": "hero"` instance — scoped the fix to the section's own emitted class combination (`.hero__content-wrapper.full-width`) rather than this instance's id, so it reaches any future full-width hero the same way, per instruction. `padding: 0 var(--page-margin) 32px`, mobile only — matches `Mobile.dc.html:439`'s `padding:0 20px 32px` exactly once the gutter token itself is 20. Desktop untouched: not reported broken there, and the design's own 20/32 values are mobile-specific numbers, not ones that also happen to be correct above 750px.
+
+**Verified live, `getBoundingClientRect`, all eight pages, 375px, after both fixes:**
+
+| Page | Flush elements found | All on the established deliberate list? |
+|---|---|---|
+| Homepage | header underlay, cart/menu hitbox, trust marquee, 2× quote-panel band, Top Sellers carousel | Yes |
+| `/collections/all` | header underlay, cart/menu hitbox | Yes — filter row, chips, item count, grid all confirmed inset (20/355) |
+| PDP | header underlay, cart/menu hitbox, gallery, recommendations band | Yes |
+| Cafe | header underlay, cart/menu hitbox, hero (photo only — text confirmed inset 20/355) | Yes |
+| Our Story | header underlay, cart/menu hitbox | Yes |
+| Wholesale | header underlay, cart/menu hitbox | Yes |
+| Contact | header underlay, cart/menu hitbox | Yes |
+| 404 | header underlay, cart/menu hitbox | Yes |
+
+No new element appeared outside the established list on any page. Two things checked and ruled out as false alarms rather than reported as regressions: a per-card image slideshow's second (off-screen) slide, `overflow-x: scroll` by design, momentarily flagged as "content bleeding" inside the fixed grid — it isn't page content, it's an unopened carousel slide; and a pre-existing `margin-left: -3px` on `.facets-toggle__wrapper` (stock Horizon, optical icon alignment, present before and unrelated to this change) that puts the Filter icon 3px inside the new 20px line — not a page-margin defect, the padding itself measured exactly 20px.
+
+Extended beyond the two named collection templates to all three sharing the identical setting (`full_width_on_mobile`), and to any future full-width hero (class-scoped, not id-scoped) — both flagged here rather than done silently.
+
+`shopify theme check --path .` clean throughout (two pushes — the second adding the filter-row/chip-row fix once verification showed the first push incomplete). Pull-check-push followed for both; each pull reverted the not-yet-pushed commit as expected, restored via `git checkout HEAD --`, pushed. No dev server running.
+
+---
+
 ## Summary
 
 | Area | Path taken |

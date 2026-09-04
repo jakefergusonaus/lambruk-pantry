@@ -544,6 +544,72 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Product card: bottom-align the price/Add row across a grid row
+   (2026-09-04), all three collection templates, both breakpoints (no
+   media query — the misalignment exists at 375 and 1280 alike).
+
+   Two parts, both required — bottom-alignment alone doesn't line the
+   prices up:
+
+   1. margin-top: auto on the price row. .product-card__content is
+      already `display:flex; flex-direction:column; justify-content:
+      normal; gap:0` (confirmed live) with NO existing auto-margin or
+      space-between to conflict with, so this is the plain, standard
+      push-to-end technique -- nothing more was needed here.
+
+      Checked before building, per instruction: does the card actually
+      stretch to fill its grid cell, or would this rule have nothing to
+      push against? Confirmed live -- a 2-line-title card and a 3-line-
+      title card in the same grid row already render at identical
+      height (CSS Grid's own default `align-items: stretch`, nothing
+      this project added), AND .product-card__content's own rendered
+      height already equals the card's full stretched height (not just
+      its own natural content height) -- so the flex column genuinely
+      has free space at its bottom to push into. Both were verified,
+      neither assumed.
+
+   2. min-height on the price row itself, matching the Add button's own
+      footprint. Without this, two bottom-aligned rows of DIFFERENT
+      height still put their price text at different Y positions -- a
+      sold-out row (price text only, ~19.6px content) and an Add-button
+      row (a real 36px-tall control) would each still hug the bottom of
+      a column of equal total height, but the SHORTER row's own box
+      would simply be shorter, so its top -- and the centred price text
+      inside it -- would sit lower than the taller row's.
+
+      The value is 68px, not 36 -- price_row is `box-sizing: border-
+      box` (confirmed live), and its own padding-block-start/-end (12px
+      /20px, this file's own gap fix above) are part of that border box
+      too: 36 (button) + 12 + 20 = 68. Setting min-height to the bare
+      36 would floor the row 32px short of what an Add-button row
+      already renders at, achieving nothing.
+
+   Checked before building, per instruction: does the row's own
+   vertical-alignment: center (`_product-card-group`'s JSON setting)
+   mean min-height alone can't align the price TEXT, only the row's own
+   box? Reasoned through and confirmed live, post-fix: once BOTH the
+   row's height (via min-height) and its bottom edge (via margin-top:
+   auto, landing on the now-equalised column bottom) are forced equal
+   across cards, the row's top is equal too (top = bottom − height,
+   both terms now identical) -- and centring price text inside two
+   boxes of identical height at an identical position lands the text
+   identically either way. No need for the bottom-alignment alternative
+   this file's own convention would otherwise reach for here --
+   centring stays correct once the row itself stops varying in size.
+
+   Consequence, not a regression: this turns the 12px title→price gap
+   from a fixed value into a floor. A short single-line title on a
+   sold-out card can now sit further than 12px above its price, because
+   the row's own min-height is what's setting the row's top position,
+   not the gap. Intended -- the alternative is prices at different
+   heights across a grid row, which is the actual complaint. */
+[data-template="collection.all"] .product-card__content > .group-block,
+[data-template="collection.occasion"] .product-card__content > .group-block,
+[data-template="collection"] .product-card__content > .group-block {
+  margin-top: auto;
+  min-height: 68px;
+}
+
 /* Homepage trust-badge row ("Low FODMAP" etc — section_proof_bar_marquee;
    originally built for a static section_proof_bar too, removed 2026-09-01
    once Jake chose the marquee, see below): remove the square outline from

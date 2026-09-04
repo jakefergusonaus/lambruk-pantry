@@ -476,6 +476,67 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Product card title/price, mobile only: steps down to the design's own
+   mobile values (2026-09-04) — a KNOWING departure from the "one place"
+   rule, recorded here because it's exactly the JSON-value-vs-rendered-
+   value split this project keeps getting burned by (most recently
+   ARCHITECTURE.md §70/§71's spacing/margin work), not because it was
+   missed this time.
+
+   Why not the JSON `font_size` setting itself, fluid or otherwise
+   (option (a), checked first): `snippets/typography-style.liquid`
+   parses `font_size` as a bare rem NUMBER --
+   `settings.font_size | split: 'rem' | first | times: 1.0` (lines 26,
+   40) -- with no passthrough for a `var()`/`clamp()` value, unlike
+   `line_height`'s own explicit, documented `contains 'var('` branch a
+   few lines below (added to this same file for exactly this class of
+   problem). A `clamp(...)` string fed through that parser produces a
+   non-numeric `split` result that coerces to 0 -- which happens to
+   still land on the flat/echo branch (`font_size_rem < 3.0`) and print
+   the raw string verbatim, so the *font-size* might even come out
+   looking right by accident, but the same broken 0 also drives the
+   `type` classification two lines up (display/heading/body), silently
+   misrouting the block's `--letter-spacing`/`--line-height` token
+   lookups to the wrong family regardless of what was actually
+   intended. Relying on an accidental pass-through with a real, silent
+   side effect elsewhere is worse than a known, commented CSS split --
+   this is bug class #5 territory (`var()` coerced to 0), not a clean
+   second option. The schema itself agrees: `font_size` is a closed
+   `select` of literal rem strings (`blocks/product-title.liquid`,
+   `blocks/price.liquid`), never designed to hold an expression.
+
+   Scoped to the three collection templates only (`collection.all`,
+   `collection.occasion`, and the bare default `collection` — index.json's
+   Top Sellers rail is a deliberately different card style at its own
+   15px/body-font and must not move). Title is the plain `<div
+   class="text-block">` wrapper Horizon renders for `product-title`;
+   price is the `<product-price class="text-block">` custom element --
+   confirmed live these are the only two `.text-block` elements inside a
+   `.product-card`, so `div.text-block` vs the `product-price` tag
+   cleanly separates them without needing a per-instance block-id
+   selector (the three templates don't even share one: collection.all
+   and the default both key this block `product_title_4nY4eT`, occasion
+   keys it plain `product_title`). `--font-size`/`--line-height` are the
+   custom properties `typography-style.liquid` sets inline
+   (`assets/base.css`'s `.custom-font-size`/`.custom-typography p` rules
+   read them) — `!important` is required to beat that inline style, same
+   reasoning as the collection-grid margin override above. Price's
+   line-height isn't touched — only font-size was specified for it. */
+@media screen and (max-width: 749px) {
+  [data-template="collection.all"] .product-card div.text-block,
+  [data-template="collection.occasion"] .product-card div.text-block,
+  [data-template="collection"] .product-card div.text-block {
+    --font-size: 0.875rem !important;
+    --line-height: 1.35 !important;
+  }
+
+  [data-template="collection.all"] .product-card product-price,
+  [data-template="collection.occasion"] .product-card product-price,
+  [data-template="collection"] .product-card product-price {
+    --font-size: 0.8125rem !important;
+  }
+}
+
 /* Homepage trust-badge row ("Low FODMAP" etc — section_proof_bar_marquee;
    originally built for a static section_proof_bar too, removed 2026-09-01
    once Jake chose the marquee, see below): remove the square outline from

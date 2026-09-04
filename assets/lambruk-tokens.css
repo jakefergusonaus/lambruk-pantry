@@ -476,12 +476,19 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Product card title/price, mobile only: steps down to the design's own
-   mobile values (2026-09-04) — a KNOWING departure from the "one place"
+/* Product card title/price, mobile only: steps down from desktop's
+   24px/16px (2026-09-04) — a KNOWING departure from the "one place"
    rule, recorded here because it's exactly the JSON-value-vs-rendered-
    value split this project keeps getting burned by (most recently
    ARCHITECTURE.md §70/§71's spacing/margin work), not because it was
    missed this time.
+
+   Revised 2026-09-04 (same day, same decision, not a new one — see
+   ARCHITECTURE.md §72): title 16px/1.35 (line-height unchanged), price
+   14px. The design's own literal mobile values (14px/13px) were tried
+   first and read too small once actually rendered — Horizon's card is
+   ~161px wide at 375px, not the design's own ~168px, and text that's
+   merely adequate at the design's width reads cramped at this one.
 
    Why not the JSON `font_size` setting itself, fluid or otherwise
    (option (a), checked first): `snippets/typography-style.liquid`
@@ -526,14 +533,14 @@ h1, h2, h3, h4, h5, h6 {
   [data-template="collection.all"] .product-card div.text-block,
   [data-template="collection.occasion"] .product-card div.text-block,
   [data-template="collection"] .product-card div.text-block {
-    --font-size: 0.875rem !important;
+    --font-size: 1rem !important;
     --line-height: 1.35 !important;
   }
 
   [data-template="collection.all"] .product-card product-price,
   [data-template="collection.occasion"] .product-card product-price,
   [data-template="collection"] .product-card product-price {
-    --font-size: 0.8125rem !important;
+    --font-size: 0.875rem !important;
   }
 }
 

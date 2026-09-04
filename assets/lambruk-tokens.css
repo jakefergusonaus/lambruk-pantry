@@ -275,6 +275,30 @@ h1, h2, h3, h4, h5, h6 {
    LAMBRUK UTILITIES
    ========================================================================== */
 
+/* Mobile gutter: 20px, not Horizon's native 16px (2026-09-04). Design
+   specifies 20px in 73 places across every page type in Mobile.dc.html
+   -- checked directly, not assumed -- with no basis anywhere for 16.
+   Reverses the earlier "accept Horizon's native 16px" concession
+   (DESIGN-TOKENS.md, approved 2026-08-19); see that file's corrected
+   entry for the full record.
+
+   Level 2: overriding the custom property assets/base.css:269/277
+   declares, not editing base.css itself -- that file stays untouched
+   and upgradable. Same selector list and the same 749px breakpoint
+   ceiling as the rule being overridden, so this is the one place every
+   --page-margin consumer sitewide now reads 20 from: the section grid
+   mechanism (.section > *, base.css), collection-wrapper-styles.liquid,
+   and the collection product grid (product-grid.liquid, repointed at
+   this token below instead of the flat --margin-lg it used natively). */
+@media screen and (max-width: 749px) {
+  .page-width-wide,
+  .page-width-normal,
+  .page-width-narrow,
+  .page-width-content {
+    --page-margin: 20px;
+  }
+}
+
 /* Doubled selector is deliberate, not a typo — do not "clean up" to a
    single class. assets/base.css defines Horizon's own heading rules as
    .h1.h1 through .h6.h6 (two class selectors each), paired with a flat,
@@ -407,6 +431,27 @@ h1, h2, h3, h4, h5, h6 {
 @media screen and (max-width: 749px) {
   [data-template="collection.all"] .product-grid-container {
     padding-top: 0;
+  }
+}
+
+/* Collection product grid: mobile margin repointed at --page-margin, not
+   Horizon's own --margin-lg (2026-09-04). `full_width_on_mobile` set to
+   false on all three collection templates (collection.all/occasion/
+   default — Horizon's own schema default is true, never chosen; that's
+   what left the grid, filter row and item count flush) makes
+   snippets/product-grid.liquid emit `--grid--margin--mobile: 0
+   var(--margin-lg)` inline on #ResultsList — but --margin-lg
+   (theme-styles-variables.liquid) is a flat `1rem`/16px with no
+   responsive component at all, while --page-margin is now 20px below
+   750px. Left alone, the grid would inset 4px less than the heading
+   above it and everything else on the page — a new, smaller mismatch
+   replacing the old total-bleed one. Overridden directly rather than
+   touching the core snippet: `!important` is required because the
+   value being overridden is itself an inline style (highest specificity
+   short of !important), not a stylesheet rule. */
+@media screen and (max-width: 749px) {
+  #ResultsList.main-collection-grid {
+    --grid--margin--mobile: 0 var(--page-margin) !important;
   }
 }
 
@@ -819,4 +864,30 @@ h1, h2, h3, h4, h5, h6 {
    ever matching a same-shaped row on another page. */
 [id$="__cafe_shop_pantry"] .collection-card__content .group-block {
   border-bottom: 1px solid #E3D6C5;
+}
+
+/* Full-width hero text inset, mobile only (2026-09-04). Design wants the
+   Cafe hero's photo full-bleed but its text (eyebrow/heading/body/CTA)
+   inset -- Mobile.dc.html:439, `padding:0 20px 32px` on the text wrapper,
+   the photo itself is a separate position:absolute layer. Confirmed
+   sitewide via templates/*.json + sections/*.json: the Cafe hero is
+   currently the only `"type": "hero"` instance, but this is scoped to
+   the section's own emitted class combination, not this instance's id --
+   sections/hero.liquid:506 ties the content wrapper's class directly to
+   the section_width setting ("hero__content-wrapper applies
+   section_width"), so *any* hero.liquid section configured full-width
+   hits the identical gap, present or future, and the fix should reach it
+   the same way. Confirmed the only two section_width options are
+   page-width/full-width (:1093-1104) with no third "full-width but
+   margined" choice -- .hero__content-wrapper.page-width gets
+   `grid-column: 2/3` (:586), the margin-respecting column; plain
+   .hero__content-wrapper (what full-width emits) gets none, so choosing
+   full-width for the photo takes the text down with it by construction,
+   not by omission. Desktop untouched -- not reported broken there, and
+   the design's own 20px/32px values are this breakpoint's own numbers,
+   not a value that also happens to be right above 750px. */
+@media screen and (max-width: 749px) {
+  .hero__content-wrapper.full-width {
+    padding: 0 var(--page-margin) 32px;
+  }
 }

@@ -10,11 +10,14 @@
   blocks theme-wide render as-is — this snippet is scoped to the surfaces
   pattern only, not a replacement for the shared one.
 
-  Floors: 40px block (top/bottom), 16px inline (left/right) — the inline floor
-  matches Horizon's own --page-margin concession already accepted in
-  ARCHITECTURE.md §3, so this fluid transition still lands on the same 16/40
-  values that concession settled on, just smoothed across the viewport instead
-  of a hard jump at 750px.
+  Floors: 40px block (top/bottom), 20px inline (left/right) — the inline floor
+  matches the mobile gutter override in assets/lambruk-tokens.css (2026-09-04,
+  20px, not Horizon's native 16px — see that file), so this fluid transition
+  still lands on the same 20/40 values that override settled on, just
+  smoothed across the viewport instead of a hard jump at 750px. Was 16 to
+  match Horizon's own --page-margin before that override reversed it; changed
+  here in the same pass so this snippet's one consumer (quote-panel) doesn't
+  silently drift back to the old value while everything else moves to 20.
 
   @param {object} settings - the block or section settings object, providing
     padding-block-start, padding-block-end, padding-inline-start and
@@ -29,7 +32,7 @@
   assign viewport_range = viewport_max | minus: viewport_min | times: 1.0
 
   assign keys = 'padding-block-start,padding-block-end,padding-inline-start,padding-inline-end' | split: ','
-  assign floors = '40,40,16,16' | split: ','
+  assign floors = '40,40,20,20' | split: ','
 
   for key in keys
     assign floor = floors[forloop.index0] | times: 1

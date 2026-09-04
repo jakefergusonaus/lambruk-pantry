@@ -2171,9 +2171,11 @@ Extended beyond the two named collection templates to all three sharing the iden
 
 ---
 
-## 72. Product card title/price: mobile step-down to the design's own values (2026-09-04)
+## 72. Product card title/price: step down to design values at mobile (2026-09-04)
 
-Title 24px→14px (line-height 1.35) and price 16px→13px below 750px, across all three collection templates (`collection.all`, `collection.occasion`, and the bare default `collection`). Desktop untouched. Occasion's title was also raised 1.375rem→1.5rem so all three templates share the same *desktop* value before the mobile override applies uniformly on top — it had drifted to its own third number, matching neither sibling nor the design.
+Title 24px→16px (line-height 1.35) and price 16px→14px below 750px, across all three collection templates (`collection.all`, `collection.occasion`, and the bare default `collection`). Desktop untouched. Occasion's title was also raised 1.375rem→1.5rem so all three templates share the same *desktop* value before the mobile override applies uniformly on top — it had drifted to its own third number, matching neither sibling nor the design.
+
+**Revised same day, same decision, not a new one.** The design's own literal mobile values (14px/13px) were built first and shipped — then read too small once actually rendered: Horizon's card is ~161px wide at 375px, not the design's own ~168px, and text merely adequate at the design's width was cramped at this one. Raised to 16px/14px; line-height stays 1.35.
 
 **Report-before-build confirmed the design steps down, not flat.** Mobile (`Mobile.dc.html:283-284`, raw markup): title `font-size:14px;line-height:1.35`, price `font-size:13px`. Desktop (`Desktop.dc.html:334`, the `ProductCard` design-system component, `ProductCard.jsx:23-26` + `tokens/typography.css:14,19`): title `var(--display-5-size)` = 24px/1.25, price `var(--body-size)` = 16px/1.6. A genuine mobile-specific pair, not the desktop numbers reused.
 
@@ -2181,15 +2183,15 @@ Title 24px→14px (line-height 1.35) and price 16px→13px below 750px, across a
 
 **Built as (b): a scoped, commented CSS override**, `assets/lambruk-tokens.css`, `@media (max-width: 749px)`. Selector distinguishes title from price structurally rather than by block id — the three templates don't even share one (`collection.all`/`collection` both key the title block `product_title_4nY4eT`, occasion keys it plain `product_title`) — using the fact that Horizon renders `product-title` as a plain `div.text-block` and `price` as the `<product-price class="text-block">` custom element; confirmed live these are the *only* two `.text-block` elements inside a `.product-card`, so the tag distinction is clean with no risk of catching something else. Overrides `--font-size`/`--line-height` (the custom properties `typography-style.liquid` sets inline, consumed by `assets/base.css`'s `.custom-font-size`/`.custom-typography p` rules) rather than the final `font-size` property directly — same reasoning as the collection-grid margin override in §71, and `!important` is required for the same reason: beating an inline style needs it. Recorded at the override site itself, in full, per instruction — this is a knowing JSON-value-≠-rendered-value split, not a missed one.
 
-**Verified live, `getComputedStyle`, all three collection templates, 375px:**
+**Verified live, `getComputedStyle`, all three collection templates, 375px, both passes (14px/13px built first, 16px/14px after the revision):**
 
 | Template | `data-template` | Title | Price | Worst-case line count |
 |---|---|---|---|---|
-| Shop All | `collection.all` | 14px / 18.9px lh | 13px | 3 lines ("Blueberry & Apple Sauce 100ml") |
-| Slow Mornings (occasion) | `collection.occasion` | 14px / 18.9px lh | 13px | 2 lines ("Pear & Blackberry Sauce 240ml" — page's own longest; the citywide worst case isn't in this collection) |
-| Tea Collection (bare default) | `collection` | 14px / 18.9px lh | 13px | 3 lines ("Lemon Ginger Tea 35g Loose Leaf") |
+| Shop All | `collection.all` | 16px / 21.6px lh | 14px | 3 lines ("Blueberry & Apple Sauce 100ml") |
+| Slow Mornings (occasion) | `collection.occasion` | 16px / 21.6px lh | 14px | 2 lines ("Pear & Blackberry Sauce 240ml" — page's own longest; the citywide worst case isn't in this collection) |
+| Tea Collection (bare default) | `collection` | 16px / 21.6px lh | 14px | 3 lines ("Lemon Ginger Tea 35g Loose Leaf") |
 
-**Breakpoint boundary checked both sides, no jump:** 749px → 14px/13px (mobile); 750px → 24px/16px (desktop) — a clean snap at exactly the rule's own `max-width`, nothing in between.
+**Breakpoint boundary checked both sides, no jump:** 749px → 16px/14px (mobile); 750px → 24px/16px (desktop) — a clean snap at exactly the rule's own `max-width`, nothing in between.
 
 **Separate finding, named per instruction, not fixed this pass.** `templates/search.json` and `templates/product.json`'s recommendation-row title/price carry `type_preset: "h6"`/`"rte"`/`"paragraph"` (not `"custom"`) — their `font_size` settings (`1rem` on all of them) are already inert, the real bug-class-#3 shape, just on different pages than this one. Confirmed what they actually render as: search results — title **14px** (Horizon's own `rte` default), price **12px** (`h6` default). PDP recommendations — fetched and measured the section's own markup directly (`data-url`, since the block never loaded live in this tool, presumably an intersection-observer lazy-fetch this environment doesn't reliably trigger — see Browser tooling notes) — identical: title **14px**, price **12px**, same mechanism, same fallback classes. The design source doesn't cover either page at all (grepped both `.dc.html` files for "isSearch"/"search results"/"recommendation" — zero matches) — no explicit target exists, but the obvious inference is the shop-grid's own values, since it's the same `_product-card` block reused, just mis-configured. Left alone, logged in `REVIEW-NOTES.md` so the dead settings don't sit unnoticed.
 

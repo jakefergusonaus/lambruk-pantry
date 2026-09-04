@@ -434,24 +434,45 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Collection product grid: mobile margin repointed at --page-margin, not
-   Horizon's own --margin-lg (2026-09-04). `full_width_on_mobile` set to
-   false on all three collection templates (collection.all/occasion/
-   default — Horizon's own schema default is true, never chosen; that's
-   what left the grid, filter row and item count flush) makes
-   snippets/product-grid.liquid emit `--grid--margin--mobile: 0
-   var(--margin-lg)` inline on #ResultsList — but --margin-lg
-   (theme-styles-variables.liquid) is a flat `1rem`/16px with no
-   responsive component at all, while --page-margin is now 20px below
-   750px. Left alone, the grid would inset 4px less than the heading
-   above it and everything else on the page — a new, smaller mismatch
-   replacing the old total-bleed one. Overridden directly rather than
-   touching the core snippet: `!important` is required because the
-   value being overridden is itself an inline style (highest specificity
-   short of !important), not a stylesheet rule. */
+/* Collection page, mobile: two separate fixes for what looked like one
+   flush block (2026-09-04). #ResultsList (the product grid), .facets-
+   toggle (the "Filter" button/view-toggle row) and .lambruk-tag-filter
+   (the category chips + item count) are three *siblings* inside
+   .collection-wrapper, not one container — fixing #ResultsList's own
+   margin does not reach the other two, confirmed live: after the first
+   half of this fix, product cards measured correctly inset (left 20,
+   right 355) while the chips and "Filter" button still measured flush
+   (left 0/13, well under the 20px margin) on the same page load.
+
+   #ResultsList: `full_width_on_mobile` set to false on all three
+   collection templates (collection.all/occasion/default — Horizon's own
+   schema default is true, never chosen) makes snippets/product-grid.liquid
+   emit `--grid--margin--mobile: 0 var(--margin-lg)` inline — but
+   --margin-lg (theme-styles-variables.liquid) is a flat `1rem`/16px with
+   no responsive component at all, while --page-margin is now 20px below
+   750px. Repointed at --page-margin directly; `!important` is required
+   because the value being overridden is itself an inline style (highest
+   specificity short of !important), not a stylesheet rule.
+
+   .facets-toggle and .lambruk-tag-filter: neither has ever carried any
+   horizontal padding of its own — .facets-toggle is stock Horizon
+   (main-collection.liquid), .lambruk-tag-filter is this project's own
+   block (blocks/lambruk-tag-filter.liquid) — both simply assumed they'd
+   sit inside a margin-respecting grid column, which `.product-grid-
+   container`'s own `display: block` below 750px (snippets/product-
+   grid.liquid, deliberate — the mobile product-grid pattern hands
+   margin to its children directly rather than via the section grid, same
+   reason #ResultsList carries its own inline padding) means neither one
+   ever got. No !important needed here — plain padding-inline, nothing
+   else currently sets it on either selector. */
 @media screen and (max-width: 749px) {
   #ResultsList.main-collection-grid {
     --grid--margin--mobile: 0 var(--page-margin) !important;
+  }
+
+  .collection-wrapper > .facets-toggle,
+  .collection-wrapper > .lambruk-tag-filter {
+    padding-inline: var(--page-margin);
   }
 }
 

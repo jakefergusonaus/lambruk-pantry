@@ -1086,3 +1086,48 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0 var(--page-margin) 32px;
   }
 }
+
+/* Homepage hero (section_hero): reduce mobile top padding (2026-09-04).
+   JSON padding-block-start stays 72 -- correct at desktop, matches the
+   design exactly (Desktop.dc.html:45) -- this is only about what
+   Horizon's own responsive-spacing utility produces from that same
+   72 at small widths.
+
+   templates/index.json's own padding-block-start reads 72 at every
+   width -- the number actually on screen below 750px is 32, from this
+   file alone. Same JSON-is-not-rendered split as §72, same reason:
+   the source of truth for "what's rendered" is this rule, not the
+   JSON value it overrides.
+
+   Mechanism: snippets/spacing-style.liquid emits --padding-block-start
+   as an INLINE custom property (`max(20px, calc(var(--spacing-scale) *
+   72px))`), read by base.css's `.spacing-style { padding-block: calc(
+   var(--padding-block-start) + ...) ... }`. Overriding that custom
+   property, not the final padding-block-start property directly, for
+   the same reason as the font-size override above -- and !important is
+   required for the same reason too: beating an inline value needs it.
+
+   Scoped to [id$="__section_hero"] > .section specifically, NOT
+   .spacing-style generally -- that class is reused by every block
+   inside this section (eyebrow, heading, body, button row) for their
+   OWN padding via the same utility, so a broader selector would
+   silently override all of those too. The direct-child combinator
+   matches only the section's own outer div (confirmed live: the
+   shopify-section wrapper's direct children are a <style> tag, the
+   section-background div, and this one .section div -- nothing else
+   at this level carries the class).
+
+   Deliberately leaves 750-989px on Horizon's own scaled 50.4px rather
+   than extending this override's range to match it -- Horizon's own
+   spacing-scale switches at 990px (theme-styles-variables.liquid's
+   --spacing-scale-md: 0.7, below 990px), while this project's other
+   mobile overrides use 750px, so a real middle band exists between the
+   two thresholds already, independent of this fix. Result: 32px
+   (<750px, this rule) -> 50.4px (750-989px, Horizon's own scale,
+   untouched) -> 72px (>=990px, the JSON value, unscaled) -- three
+   deliberate steps, not a cliff at 750px followed by a jump back up. */
+@media screen and (max-width: 749px) {
+  [id$="__section_hero"] > .section {
+    --padding-block-start: 32px !important;
+  }
+}

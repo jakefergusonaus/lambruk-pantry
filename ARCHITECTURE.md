@@ -2308,6 +2308,58 @@ Design spec, `Mobile.dc.html:450`: the panel's own container is `padding:24px` (
 
 Verified live, both breakpoints: at 375px, `flex: 0 1 auto` applied, panel height grew 448.71px → 475.38px, gap below the buttons to the panel's bottom edge 1.23px → 23.4px (matching the 22.4px padding-block-end, no overflow) — screenshotted, rounded corner clear of both button faces. At 1280px, confirmed unchanged: `flex: 1 1 0%` still applies (row direction, correct), gap 33px, matching pre-fix exactly. `shopify theme check --path .` clean. Pull-check-push followed; the post-push pull matched exactly, no revert needed. No dev server running.
 
+**Superseded by §78 (2026-09-05, same day).** A sitewide sweep for the same shape found 18 more instances of this exact mechanism; the scoped `color-custom-*` selector above was replaced with one broad rule covering all of them, `reserve_card` included. The reasoning for narrow-first (verify one instance in isolation before trusting the diagnosis, avoid disturbing anything else while still investigating) doesn't disappear — it's exactly why the fix here started scoped, and why the broad rule in §78 could be written with confidence once this one had already proven the mechanism.
+
+---
+
+## 78. Native flex-height bug: sitewide sweep and single broad fix (2026-09-05)
+
+§77 fixed one instance (`reserve_card`) with a rule scoped to its own generated class, deliberately not touching the generic `.group-block--width-fill` selector even though `find_us` — sitting right next to it — carried the identical setting and was very likely subject to the same collapse. A follow-up sweep confirmed exactly that: **19 elements sitewide match the same shape** — a `width:"fill"` group nested directly inside a row-direction, `vertical_on_mobile` parent — all driven by the same single native rule, `assets/base.css:1778`'s `.layout-panel-flex--row > .group-block--width-fill { flex: 1; }` surviving the mobile row→column axis flip (`.mobile-column` is added, `.layout-panel-flex--row` is never removed — see §77 for the full mechanism). One native rule misapplying after an axis flip is one defect, not nineteen, so the fix was rebuilt as one rule instead of one-per-instance:
+
+```css
+@media screen and (max-width: 749px) {
+  .mobile-column > .group-block--width-fill {
+    flex: 0 1 auto;
+  }
+}
+```
+
+This **replaces** §77's `[id$="__cafe_booking"] .color-custom-AU2hHdC8yRjJCVVZSe__reserve_card` rule outright — that selector is now redundant, not merely superseded in spirit, and was deleted rather than left alongside the broad rule (two rules doing one job invites drift between them).
+
+**Checked for a load-bearing counter-case before going broad, not assumed.** The one place equal-height-via-flex-grow could plausibly be intentional is the homepage two-up cards, whose own equal-height fix (§57) was built deliberately at Jake's request. §57 itself already states, sourced from the design: `Desktop.dc.html`'s equivalent uses CSS Grid's default stretch; `Mobile.dc.html`'s equivalent is `display:flex;flex-direction:column` "with no equal-height concept at all" — confirming in writing, not by inference, that the equal-height requirement was always desktop-only. §57's own CSS is scoped to `@media (min-width: 750px)`; this rule is scoped to `max-width: 749px` — the two occupy disjoint breakpoints and cannot interact. Verified live rather than trusting the paper argument alone: at 1280px the two-up cards compute `flex: 1 1 0%` (this rule's `0 1 auto` never applies there) and render at 617px, matching §57's own previously-documented desktop value exactly.
+
+**Full inventory, verified live at 375px, before this rule and after:**
+
+| Instance | Height before | Content before (scroll/client) | Clipped before | Height after | Content after | Clipped after |
+|---|---|---|---|---|---|---|
+| Home two-up: Wholesale partnerships | 460.77px | 438/438 | No | 460.77px | 438/438 | No — pixel-identical |
+| Home two-up: A high tea worth travelling for | 460.77px | 438/438 | No | 460.77px | 438/438 | No — pixel-identical |
+| PDP trust row: Sustainably sourced | 180.2px | 180/180 | No | 180.2px | 180/180 | No — pixel-identical |
+| PDP trust row: Freshness secured | 180.2px | 180/180 | No | 180.2px | 180/180 | No — pixel-identical |
+| PDP trust row: Low sugar | 180.2px | 180/180 | No | 180.2px | 180/180 | No — pixel-identical |
+| Cafe: find_us | 375.24px | 375/375 | No | 375.24px | 375/375 | No — pixel-identical |
+| Cafe: reserve_card | 475.38px (already fixed by §77) | 429/429 | No | 475.38px | 429/429 | No — identical to §77's fixed state |
+| Wholesale benefits: Custom tea blending | 182px | 140/140 | No | 166px | 124/124 | No |
+| Wholesale benefits: Reliable batch supply | 182px | **144/140** (4px internal overflow) | No | 190px | 148/148 | No — internal overflow gone too |
+| Wholesale benefits: Formats for every service | 182px | **144/140** | No | 190px | 148/148 | No |
+| Who we supply: Suitable Business Partners | 432.16px | 432/432 | No | 432.16px | 432/432 | No — pixel-identical |
+| Who we supply: Packaging Formats | 466.57px | 467/467 | No | 466.57px | 467/467 | No — pixel-identical |
+| Wholesale enquiry: Partnership Enquiry (info) | 813.86px | 814/814 | No, but 132px forced-empty | **549.75px** | 550/550 | No — the 132px is gone, not just hidden |
+| Wholesale enquiry: Apply for a commercial account (form) | 866.26px | **946/814** (132px overflow) | **YES** | **1130.37px** | 1078/1078 | **No — fixed** |
+| Our Story: Straight from the farm | 172px | 172/172 | No | 172px | 172/172 | No — pixel-identical |
+| Our Story: Made with real fruit | 148px | 148/148 | No | 148px | 148/148 | No — pixel-identical |
+| Our Story: Small batches, tested | 172px | 172/172 | No | 172px | 172/172 | No — pixel-identical |
+| Contact: General & online orders (info) | 697.73px | 698/698 | No | 697.73px | 698/698 | No — pixel-identical |
+| Contact: Send a Message (form) | 666.38px | 614/614 | No | 666.38px | 614/614 | No — pixel-identical |
+
+Ten of nineteen are pixel-identical before and after — exactly the expected result where flex-grow's allotted share already happened to match natural content size (the two-up cards being the clearest case: both landed on 438px either way, per the same-numbers observation that prompted checking §57 in the first place). The three Wholesale-benefits tiles and the Wholesale-enquiry pair are the four that actually moved: the three tiles grew slightly to close a small pre-existing internal overflow (140→124/148/148, no more squeeze); the enquiry pair is the real fix — the form gained 264px and now fits its own content exactly (1078/1078, no overflow), and its sibling info panel lost the 132px it was being forced to carry as dead space.
+
+**The Wholesale enquiry submit button specifically confirmed tappable, not just present in the DOM:** hit-tested `document.elementFromPoint()` at the button's own center coordinates after scrolling it into view — returned the button element itself (`BUTTON.button wholesale-enquiry-form__submit`), not an ancestor or an overlapping sibling, `disabled: false`, fully inside the panel's now-correct bottom edge. Screenshotted both the button (clear margin below it, footer starts cleanly after) and the Partnership Enquiry panel (content now ends at the panel's own background, no trailing empty space).
+
+At 1280px: confirmed by rect that all 19 render exactly as they did before this change (two-up cards' `flex: 1 1 0%` and 617px height specifically re-verified live, not assumed from the media query alone). Screenshotted the homepage two-up cards and the Wholesale enquiry section at both breakpoints.
+
+`shopify theme check --path .` clean. Pull-check-push followed; the post-push pull matched exactly, no revert needed. No dev server running.
+
 ---
 
 ## Summary

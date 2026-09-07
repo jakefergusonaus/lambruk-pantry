@@ -1353,7 +1353,7 @@
         "columns": 3,
         "mobile_columns": "1",
         "section_width": "page-width",
-        "gap": 32,
+        "gap": 28,
         "background_color": "#F4F1EA",
         "padding-block-start": 88,
         "padding-block-end": 88

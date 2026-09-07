@@ -2270,6 +2270,26 @@ Made the Cafe instance (`templates/page.cafe.json`, `cafe_shop_pantry > static-c
 
 ---
 
+## 76. Homepage mobile: Cafe intro 4:3 crop, Curated Occasions 2-up grid (2026-09-05)
+
+Two mobile-only height reductions, report-first. Both fixes were scoped CSS overrides below 750px — neither module has a schema field that could do this natively (`media_height`'s options are viewport-height presets, not aspect-ratio; `group.liquid` has no grid/columns setting at all, flex row/column only).
+
+**Cafe intro image ("Introducing"/`media_with_content_cafe_intro`):** `media_height: "auto"` imposes no aspect-ratio at all — the box renders at whatever the source file's own dimensions are. `Ballina_Cafe_1.jpg` is a portrait crop (825×1238, confirmed via the `<img>`'s own `width`/`height` attributes, ratio 0.666), rendering **335×503px** at 375px before this fix. `Mobile.dc.html:116` specifies `aspect-ratio:4/3` at this breakpoint — a different ratio than desktop's own spec (`Desktop.dc.html:112`, `4/5`), so mobile and desktop were never supposed to share one value here. Added `aspect-ratio:4/3; object-fit:cover` to `.media-block__media`, scoped to `[id$="__media_with_content_cafe_intro"]`, below 750px only.
+
+Verified live: **335×251.25px, ratio 1.333**, exactly as computed. Checked the crop itself, not just the numbers, since cropping a 0.666 source down to 1.333 discards over half the original frame height — screenshotted the result: a cafe-interior scene with several seated people, all heads fully in frame, no one cut off at top or bottom. No `object-position` adjustment needed. Desktop unaffected (still 1.054, the unmodified raw-ratio behaviour — not asked to fix, and this task didn't touch it, so desktop remains equally unenforced against its own `4/5` spec, a separate, unreported gap named here for the record).
+
+**Curated Occasions (`section_curated_occasions`, `lambruk-occasion-card`):** not a ratio problem — `aspect-ratio:3/4` on the card already matched `Mobile.dc.html:162` etc. exactly. The actual cause of the excessive mobile scroll was layout: the wrapping "row" group's `vertical_on_mobile:true` stacked all four cards one-per-row at ~447px tall each. The design uses a genuine breakpoint-specific layout change, not a scaled desktop grid — `Mobile.dc.html:161`, `display:grid; grid-template-columns:1fr 1fr; gap:14px`, all four cards including High Tea, still at 3:4. Adopted in full, including the text treatment that goes with it: `Mobile.dc.html:165` etc. drop the caption `<p>` entirely and use a 20px heading (vs desktop's 26px) with 16px/16px/14px insets (vs 22px/22px/22px) — verified live *before* building that the current text (26px heading + full-sentence caption) does not fit a 214px-tall 2-up card without crowding the scrim (up to 141px of text in a 214px box, past the point the gradient had already faded transparent), so the smaller design treatment isn't optional polish, it's what makes 2-up work at all.
+
+Built as four rules scoped to `[id$="__section_curated_occasions"]`, below 750px: the content wrapper (`.group-block-content:has(> .lambruk-occasion-card)`, `:has()` used to reach only the wrapper directly containing the cards — the section's sibling "header" group has its own `.group-block-content` that must not become a grid) set to `display:grid; grid-template-columns:1fr 1fr; gap:14px`; heading `font-size:20px`; text-block insets `16px/16px/14px`; caption `display:none`. The caption's markup and settings are untouched — still in the DOM, still populated with its real text, still rendering at desktop; this is a breakpoint CSS treatment, not a content removal, confirmed by reading the block's own schema and markup (`blocks/lambruk-occasion-card.liquid`) before and after — nothing there changed.
+
+Verified live, precisely, not eyeballed: **two rows of two, 160.5×214px each** (grid `gridTemplateColumns: "160.5px 160.5px"`, `gap:14px`, matching the ~161×214 estimate); **every one of the four real headings — Slow Mornings, Entertaining, Sunday Roast, High Tea — renders on exactly one line** at 20px (checked via `Range.getClientRects()`, not assumed from the shortest one); caption confirmed `display:none` while `caption.textContent` still returns its full sentence, proving the DOM is intact; **text block's top edge sits 19.6% up from the card's bottom edge** (42px of 214px), well inside the scrim's `0%→44%` zone (opacity 0.86→0.46) and nowhere near the 72% point where the gradient (`linear-gradient(0deg, rgba(0,0,0,.86), rgba(0,0,0,.46) 44%, rgba(0,0,0,0) 72%)`) has faded transparent — comfortable, not marginal.
+
+**Total section height: 2046px → 660px, a 1387px (68%) reduction** — measured by temporarily reverting the four rules live (a temporary style-injection test, removed immediately after) to capture the true "before" number on the same page load, rather than reconstructing it from separate measurements taken before and after a push. At 1280px, confirmed unchanged: `display:flex; flex-direction:row`, four cards at 282×376px, 26px headings, captions `display:block` — screenshotted alongside the mobile result.
+
+`shopify theme check --path .` clean. Pull-check-push followed; the post-push pull matched exactly, no revert needed. No dev server running.
+
+---
+
 ## Summary
 
 | Area | Path taken |

@@ -1020,7 +1020,7 @@
                     "style_class": "button-secondary",
                     "width": "fit-content",
                     "custom_width": 100,
-                    "width_mobile": "fit-content",
+                    "width_mobile": "fill",
                     "custom_width_mobile": 100
                   },
                   "blocks": {}

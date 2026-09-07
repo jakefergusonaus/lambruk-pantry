@@ -1355,7 +1355,7 @@
         "columns_gap": 24,
         "rows_gap": 24,
         "section_width": "page-width",
-        "gap": 28,
+        "gap": 32,
         "background_color": "#F4F1EA",
         "padding-block-start": 88,
         "padding-block-end": 88

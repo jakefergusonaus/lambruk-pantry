@@ -1104,3 +1104,74 @@ h1, h2, h3, h4, h5, h6 {
     --padding-block-start: 32px !important;
   }
 }
+
+/* Cafe intro image ("Introducing" / media_with_content_cafe_intro):
+   4:3 at mobile (2026-09-05). `media_height: "auto"` (the section's
+   own setting) imposes no aspect-ratio at all -- the box just
+   renders at whatever the source file's own dimensions are
+   (Ballina_Cafe_1.jpg is a portrait crop, 825x1238, ratio 0.666,
+   confirmed via the img's own width/height attributes, not assumed).
+   No schema field exists for a mobile-only ratio -- media_height's
+   options are five viewport-height presets (auto/50svh/60svh/80svh/
+   100svh), none of them an aspect-ratio control -- so this is a
+   scoped CSS override, same pattern as the hero padding above.
+   Mobile.dc.html:116 specifies 4/3 here; desktop's own spec
+   (Desktop.dc.html:112, 4/5) is a DIFFERENT ratio, deliberately left
+   untouched -- not asked for, and the same "auto" mechanism means
+   desktop is equally unenforced today, a separate, unreported gap. */
+@media screen and (max-width: 749px) {
+  [id$="__media_with_content_cafe_intro"] .media-block__media {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+}
+
+/* Curated Occasions (section_curated_occasions): adopt the design's
+   mobile treatment in full (2026-09-05) -- 2-up grid, not a ratio
+   change (3:4 was already correct, Mobile.dc.html:162 etc.). Four
+   cards stacked one-per-row at ~447px each was the actual cause of
+   the excessive mobile scroll; this fixes the layout, matching
+   Mobile.dc.html:161's `display:grid; grid-template-columns:1fr 1fr;
+   gap:14px`.
+
+   `group.liquid` has no grid/columns setting at all (checked its
+   full schema -- flex row/column plus a mobile-stacking boolean,
+   nothing else), so the wrapping "row" group's own vertical_on_mobile
+   flex-column stacking is overridden here rather than reconfigured
+   in the JSON. Selector uses :has() to reach only the group-block-
+   content that directly contains the occasion cards -- the section
+   also has a sibling "header" group (eyebrow/heading/"Shop all")
+   with its own .group-block-content that must NOT become a grid.
+
+   Text treatment shrunk to match -- verified live before building
+   that the CURRENT text (26px heading + full-sentence caption, 22px
+   insets) does not fit a 214px-tall 2-up card without crowding the
+   scrim (up to 141px of text in a 214px card, past the point the
+   gradient has already faded transparent). The design's own mobile
+   cards drop the caption entirely and use a smaller heading
+   (Mobile.dc.html:165 etc. -- `<h3>` only, no `<p>`, font-size 20px,
+   inset 16px/16px/14px vs desktop's 26px/22px/22px/22px) -- adopting
+   that, not inventing a new mobile-only value. Caption hidden via
+   `display:none`, not removed from the block's own markup or
+   settings -- it stays in the DOM and still renders at desktop. */
+@media screen and (max-width: 749px) {
+  [id$="__section_curated_occasions"] .group-block-content:has(> .lambruk-occasion-card) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  [id$="__section_curated_occasions"] .lambruk-occasion-card__heading {
+    font-size: 20px;
+  }
+
+  [id$="__section_curated_occasions"] .lambruk-occasion-card__text {
+    left: 16px;
+    right: 16px;
+    bottom: 14px;
+  }
+
+  [id$="__section_curated_occasions"] .lambruk-occasion-card__caption {
+    display: none;
+  }
+}

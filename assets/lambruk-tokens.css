@@ -1175,3 +1175,69 @@ h1, h2, h3, h4, h5, h6 {
     display: none;
   }
 }
+
+/* Cafe "Reserve your table" panel (cafe_booking > row > reserve_card):
+   buttons clipped at mobile (2026-09-05). Not a padding value that's
+   wrong -- padding-block-end computes correctly (22.4px, scaled from
+   the JSON's 32) -- the padding is simply never reached, because the
+   panel's own rendered height is ~26px shorter than its real content
+   needs, and `overflow: hidden` (required for the border-radius) then
+   crops the shortfall off the bottom, eating most of the padding and
+   grazing the button row itself.
+
+   Root cause, confirmed live before writing this rule (temporary
+   style-injection tests, not assumed): reserve_card has width:"fill",
+   which base.css's own `.layout-panel-flex--row > .group-block--
+   width-fill { flex: 1; }` (a *native*, unmodified Horizon rule)
+   turns into `flex: 1 1 0%` -- flex-basis:0%, grow:1. At desktop this
+   is correct: the row really is row-direction there, so flex:1 shares
+   WIDTH between reserve_card and its sibling "find_us" column, and
+   the panel's height is governed by its own content as normal (33px
+   measured below the buttons there, matching the spec's 32 almost
+   exactly -- desktop is NOT affected).
+
+   Below 750px, `vertical_on_mobile` flips the row to column via a
+   SEPARATE class, `.mobile-column` (base.css:1207-1212, its own
+   max-width:749px media query) -- but the row wrapper KEEPS its
+   `.layout-panel-flex--row` class throughout; only `.mobile-column`
+   is added alongside it, it doesn't replace it. So the width-sharing
+   rule above still matches by selector, and flex-basis:0%+grow:1 now
+   governs the panel's HEIGHT instead of its width, since the flex
+   container's main axis has rotated to vertical. The panel's real
+   height gets whatever share of the row's own available space
+   flex-grow allots it -- not its actual content size -- and reserve_
+   card's own content needs more than that share provides. Confirmed
+   this is the actual mechanism, not a guess: forcing `height: auto
+   !important` directly on the panel (bypassing flex sizing entirely)
+   had NO effect on its rendered height, which only makes sense if
+   `height` isn't what's determining that size in the first place --
+   flex-basis is. Setting `flex: 0 1 auto` (natural sizing, the same
+   value base.css's own `.layout-panel-flex--column > .group-block--
+   height-fit` rule already uses -- this project is just restoring
+   the rule Horizon would apply if the row wrapper's class genuinely
+   said "column") resolved it immediately in the same live test.
+
+   This is the identical root cause already documented and worked
+   around for `.lambruk-occasion-card` (that block's own doc comment:
+   "flex: 1 1 0 only applies from 750px up... every card collapsed to
+   height: 0 in testing") -- same Horizon mechanism, same class-
+   doesn't-swap-on-breakpoint gap, hitting a *native* `group` block
+   this time instead of a custom one, so there's no block-level
+   Liquid to patch -- a scoped CSS override is the only lever.
+
+   Scoped to reserve_card's own generated `color-custom-*` class
+   (stable -- Shopify derives it from this block's own id, which
+   doesn't change unless the block itself is deleted and recreated)
+   rather than the generic `.group-block--width-fill`, which would
+   also reach "find_us" -- confirmed find_us carries the identical
+   width:"fill" setting and is very likely subject to the same
+   underlying height-collapse, but it has no border/background/
+   border-radius of its own, so nothing crops it visibly and it
+   wasn't part of what was reported broken. Left untouched
+   deliberately, not overlooked -- flagged here so it isn't
+   mistaken for already-covered by this fix. */
+@media screen and (max-width: 749px) {
+  [id$="__cafe_booking"] .color-custom-AU2hHdC8yRjJCVVZSe__reserve_card {
+    flex: 0 1 auto;
+  }
+}

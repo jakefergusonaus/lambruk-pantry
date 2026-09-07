@@ -1352,6 +1352,8 @@
         "layout_type": "grid",
         "columns": 3,
         "mobile_columns": "1",
+        "columns_gap": 24,
+        "rows_gap": 24,
         "section_width": "page-width",
         "gap": 28,
         "background_color": "#F4F1EA",

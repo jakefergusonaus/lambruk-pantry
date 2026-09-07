@@ -279,8 +279,7 @@
             "custom_button_border": "#F7F5F2",
             "width": "fit-content",
             "custom_width": 100,
-            "width_mobile": "custom",
-            "custom_width_mobile": 100
+            "width_mobile": "fill"
           },
           "blocks": {}
         }

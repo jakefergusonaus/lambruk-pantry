@@ -2290,6 +2290,26 @@ Verified live, precisely, not eyeballed: **two rows of two, 160.5×214px each** 
 
 ---
 
+## 77. Cafe "Reserve your table" panel: buttons clipped at mobile (2026-09-05)
+
+Not a missing-padding bug — `padding-block-end` on `reserve_card` computes correctly (22.4px, scaled from the JSON's 32 via the standard `spacing-style.liquid` mechanism). The padding was simply never reached: the panel's own rendered height came out ~26px shorter than its real content needed, and `overflow: hidden` (required for the panel's `border-radius`) cropped the shortfall off the bottom, eating most of the padding and grazing the button row itself.
+
+**Root cause, confirmed live before writing any CSS, not assumed:** `reserve_card` has `width: "fill"`, which triggers a *native*, unmodified Horizon rule — `assets/base.css:1778`, `.layout-panel-flex--row > .group-block--width-fill { flex: 1; }`. At desktop this is correct: the row really is row-direction there, so `flex:1` (`flex-basis:0%; flex-grow:1`) shares *width* between `reserve_card` and its sibling `find_us` column, and the panel's height is governed by its own content normally — measured 33px below the buttons there, matching the design's 32px almost exactly. Desktop was never affected.
+
+Below 750px, `vertical_on_mobile` flips the row to column via a *separate* class, `.mobile-column` (`base.css:1207-1212`, its own `max-width:749px` query) — but the row wrapper **keeps** its `.layout-panel-flex--row` class; `.mobile-column` is added alongside it, not swapped in. So the width-sharing rule above still matches by selector, and `flex-basis:0%; flex-grow:1` now governs the panel's *height* instead, since the flex container's main axis has rotated to vertical. The panel gets whatever share of the row's own available space flex-grow allots it — not its actual content size.
+
+Confirmed this was the real mechanism, not a guess, via live temporary style-injection tests: forcing `height: auto !important` directly on the panel had **zero effect** on its rendered height — which only makes sense if `height` isn't what's determining that size at all; `flex-basis` is. Setting `flex: 0 1 auto` (natural sizing — the same value `base.css`'s own `.layout-panel-flex--column > .group-block--height-fit` rule already uses; this is just restoring the rule Horizon would apply if the row wrapper's class genuinely said "column") resolved it immediately in the same test.
+
+**Same root cause already documented and worked around once before, in a different block.** `blocks/lambruk-occasion-card.liquid`'s own doc comment: "`flex: 1 1 0` only applies from 750px up... every card collapsed to `height: 0` in testing" — identical Horizon mechanism, identical class-doesn't-swap-on-breakpoint gap. That case had its own Liquid file to patch (dropped flex sizing below 750px in the block's own stylesheet); this one hits a *native* `group` block with no block-level file of its own, so a scoped CSS override in `lambruk-tokens.css` is the only lever.
+
+**Scoped to `reserve_card`'s own generated `color-custom-*` class** (stable — Shopify derives it from this block's own id, which doesn't change unless the block is deleted and recreated), not the generic `.group-block--width-fill`, which would also reach `find_us`. Confirmed `find_us` carries the identical `width:"fill"` setting and is very likely subject to the same underlying height-collapse — but it has no border/background/border-radius of its own, so nothing crops it visibly, and it wasn't part of what was reported broken. **Left untouched deliberately, not overlooked** — named here so it isn't mistaken for already covered by this fix, and so a future report of "find_us content looks squeezed" isn't treated as a surprise.
+
+Design spec, `Mobile.dc.html:450`: the panel's own container is `padding:24px` (uniform, all sides) — close to, but not identical to, this project's own 32px-scaled-to-22.4px value; not changed here, since the ask was to fix the clipping, not re-litigate the padding number, and 22.4 vs 24 is not the defect.
+
+Verified live, both breakpoints: at 375px, `flex: 0 1 auto` applied, panel height grew 448.71px → 475.38px, gap below the buttons to the panel's bottom edge 1.23px → 23.4px (matching the 22.4px padding-block-end, no overflow) — screenshotted, rounded corner clear of both button faces. At 1280px, confirmed unchanged: `flex: 1 1 0%` still applies (row direction, correct), gap 33px, matching pre-fix exactly. `shopify theme check --path .` clean. Pull-check-push followed; the post-push pull matched exactly, no revert needed. No dev server running.
+
+---
+
 ## Summary
 
 | Area | Path taken |

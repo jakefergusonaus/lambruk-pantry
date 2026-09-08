@@ -50,7 +50,7 @@
                 "inverse": true,
                 "custom_mobile_size": true,
                 "unit_mobile": "pixel",
-                "pixel_height_mobile": 32
+                "pixel_height_mobile": 64
               },
               "blocks": {}
             },

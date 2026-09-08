@@ -2362,6 +2362,28 @@ At 1280px: confirmed by rect that all 19 render exactly as they did before this 
 
 ---
 
+## 79. PDP "Goes well with" recommendation cards: full parity with Shop All (2026-09-06)
+
+Confirmed before building that the recommendations module is the *only* `_product-card` instance on the PDP template (grepped `templates/product.json`, one match — its own gallery sub-block being the only other hit) and that there's only one product template file at all (no `product.<suffix>.json` in use) — widening a CSS selector to `[data-template="product"]` reaches this module alone, nothing else on any product page.
+
+**`type_preset` → `"custom"` first, as the prerequisite.** Checked `snippets/typography-style.liquid:18` directly: the entire variable block — `--font-size`, `--font-family`, `--font-weight`, `--line-height`, `--letter-spacing` — sits inside one `{% if preset == 'custom' %}`. The card's title and price blocks were `"rte"` and `"h6"` respectively, so none of those five properties were reaching the page, not only font-size as the original bug report named. Live-measured before the fix: title rendered 14px in Geist (the body font, despite the JSON's own `font` setting saying otherwise) at `rgb(74, 84, 120)` — Shop All's *price* colour; price rendered 12px at `rgb(19, 26, 62)` — Shop All's *title* colour. The two were swapped, not just under-sized.
+
+**Brought to full parity with `collection.all.json`'s card:** `product_card_gap` 8→0, card `padding-block-end` 8→0, gallery `image_ratio` `"adapt"`→`"square"` (worth noting for anyone reading this literally: "square" doesn't mean 1:1 in this codebase — `lambruk-tokens.css:364`'s own `[data-image-ratio="square"] { --gallery-aspect-ratio: 4/3 !important; }` repurposes that enum value to mean a 4:3 crop, documented there when it was first done for Shop All. Setting the same value here reaches the same override — confirmed live, both now render `1.333`, identical). Title: `type_preset: "custom"`, heading family, `1.5rem`, `#131A3E`, `20px`/`20px` padding. Price: `type_preset: "custom"`, `#4A5478`, `width: "fit-content"` (needed for the row layout below, not just the colour). Price and a new `_lambruk-add-button` block wrapped in a `price_row` (`_product-card-group`) with settings copied verbatim from `collection.all.json`. The `review` block was left exactly as it was — Shop All has no equivalent, so parity has nothing to say about it, and it's dormant (no reviews app connected yet) rather than broken.
+
+**CSS scope extended, not duplicated — the §77→§78 lesson applied on the way in this time, not learned the hard way again.** §72's mobile step-down and §78's bottom-alignment selectors both already listed `collection.all`/`collection.occasion`/`collection` explicitly (by design — `index.json`'s Top Sellers rail deliberately isn't in that list, at its own 15px). Added `[data-template="product"]` as a fourth entry to both rules rather than writing a parallel pair scoped to `product` alone. Updated §78's own comment, which had said Top Sellers was "the only other `_product-card-group` consumer" — no longer true now that this card uses one too, so it now reads "at the time," not left stale.
+
+**Design confirmed to specify an Add button on this exact module**, checked rather than assumed: `Mobile.dc.html:426` and `Desktop.dc.html:543` both pass `onAdd="{{ r.add }}"` to the shared `ProductCard` design-system component for this module specifically, and the component's own source (`ProductCard.jsx:27`) renders the Add button only when `onAdd` is supplied — not a default that came along for free. Built accordingly.
+
+**Verified live at both breakpoints — the real fetched module, not injected markup.** The `<product-recommendations>` element is a lazy `fetch()` gated behind an `IntersectionObserver` that doesn't reliably fire via `scrollIntoView` alone in this tool; taking a screenshot (which forces a compositor pass) after scrolling reliably woke it — confirmed by `document.querySelectorAll('product-recommendations .product-card').length` going from 0 to 4 with no DOM manipulation of any kind in between.
+
+At 375px, all four real cards: title 16px, `"Instrument Serif", serif`, `rgb(19, 26, 62)` (`#131A3E`); price 14px, `rgb(74, 84, 120)` (`#4A5478`) — colours the right way round, confirmed against Shop All's own live-measured values on the same page load (identical: 16px/`rgb(19,26,62)` title, 14px/`rgb(74,84,120)` price, image ratio `1.333` on both, card width `162px` on both). Price-row bottom-alignment confirmed on the real content, not a constructed test case: the second row's two cards have naturally different title line counts (2 vs 3 lines — "Green Tea 12 Tea Bags" vs "Green Tea 60g Loose Leaf") and their prices land at the identical `y=980`. Add button hit-tested with `document.elementFromPoint()` at its own center after resolving past the `.lambruk-add-button` wrapper div (which has no layout box of its own — the real clickable element is the nested `<button class="... add-to-cart-button">`) — returned the button itself, `disabled: false`, gap from the price's right edge 23px on a 162px-wide card, no crowding.
+
+At 1280px: title 24px, price 16px, same navy/muted split, all four cards' prices aligned at `y=848`, Add button present on all four. `image_ratio` still `1.333` (unaffected by breakpoint, as expected — it's not part of §72's mobile-scoped rule). Screenshotted both breakpoints, PDP recommendations next to Shop All.
+
+`shopify theme check --path .` clean. Pull-check-push followed; the post-push pull matched exactly, no revert needed. No dev server running.
+
+---
+
 ## Summary
 
 | Area | Path taken |

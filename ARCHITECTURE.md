@@ -1774,6 +1774,31 @@ Cost real ground during §81: three overrides were "verified" this way — `marg
 
 That last result is the useful one: `gap` and `padding-block-start` are themselves ordinary declarations in `base.css` (`.layout-panel-flex { gap: var(--gap); }`), not inline — a later external rule of equal-or-greater specificity overrides them cleanly through the normal cascade. Overriding the variable a Liquid snippet injects inline should be the last resort, reached only when the final property itself isn't independently targetable (as with `.quote-panel__eyebrow`'s literal inline `margin`, which does need `!important` for that specific reason) — not the default move for every spacing override on this theme.
 
+### `content-visibility: auto` returns a stale placeholder until layout is forced
+
+An element with `content-visibility: auto` that hasn't been laid out yet (typically because it's off-screen on page load) reports a placeholder box from `getBoundingClientRect()`, not its real size — found while verifying the footer reorder (§82): `.footer-content`, unscrolled, measured **84px** tall; the same element after `el.scrollIntoView()` measured **831px**, its real height. No error, no warning — the number is just wrong, and plausible enough (84px isn't zero or NaN) to read as a real, small measurement rather than an artifact.
+
+It appears in exactly 8 places in this theme, each scoped to a specific named component, not a general section or group-block mechanism — checked every file, confirmed nothing broader carries it:
+
+- `.footer-content` (`sections/footer.liquid`)
+- `.header` (`sections/header.liquid`)
+- product media gallery (`snippets/product-media-gallery-content.liquid`, ×2)
+- slideshow (`snippets/slideshow-styles.liquid`)
+- a product card's own image gallery (`snippets/card-gallery.liquid`)
+- quick-add modal (`snippets/quick-add-modal-styles.liquid`)
+- the *carousel* variant of a resource list (`snippets/resource-list-carousel.liquid`) — the plain-grid variant (`.section-resource-list__content`, what PDP recommendations actually uses) does not have it
+- `.quick-order-list__grid-row` (`sections/quick-order-list.liquid`)
+
+**Scroll the target into view before measuring anything inside one of these eight.** §81's 27 eyebrow measurements were re-checked against this directly (five deep-below-fold instances, each measured both unscrolled and after `scrollIntoView()`) and came back identical every time — none of §81's containers (`.group-block-content`, `.layout-panel-flex`, `.section-content-wrapper`, `.section-resource-list__content`, `.lambruk-cafe-gallery__header`, the five bespoke Mechanism D classes) are among the eight. §81's numbers stand; this was a real risk worth checking, not one that happened to already be covered.
+
+### Schema `step` constraints are enforced server-side, not just in the theme-editor slider
+
+A range setting's `min`/`max`/`step` isn't UI decoration — `shopify theme push` validates the pushed value against it and rejects the file if it doesn't land on a step. Hit directly in §82: `blocks/logo.liquid`'s `pixel_height_mobile` is `min: 16, max: 160, step: 8`; setting it to the design's exact `34` failed the push outright ("Setting 'pixel_height_mobile' must be a step in the range"), not silently rounded or ignored. **Check a setting's schema before promising a design's exact number is reachable** — the nearest valid step (here, 32) may be the real ceiling on precision, and that's worth knowing before telling anyone a build will match the design exactly.
+
+### "This theme has no mobile-specific settings" is not true in general — check the specific block
+
+It holds for the eyebrow-gap groups (§81): no `group` or `section` schema anywhere exposes a `gap_mobile` field, confirmed directly. It does **not** hold as a theme-wide claim — `blocks/logo.liquid` has a complete mobile-size mechanism (`custom_mobile_size`, `unit_mobile`, `percent_width_mobile`, `pixel_height_mobile`), read only below 749px, sitting unused on the footer's own logo block until §82. Before assuming a spacing/sizing question needs a CSS workaround because "this theme has no mobile settings," check that specific block's own schema — the generalization from one investigated case (group/section gap) doesn't transfer to every block type.
+
 ---
 
 ## 58. Homepage hero award badge (2026-09-02)
@@ -2470,6 +2495,35 @@ All 20 group/resource-list instances were checked for this rather than assuming 
 **Coverage swept beyond the original 27, since the base rule is unscoped and therefore sitewide.** Checked every other template in the theme against all three structural selectors plus the five bespoke classes, live, at 375px: 404, search results, cart, a generic collection (`collection.json`, e.g. Tea), all-collections, and the policy pages all render zero matches — nothing to move. No blog or article exists on the store to check (`/blogs`, `/blogs/news` both 404). `gift_card.liquid` is a self-contained document with none of the shared classes. `/account` redirects off the theme entirely to Shopify's hosted Customer Accounts (`shopify.com/authentication/...`) — this theme has no `templates/customers/` directory at all, so there's nothing there for this CSS to reach. Two design-specified eyebrows exist that were never built at all — 404 (design: 16px) has the design's own heading text but no eyebrow above it; there is no Customer Care/FAQ page in this build for the design's 14px value to apply to. Both logged in `REVIEW-NOTES.md` as findings, not actioned here — this task was about the gap value where an eyebrow exists, not about building missing ones.
 
 Verified live at 375px (all 25 live-testable instances of 27 — the two form-success states are behind a real form submission, not exercised) and confirmed zero movement at 1280px across every page, before and after. `shopify theme check --path .` clean throughout. Pull-check-push followed for every push; each post-push pull matched exactly, no revert needed.
+
+---
+
+## 82. Footer, mobile only: logo/tagline moved below the link columns, logo resized (2026-09-08)
+
+At mobile only (`<750px`), the footer's logo/tagline group moves from first to last among the four `.footer-content` grid siblings, and the logo shrinks from its previous container-fill size to 32px tall. Desktop confirmed unchanged, not just left alone by omission.
+
+**Reorder — CSS, one property.** `.footer-content > .group-block:has(.logo-block) { order: 1; }` inside `@media (max-width: 749px)`, `assets/lambruk-tokens.css`. `.logo-block` (`blocks/logo.liquid`) renders exactly once on the whole page — footer only, the header uses a different block — so the selector reaches the logo/tagline group and nothing else, no per-block hash needed. Targets the final `order` property directly; nothing else on this element sets `order`.
+
+**No new gap rule needed.** `.footer-content`'s own `gap: 48` (`sections/footer-group.json`'s section-level setting) applies between adjacent siblings in *visual* order, not DOM order — CSS Grid gap follows layout, not markup. Reordering the logo group to last carried the existing gap with it for free: measured live, General→Logo is exactly **48px**, identical to the Shop→Explore and Explore→General gaps either side of it. Nothing to invent, nothing to reference from an unrelated context.
+
+**Logo size — the block's own setting, not CSS.** `sections/footer-group.json`'s `logo_footer` block had never been configured at all — every sizing field sat at schema default (`unit: "percent"`, `percent_width: 100`), so the logo rendered at 100% of its grid column on *every* breakpoint: 335×134px at 375px, 264×105.6px at 1280px, against the design's 34px and 38px. `blocks/logo.liquid` has a complete, previously-unused mobile-size mechanism (`custom_mobile_size`, `unit_mobile`, `percent_width_mobile`, `pixel_height_mobile`) read only inside `.logo-block`'s own `max-width: 749px` block — confirmed by reading the file line by line, not assumed: the desktop-facing `unit`/`percent_width`/`pixel_height` fields (left untouched) are computed unconditionally and never reference the `-mobile` variables, so there's no code path by which this change could reach desktop. Set `custom_mobile_size: true, unit_mobile: "pixel", pixel_height_mobile: 32`.
+
+**34px isn't reachable — a schema `step` constraint, confirmed server-side.** `pixel_height_mobile`'s range is `min: 16, max: 160, step: 8`. `shopify theme push` rejected `34` outright ("Setting 'pixel_height_mobile' must be a step in the range") — not a theme-editor slider cosmetic limit, a real validation the API enforces on the pushed file. Set to **32**, the nearer of the two bracketing steps (32, 40), 2px under the design's 34px. Confirmed by rendered rect, not the setting: `.logo-block__image` measures **80×32px** live. Logged in `REVIEW-NOTES.md` as an accepted rounding, not silently absorbed.
+
+**This is a deliberate override of the design, not a build-to-design fix — recorded in `design/DESIGN-TOKENS.md`, same place the other deliberate departures live.** Both `Mobile.dc.html:887-925` and `Desktop.dc.html:1139-1186` put the logo/tagline group *first* — above the link columns on mobile, leftmost of four columns on desktop. Neither breakpoint's design source specifies moving it to last. This was confirmed and reported before building (the prior task stopped at that finding rather than picking a position), and the reorder was authorized as Jake's own call, made looking at the built page, not a correction of a build error. Nobody should "restore" this to match the design later without knowing that's what they'd be undoing.
+
+**Verified live, both breakpoints, rect only:**
+
+| | 375px | 1280px |
+|---|---|---|
+| Visual order | Shop → Explore → General → Logo | Logo, Shop, Explore, General side by side (unchanged) |
+| `order` computed value | Logo `1`, others `0` | All four `0` — confirmed the rule is inactive above 749px |
+| Logo dimensions | 80×32px | 264×106px (before: 264×105.6px — same, rounding) |
+| Grid columns | single column (unchanged shape) | 264/264/264/264px (unchanged) |
+
+Logo group's top (7081) sits 48px below General's bottom (7033); its own bottom (7205) sits 28px above the bottom bar's top (7233) — the section's existing `padding-block-end` (40, scaling to 28 under 990px), not a new value either. One measurement gotcha hit during this verification, worth carrying forward: `.footer-content` is Horizon's own `content-visibility: auto` element (`sections/footer.liquid`) — an unscrolled `getBoundingClientRect()` on it returns a stale ~84px placeholder, not the real ~830px. `scrollIntoView()` before measuring anything inside it fixed this; see the house rule below for the full list of where else this applies.
+
+**Flagged, not fixed: tab order and screen-reader order now diverge from visual order.** `order` repaints without touching the DOM — confirmed directly, DOM index is still `[logo(0), shop(1), explore(2), general(3)]` at both breakpoints, unaffected by the CSS. Sighted mobile users reach Shop → Explore → General → Logo; keyboard and screen-reader users still reach Logo first. Fixing this properly means reordering the blocks themselves in `sections/footer-group.json`, which would move desktop too — out of scope for a mobile-only task, left as a known, accepted divergence rather than something silently wrong.
 
 ---
 

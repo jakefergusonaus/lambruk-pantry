@@ -1344,13 +1344,23 @@ h1, h2, h3, h4, h5, h6 {
    ========================================================================== */
 @media screen and (max-width: 749px) {
 
-  /* --- Branch 1 base: ordinary tier, 12px. Correctly covers 13 of the
+  /* --- Branch 1 base: ordinary tier, 12px. Correctly covers 14 of the
      19 branch-1 instances as-is: Top Sellers, Curated Occasions, Meet
      Paige, How we make things, Traceable, Who We Supply, Packaging
      Formats, Partnership Enquiry, Cafe hero, Saturday & Sunday Rituals,
-     Pull Up a Chair, Shop For Your Pantry, cta_sample_box. Also matches
-     the other 6 (5 page-heroes + Catering), which the exception rules
-     below then override by specificity. */
+     Pull Up a Chair, Catering, Shop For Your Pantry, cta_sample_box.
+     Also matches the 5 page-heroes, which the exception rules below
+     override by specificity.
+
+     Catering has no design-audit entry at all (checked both
+     Desktop.dc.html and Mobile.dc.html directly), but that's because
+     the module postdates the design source, not because the design
+     excluded it -- it's an ordinary Cafe-page content module, structurally
+     identical to Saturday & Sunday Rituals and Pull Up a Chair right
+     next to it on the same page, both of which are 12px. Falls back to
+     the ordinary tier for the same reason How We Make Things and
+     cta_sample_box do. (Previously carried its own exception rule
+     restating 24px -- removed; that was overcautious, not correct.) */
   .layout-panel-flex:has(> [class*="__eyebrow"]) {
     gap: 12px;
   }
@@ -1397,14 +1407,6 @@ h1, h2, h3, h4, h5, h6 {
   }
   [id$="__hero_contact"] .layout-panel-flex:has(> [class*="__eyebrow"]) {
     gap: 16px; /* Contact hero */
-  }
-
-  /* --- Catering: NOT a design match (absent from Desktop.dc.html and
-     Mobile.dc.html entirely -- checked, not just missing from the mobile
-     file). Restates its own current value so branch 1's base rule above
-     does not silently move it to 12px. Left unchanged deliberately. */
-  [id$="__media_with_content_catering"] .layout-panel-flex:has(> [class*="__eyebrow"]) {
-    gap: 24px;
   }
 
   /* --- Bespoke Mechanism D: hardcoded Liquid/CSS, no theme setting.

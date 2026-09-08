@@ -1259,3 +1259,183 @@ h1, h2, h3, h4, h5, h6 {
     flex: 0 1 auto;
   }
 }
+
+/* ==========================================================================
+   EYEBROW -> HEADING SPACING SYSTEM (mobile only, <750px)
+
+   Brings the rendered gap between every eyebrow and the heading below it
+   to the design's own mobile value, without moving anything at >=750px.
+   No JSON template, theme setting, or Liquid file is touched -- this is
+   the only mechanism available, because no group/section block exposes a
+   mobile-specific gap setting (checked: no `gap_mobile` field anywhere in
+   this theme's schemas), so a JSON change moves both breakpoints together.
+
+   TARGETS, per the design audit (Desktop.dc.html / Mobile.dc.html):
+     12px - ordinary sub-page modules (the default, ~half the sitewide count)
+     14/16px - page-hero eyebrows (value is per-page, not one number)
+     20px - the two homepage quote panels
+     10px - the occasion-collection hero
+
+   THREE STRUCTURAL BRANCHES, because this build uses three different
+   mechanisms for producing an eyebrow-heading gap, confirmed live, not
+   assumed from JSON:
+     1. `.layout-panel-flex:has(> [class*="__eyebrow"])` -- the generic
+        group/section flex-gap wrapper (group.liquid, section.liquid).
+        19 of the 27 eyebrows use this.
+     2. `.section-resource-list__content:has(> [class*="__eyebrow"])` --
+        the PDP recommendations module's own resource-list layout, which
+        does not extend layout-panel-flex at all. 1 instance.
+     3. `.lambruk-cafe-gallery__header [class*="__heading"]` -- Cafe
+        Gallery's bespoke section, whose header has NO gap CSS property
+        at all; its whole rendered gap is the heading's own
+        padding-block-start. 1 instance.
+   Every rule below targets the FINAL property (`gap` or
+   `padding-block-start`), never the `--gap` / `--padding-block-start`
+   custom property gap-style.liquid / spacing-style.liquid emit inline on
+   the same element -- confirmed live: the inline custom property beats a
+   plain external rule for that same property, but `gap` and
+   `padding-block-start` are themselves ordinary stylesheet declarations
+   in base.css, so a later rule of equal-or-greater specificity overrides
+   them cleanly with no !important.
+
+   The remaining 6 of 27 are hardcoded Liquid/CSS, not built from these
+   generic mechanisms at all, so they're overridden directly by their own
+   existing class names (no `text-block--<hash>__x` involved for these six):
+   `.quote-panel__eyebrow`, `.lambruk-occasion-hero__eyebrow`,
+   `.lambruk-other-occasions__eyebrow`, `.lambruk-contact-form__success-
+   eyebrow` (already at its design value, no rule needed -- see below),
+   `.wholesale-enquiry-form__success-eyebrow`.
+
+   NO PER-BLOCK HASHES. Branches 1 and 2's base rules are unscoped and
+   therefore can only ever carry ONE value each. But 6 of the 19 branch-1
+   instances need a value other than 12px (5 need their own page-hero
+   value; 1 -- Catering -- has no confirmed design value at all and must
+   not move). There is no reliable non-hash DOM signal that separates
+   these 6 from the other 13: heading tag level looked promising but
+   fails outright -- Cafe hero is also an <h1>-headed eyebrow, exactly
+   like Hero/Our Story/Wholesale/Contact, and it wants 12px, not 16.
+   Ancestor wrapper class fails too -- the homepage Hero and Cafe's own
+   hero render through genuinely different section constructions
+   (`media-with-content` vs a plain `section`), so there's no shared
+   "hero" class either. The one signal that IS ours and IS stable is each
+   section's own JSON-authored key -- Shopify's own section wrapper
+   carries `id="shopify-section-<template-id>__<our-key>"`, and an
+   attribute-suffix selector on that (`[id$="__section_hero"]`) reaches
+   exactly one section by the name we gave it in the template file,
+   ignoring the numeric prefix Shopify assigns (which duplication/
+   republish could in principle change, per prior investigation -- the
+   suffix is what we wrote and won't move). This is not a per-block hash:
+   it's the same kind of authored name as `__eyebrow`/`__heading`
+   themselves, just one level up, at the section rather than the block.
+
+   THE SUM PROBLEM. In 3 of these 20 group/resource-list instances, the
+   rendered gap is currently the sum of the container's own gap AND the
+   heading's own padding-block-start, not the gap alone -- setting gap to
+   the target without also zeroing that padding would overshoot by
+   exactly the padding amount. Checked all 20 for this rather than
+   assuming only the two already-known cases: only 3 have a nonzero
+   heading padding-block-start today --
+     - Cafe hero:            gap 0    + padding 18 = 18 (known)
+     - How we make things:   gap 12   + padding 8  = 20 (known)
+     - PDP Goes well with:   gap 24*  + padding 8  = 32 (found here;
+                              *28 in JSON, scales to 24 under 990px)
+   All three are fixed by zeroing padding-block-start on that section's
+   own heading block and letting the gap rule alone own the number.
+   ========================================================================== */
+@media screen and (max-width: 749px) {
+
+  /* --- Branch 1 base: ordinary tier, 12px. Correctly covers 13 of the
+     19 branch-1 instances as-is: Top Sellers, Curated Occasions, Meet
+     Paige, How we make things, Traceable, Who We Supply, Packaging
+     Formats, Partnership Enquiry, Cafe hero, Saturday & Sunday Rituals,
+     Pull Up a Chair, Shop For Your Pantry, cta_sample_box. Also matches
+     the other 6 (5 page-heroes + Catering), which the exception rules
+     below then override by specificity. */
+  .layout-panel-flex:has(> [class*="__eyebrow"]) {
+    gap: 12px;
+  }
+
+  /* --- Branch 2 base: PDP "Goes well with", also ordinary tier, 12px. */
+  .section-resource-list__content:has(> [class*="__eyebrow"]) {
+    gap: 12px;
+  }
+
+  /* --- Branch 3: Cafe Gallery. No gap property exists on this header at
+     all -- the entire distance is this heading's own top padding. */
+  .lambruk-cafe-gallery__header [class*="__heading"] {
+    padding-block-start: 12px;
+  }
+
+  /* --- Sum-problem fixes: zero the heading's own padding so branch 1/2's
+     gap rule is the only contributor, in the 3 sections where both
+     currently stack. Scoped by each section's own JSON key, not a
+     per-block hash. */
+  [id$="__how_we_make_things"] [class*="__heading"] {
+    padding-block-start: 0;
+  }
+  [id$="__cafe_hero"] [class*="__heading"] {
+    padding-block-start: 0;
+  }
+  [id$="__product_recommendations_qggXJq"] [class*="__text_cbcgyb"] {
+    padding-block-start: 0;
+  }
+
+  /* --- Page-hero exceptions: each carries its own design-specified
+     mobile value (14 or 16), not the 12px ordinary default. Scoped by
+     section key so only that one section's gap changes. */
+  [id$="__section_hero"] .layout-panel-flex:has(> [class*="__eyebrow"]) {
+    gap: 16px; /* Home hero: "Multi Award Winning" */
+  }
+  [id$="__media_with_content_cafe_intro"] .layout-panel-flex:has(> [class*="__eyebrow"]) {
+    gap: 14px; /* Home Cafe intro: "Introducing" */
+  }
+  [id$="__hero_our_story"] .layout-panel-flex:has(> [class*="__eyebrow"]) {
+    gap: 16px; /* Our Story hero */
+  }
+  [id$="__hero_wholesale"] .layout-panel-flex:has(> [class*="__eyebrow"]) {
+    gap: 16px; /* Wholesale hero */
+  }
+  [id$="__hero_contact"] .layout-panel-flex:has(> [class*="__eyebrow"]) {
+    gap: 16px; /* Contact hero */
+  }
+
+  /* --- Catering: NOT a design match (absent from Desktop.dc.html and
+     Mobile.dc.html entirely -- checked, not just missing from the mobile
+     file). Restates its own current value so branch 1's base rule above
+     does not silently move it to 12px. Left unchanged deliberately. */
+  [id$="__media_with_content_catering"] .layout-panel-flex:has(> [class*="__eyebrow"]) {
+    gap: 24px;
+  }
+
+  /* --- Bespoke Mechanism D: hardcoded Liquid/CSS, no theme setting.
+     All four need !important, for two different reasons. quote-panel's
+     margin is a literal inline style attribute -- confirmed live that
+     beating it needs !important regardless of anything else. The other
+     three looked like plain stylesheet rules that shouldn't need it
+     (confirmed live earlier that a plain override CAN beat a plain
+     stylesheet rule) -- but tested live against the real page, a plain
+     `margin-bottom` here loses anyway: each source rule sets `margin:
+     0 0 Npx` as a SHORTHAND, compiled into
+     `compiled_assets/styles.css`, which this theme loads AFTER
+     `lambruk-tokens.css` -- a later same-specificity shorthand rule
+     overwrites an earlier longhand one for that sub-property, no
+     matter which file "should" win on selector specificity alone.
+     Confirmed via `document.styleSheets` inspection: both rules were
+     present, the shorthand simply came later. !important is the fix
+     for all four here, not the two-tier split the earlier
+     investigation assumed. */
+  .quote-panel__eyebrow {
+    margin-bottom: 20px !important; /* Home: "The Lambruk Promise", "Why Lambruk" -- both want 20, one rule covers both */
+  }
+  .lambruk-occasion-hero__eyebrow {
+    margin-bottom: 10px !important; /* Occasion collection hero */
+  }
+  .lambruk-other-occasions__eyebrow {
+    margin-bottom: 12px !important; /* "Other Occasions" / Set another table */
+  }
+  .wholesale-enquiry-form__success-eyebrow {
+    margin-bottom: 12px !important; /* Wholesale form success: was 14px, design wants 12px */
+  }
+  /* .lambruk-contact-form__success-eyebrow: no rule -- its container
+     already renders gap: 12px, matching the design value exactly. */
+}

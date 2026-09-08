@@ -47,7 +47,10 @@
             "logo_footer": {
               "type": "logo",
               "settings": {
-                "inverse": true
+                "inverse": true,
+                "custom_mobile_size": true,
+                "unit_mobile": "pixel",
+                "pixel_height_mobile": 32
               },
               "blocks": {}
             },

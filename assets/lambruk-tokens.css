@@ -1441,3 +1441,38 @@ h1, h2, h3, h4, h5, h6 {
   /* .lambruk-contact-form__success-eyebrow: no rule -- its container
      already renders gap: 12px, matching the design value exactly. */
 }
+
+/* ==========================================================================
+   FOOTER: logo/tagline moved below the link columns (mobile only, <750px)
+
+   Desktop is explicitly out of scope for this task (logged in
+   REVIEW-NOTES.md) -- confirmed unchanged, not just left alone by
+   omission, since this whole block lives inside the same
+   max-width: 749px query as everything else in this file.
+
+   `.footer-content` (sections/footer-group.json's "footer_m9NzUG") is a
+   single-column CSS Grid at mobile with exactly 4 sibling children:
+   group_brand (logo + tagline), group_shop, group_explore, group_general
+   -- confirmed live, same investigation as ARCHITECTURE.md §81. Moving
+   group_brand after the other three is a pure `order` change among grid
+   siblings, nothing structural.
+
+   Hook: `.logo-block` (blocks/logo.liquid) renders exactly once on the
+   whole page -- footer only, the header uses a different block -- so
+   `.footer-content > .group-block:has(.logo-block)` reaches group_brand
+   and nothing else, no per-block hash needed. Targets the final `order`
+   property directly; nothing else on this element sets `order`, so no
+   cascade fight and no !important.
+
+   No new gap rule needed: `.footer-content`'s own `gap: 48` (its
+   settings, not a per-child value) already applies uniformly between
+   every adjacent pair of its 4 siblings -- CSS Grid's gap follows visual
+   order, not DOM order, so reordering group_brand to last inherits the
+   same 48px already separating group_shop/group_explore/group_general
+   from each other. Confirmed live, not assumed from how `gap` is
+   supposed to work. */
+@media screen and (max-width: 749px) {
+  .footer-content > .group-block:has(.logo-block) {
+    order: 1;
+  }
+}

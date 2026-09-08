@@ -1476,3 +1476,75 @@ h1, h2, h3, h4, h5, h6 {
     order: 1;
   }
 }
+
+/* ==========================================================================
+   WHOLESALE "WHO WE SUPPLY": number-to-text gap, mobile only (<750px)
+
+   Design (Mobile.dc.html:603-606 / Desktop.dc.html:790-793): each row is a
+   plain flex row, `gap:16px` mobile / `18px` desktop, `align-items:baseline`.
+   The number carries NO explicit width in the design at either breakpoint
+   -- it's sized to its own content ("01"), nothing more. The build's own
+   JSON already sets the number block's own `width` setting to
+   "fit-content" for exactly this reason -- but that setting is never
+   reached at mobile.
+
+   ROOT CAUSE, confirmed live, not assumed: Horizon's own base.css carries
+   a MOBILE-ONLY rule (base.css:1207-1238, inside its own
+   `@media (max-width: 749px)`) that overrides flex-basis/grow on any
+   `.text-block` that is a direct child of a row-direction flex container
+   NOT also stacking at mobile:
+     .layout-panel-flex--row:not(.mobile-column) > .text-block {
+       flex: 1 1 var(--max-width--display-tight);
+     }
+   This is NOT `.layout-panel-flex--row > .group-block--width-fill { flex:
+   1 }` (base.css:1778) -- that rule exists, but it targets a *group*
+   block's own outer wrapper class and never matches these elements at
+   all, since the row's direct children here are `.text-block`s, not
+   `.group-block`s. Different rule, same shape, confirmed by inspecting
+   the matched CSSOM rules directly rather than assuming either one.
+
+   This rule ignores each block's own `width` setting entirely (`flex-
+   basis` set explicitly overrides the `width` property's own effect on a
+   flex item) and forces the number to flex-grow *equally* alongside the
+   label, splitting the row roughly in half regardless of how little
+   content the number has. Measured live before fixing: the "01"/"02"/etc.
+   text itself is 13-16px wide, but its flex-grown box rendered
+   150.375px -- **the true rect-to-rect distance from the number's own
+   glyph to the label's text was 155px** (137px of dead space inside the
+   number's own oversized box, plus the row's actual 18px gap), not merely
+   the 18px `gap` value itself. Confirmed inactive above 749px: the whole
+   rule lives inside Horizon's own mobile media query, and the affected
+   elements measured `flex: 0 1 auto` (i.e. untouched) at 1280px --
+   matching the fact desktop was never reported broken.
+
+   Fix: override the *final* `flex` property (not a custom property --
+   this rule and its target aren't fed by one) on the number block only,
+   restoring its own "fit-content" intent; the label needs no rule of its
+   own; with the number no longer competing for growth, the row's only
+   remaining `flex-grow: 1` item absorbs 100% of the freed space
+   automatically. Also brings the row's own gap to the design's mobile
+   16px (built currently uses 18 -- the desktop value -- unscaled at every
+   width, since 18 sits under `gap-style.liquid`'s 24px scaling
+   threshold).
+
+   Scoped to this one section (`who_we_supply`, its own authored key, not
+   a per-block hash) rather than every `.layout-panel-flex--row:not(.mobile-
+   column) > .text-block` sitewide -- swept the whole site first (all main
+   templates, live DOM query against this exact selector) and found no
+   other instance where two `.text-block` children share a row like this.
+   One other place is subject to the same native rule (Wholesale's
+   "Traceable to the grower" icon+label bullets) but doesn't show the bug,
+   because its non-growing sibling is an `.icon-block`, not a second
+   `.text-block` competing for the same space -- confirmed live (12px
+   gap, no issue), deliberately left untouched. A sitewide rule would
+   have changed that instance's sizing mechanism (flex-grow to a bare
+   `width:100%`) for no visible benefit and a real, unverified risk to
+   something that isn't broken. */
+@media screen and (max-width: 749px) {
+  [id$="__who_we_supply"] .layout-panel-flex--row:not(.mobile-column) > [class*="__num"] {
+    flex: 0 1 auto;
+  }
+  [id$="__who_we_supply"] .layout-panel-flex--row:not(.mobile-column) {
+    gap: 16px;
+  }
+}

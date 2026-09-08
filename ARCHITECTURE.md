@@ -1760,6 +1760,20 @@ Consequence: the only way to know what a spacing OR sizing change actually produ
 
 **Checked for a fourth instance and didn't find one.** Swept every file for `margin-top: auto`/`margin-block-start: auto` and `align-items: stretch` before writing this rule — the only other hits are pristine, unmodified Horizon internals (`blocks/filters.liquid`'s sticky drawer footer, `snippets/cart-drawer.liquid`, `snippets/quick-add-modal-styles.liquid`, `snippets/slideshow.liquid`, `blocks/email-signup.liquid`, `sections/quick-order-list.liquid`) — none of them a card row, none of them ours. If a fourth applied instance exists, it isn't findable by this pattern; flag it if one comes to mind so this list stays accurate.
 
+### An injected `<style>` tag cannot test cascade order
+
+Appending a test rule to `<head>` via `document.createElement('style')` always sorts last in the cascade, regardless of where the real rule would actually load from in `assets/*.css`. That proves the *selector* can beat what it's targeting; it proves nothing about whether the real file, in its real load position, wins.
+
+Cost real ground during §81: three overrides were "verified" this way — `margin-bottom` on `.lambruk-occasion-hero__eyebrow`, `.lambruk-other-occasions__eyebrow`, and `.wholesale-enquiry-form__success-eyebrow` — and, pushed for real, all three lost anyway. `compiled_assets/styles.css` (every section's own `{% stylesheet %}` block, bundled) loads *after* `assets/lambruk-tokens.css` on this theme, and each source rule sets `margin: 0 0 14px` as a **shorthand**. A later shorthand always overwrites an earlier longhand for that sub-property, at equal specificity, full stop — `margin-bottom: 12px` from the earlier-loading file never had a chance against a later `margin` shorthand, no matter how the two selectors compare. Confirmed via `document.styleSheets`, walking into `@media` rules (a flat `sheet.cssRules` scan misses anything nested inside a media query) — both declarations were present and matched the element; the shorthand simply came later. `!important` is the fix, applied to all four bespoke overrides in that rule block, not just the three that happened to get caught.
+
+**Test cascade-order questions against the real pushed file**, not an injected tag — push, reload, measure. An injection can tell you a selector matches; it cannot tell you it will win.
+
+### Target the final CSS property, never the custom property it's built from
+
+`gap-style.liquid` and `spacing-style.liquid` emit `--gap` and `--padding-block-start` as **inline** custom properties on the element itself. An inline value for a given property beats any non-`!important` external rule for that *same* property, regardless of the external selector's specificity — confirmed live in §81 by testing all three forms side by side on the same node: a plain override of `--gap` failed, the same value with `!important` worked, and a plain override of the *final* `gap` property (not the variable) also worked with no `!important` needed.
+
+That last result is the useful one: `gap` and `padding-block-start` are themselves ordinary declarations in `base.css` (`.layout-panel-flex { gap: var(--gap); }`), not inline — a later external rule of equal-or-greater specificity overrides them cleanly through the normal cascade. Overriding the variable a Liquid snippet injects inline should be the last resort, reached only when the final property itself isn't independently targetable (as with `.quote-panel__eyebrow`'s literal inline `margin`, which does need `!important` for that specific reason) — not the default move for every spacing override on this theme.
+
 ---
 
 ## 58. Homepage hero award badge (2026-09-02)
@@ -2413,6 +2427,49 @@ Confirmed before building, same check as the PDP: `templates/search.json` has ex
 Verified live at 1280px: both grids now `data-product-card-size="large"`, both 3-per-row, card widths `389px` (search) vs `381px` (Shop All) — close but not pixel-identical, the residual 8px most likely from a `columns_gap_horizontal` difference between the two sections (search 16px; not matched here, out of scope for this change) rather than from `product_card_size` itself. Confirmed 375px unaffected by the same measurements as the earlier test — `162px` card width, `2` mobile columns, `4px` gap, `8px` padding, all unchanged — matching the mechanism's own scope exactly (desktop-only) rather than assuming the earlier test's finding still held. Screenshotted both pages at 1280px, side by side. The mobile 4px gap remains open and unrelated.
 
 `shopify theme check --path .` clean. Pull-check-push followed; the post-push pull matched exactly, no revert needed. No dev server running.
+
+---
+
+## 81. Eyebrow-to-heading spacing system, mobile-only (2026-09-08)
+
+Brings the rendered gap between every eyebrow (the small uppercase letterspaced line above a heading) and the heading below it to the design's own mobile value, below 750px, with desktop untouched at every one of the 27 known instances. Entirely `assets/lambruk-tokens.css`, inside a single `@media (max-width: 749px)` block — no JSON template, theme setting, or Liquid file touched.
+
+**Target values, per the design audit (`Desktop.dc.html` / `Mobile.dc.html`):**
+
+| Tier | Value | Count |
+|---|---|---|
+| Ordinary sub-page modules | 12px | the default, roughly half the sitewide count |
+| Page-hero eyebrows | 14–16px, per page, not one shared number | 5 (Home Hero 16, Cafe Intro 14, Our Story hero 16, Wholesale hero 16, Contact hero 16) |
+| Quote panels | 20px | 2 (Home: "The Lambruk Promise", "Why Lambruk") |
+| Occasion-collection hero | 10px | 1 |
+
+**Why CSS, not a settings change.** No group or section schema in this theme exposes a mobile-specific gap field — checked directly, no `gap_mobile` anywhere. The only responsive behaviour a `gap`/`padding-block-start` setting gets natively is `gap-style.liquid`/`spacing-style.liquid`'s own fluid scale (`max(threshold, calc(var(--scale) * value))`, scale 0.7 below 990px, 1.0 above), which is a single JSON number scaled by one formula at both breakpoints — there's no way to set "12 on mobile, 16 on desktop" via the JSON at all. A CSS override scoped to the mobile media query is the only mechanism that can move one breakpoint without moving the other.
+
+**Three structural mechanisms produce an eyebrow-heading gap on this site, confirmed live rather than assumed from the JSON — a sweep built on only the first one misses the other two entirely:**
+
+1. `.layout-panel-flex:has(> [class*="__eyebrow"])` — the generic group/section flex-gap wrapper (`group.liquid`, `section.liquid`). 19 of the 27 instances.
+2. `.section-resource-list__content:has(> [class*="__eyebrow"])` — the PDP recommendations module's own resource-list layout (`sections/product-recommendations`), which does not extend `layout-panel-flex` at all — its `--gap` custom property lives on the section wrapper two levels up, and the element that actually applies `gap: var(--gap)` carries a completely different class. 1 instance ("Goes well with"). A selector search for `.layout-panel-flex` alone returns zero matches here.
+3. Bespoke section CSS with **no gap property at all** — Cafe Gallery's `.lambruk-cafe-gallery__header` is a plain `display:flex;flex-direction:column` div with nothing setting `gap`; its entire rendered distance is the heading's own `padding-block-start`. 1 instance. Neither of the first two mechanisms has anything to override here even in principle.
+
+The remaining 6 of 27 are hardcoded Liquid/CSS predating this system, addressed by their own existing bespoke class names: the two homepage quote panels (`.quote-panel__eyebrow`, shared identically by both), the occasion-collection hero and "Other Occasions" (`.lambruk-occasion-hero__eyebrow`, `.lambruk-other-occasions__eyebrow`), and the two form success states (`.lambruk-contact-form__success-eyebrow` — already at its design value, no rule needed; `.wholesale-enquiry-form__success-eyebrow`).
+
+**The authored-key hook — why this is four rule groups plus five exceptions, not twenty hardcoded per-block hashes.** Horizon renders every `text` block's wrapper as `text-block--<generated-hash>__<JSON block key>`, and Shopify renders every section's own wrapper as `shopify-section-<template id>__<JSON section key>`. Only the leading prefix in each is generated (a Shopify-internal hash for the block; a numeric template id for the section) — the suffix after `__` is always the literal key string written in the template file. Confirmed, not assumed: PDP's recommendations eyebrow is keyed `"eyebrow_gRwsSk"` in `templates/product.json` (not the plain word "eyebrow" every other instance uses), and it rendered live as `text-block--AZEo4eWdGZVBMK0Yra__eyebrow_gRwsSk` — the irregular key reproduced verbatim in the class. Because the section-level suffix is equally authored and stable, five page-hero exceptions that need a value other than the 12px base (no non-hash DOM signal reliably separates them — heading tag level looked promising and fails: Cafe hero is also `<h1>`-headed and wants 12px, not 16) are scoped by `[id$="__section_hero"]`-style selectors instead of by the block's own random hash. Same category of name as `__eyebrow`/`__heading`, one level up.
+
+**The sum problem.** In 3 of the 20 group/resource-list instances, the rendered gap was the container's own gap *plus* the heading's own `padding-block-start`, not the gap alone — setting gap to the target without also zeroing that padding overshoots by the padding amount:
+
+| Instance | Gap | + Padding | = Rendered (before) |
+|---|---|---|---|
+| Cafe hero | 0 | 18 | 18 |
+| How we make things | 12 (schema default, omitted from JSON) | 8 | 20 |
+| PDP "Goes well with" | 24 (28 in JSON, scaled under 990px) | 8 | 32 |
+
+All 20 group/resource-list instances were checked for this rather than assuming only the two already-known cases — these three were the only ones with a nonzero heading padding. Fixed by zeroing `padding-block-start` on that section's own heading block (scoped by section key) and letting the gap rule alone own the number. **General rule for any future spacing task on this theme: measure rect-to-rect (`getBoundingClientRect()` on the actual eyebrow and heading elements), never trust the JSON arithmetic alone, and when more than one mechanism contributes to a single visible gap, make exactly one of them own the final number — zero out the rest, don't try to split the difference between them.**
+
+**Catering follows the ordinary 12px tier despite having no design-audit entry.** Checked both `Desktop.dc.html` and `Mobile.dc.html` directly for it — absent from both, not just missing from one breakpoint the way "How we make things" and "Not sure what to pick" (`cta_sample_box`) are. The absence means the module postdates the design source, not that the design rejected it: it sits on the Cafe page structurally identical to Saturday & Sunday Rituals and Pull Up a Chair either side of it, both already 12px. An early version of this rule carried its own exception restating Catering's old 24px value out of excess caution; removed once traced back to the same "no design entry = postdates the design, not excluded by it" reasoning already applied to the other two fallback cases.
+
+**Coverage swept beyond the original 27, since the base rule is unscoped and therefore sitewide.** Checked every other template in the theme against all three structural selectors plus the five bespoke classes, live, at 375px: 404, search results, cart, a generic collection (`collection.json`, e.g. Tea), all-collections, and the policy pages all render zero matches — nothing to move. No blog or article exists on the store to check (`/blogs`, `/blogs/news` both 404). `gift_card.liquid` is a self-contained document with none of the shared classes. `/account` redirects off the theme entirely to Shopify's hosted Customer Accounts (`shopify.com/authentication/...`) — this theme has no `templates/customers/` directory at all, so there's nothing there for this CSS to reach. Two design-specified eyebrows exist that were never built at all — 404 (design: 16px) has the design's own heading text but no eyebrow above it; there is no Customer Care/FAQ page in this build for the design's 14px value to apply to. Both logged in `REVIEW-NOTES.md` as findings, not actioned here — this task was about the gap value where an eyebrow exists, not about building missing ones.
+
+Verified live at 375px (all 25 live-testable instances of 27 — the two form-success states are behind a real form submission, not exercised) and confirmed zero movement at 1280px across every page, before and after. `shopify theme check --path .` clean throughout. Pull-check-push followed for every push; each post-push pull matched exactly, no revert needed.
 
 ---
 

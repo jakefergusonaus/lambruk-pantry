@@ -168,7 +168,7 @@
         "anchor": {
           "type": "custom-liquid",
           "settings": {
-            "custom_liquid": "<div id=\"cafe-booking\"></div>"
+            "custom_liquid": "<div id=\"cafe-booking\" style=\"scroll-margin-top: calc(var(--header-height) + 16px);\"></div>"
           },
           "blocks": {}
         },
@@ -646,7 +646,7 @@
                 "book": {
                   "type": "button",
                   "settings": {
-                    "label": "Book High Tea",
+                    "label": "Book a table",
                     "link": "#cafe-booking",
                     "open_in_new_tab": false,
                     "style_class": "button",
@@ -848,6 +848,20 @@
                 "padding-inline-end": 0
               },
               "blocks": {
+                "book": {
+                  "type": "button",
+                  "settings": {
+                    "label": "Book a table",
+                    "link": "#cafe-booking",
+                    "open_in_new_tab": false,
+                    "style_class": "button",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
+                },
                 "view_menu": {
                   "type": "_lambruk-view-menu-button",
                   "settings": {
@@ -864,6 +878,7 @@
                 }
               },
               "block_order": [
+                "book",
                 "view_menu"
               ]
             }

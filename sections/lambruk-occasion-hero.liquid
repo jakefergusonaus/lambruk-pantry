@@ -68,12 +68,17 @@
      source specifies rgba(13, 16, 36, ...) here (the brand's own
      --blue-950 navy, confirmed identical on both breakpoints), not
      neutral black. Client call: the photography should read warm and
-     natural under the scrim, not colour-shifted toward navy. See
-     DESIGN-TOKENS.md. */
+     natural under the scrim, not colour-shifted toward navy.
+
+     Stops raised again, 2026-09-10 — was 0.88/0.48/0.12, deliberately
+     overshooting the 4.5:1 WCAG floor to a 6:1 target so headroom
+     survives whatever photo replaces today's placeholders. Don't
+     lower this back toward 4.5:1 without re-measuring against
+     whatever image is actually in place. See DESIGN-TOKENS.md. */
   .lambruk-occasion-hero__scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.48) 46%, rgba(0, 0, 0, 0.12) 76%);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.74) 46%, rgba(0, 0, 0, 0.27) 76%);
   }
 
   .lambruk-occasion-hero__content {

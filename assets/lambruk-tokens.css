@@ -143,12 +143,42 @@
      mobile. See ARCHITECTURE.md §18. */
   --text-3-size: clamp(11px, 10.541px + 0.118vw, 12px);
 
-  /* Accent/eyebrow text (DESIGN-TOKENS.md §1). design_handoff_website's raw
-     #A07037 fails WCAG AA on both surfaces it's used on (4.13:1 on paper,
-     3.91:1 on navy) — these are the nearest points on its own hue/
-     saturation line that clear 4.5:1 in each direction. */
-  --text-accent: #986A34;
-  --text-accent-on-dark: #AE7A3C;
+  /* Gold consolidation (ARCHITECTURE.md, gold consolidation section;
+     DESIGN-TOKENS.md). Superseded 2026-09-10 — the previous #986A34/
+     #AE7A3C pair (below, in this same comment's git history) was itself
+     a WCAG correction of the design's raw #A07037, but a sitewide audit
+     found it still failing 16 of 27 live eyebrow instances: #986A34 only
+     clears 4.5:1 against the lighter of the two light backgrounds in use
+     (#FBFAF7, 4.52) and fails against the more common #F4F1EA (4.19);
+     #AE7A3C clears navy at only 4.54, no headroom. Two values now, each
+     solved against the WORST real background it has to sit on, not just
+     one representative case:
+
+     --gold-on-light clears 4.5:1 against all three light backgrounds
+     this theme actually uses (#FBFAF7 cream, #F4F1EA paper-2, #FFFFFF
+     card) — #F4F1EA was the binding constraint, at 3.82 for the old
+     #A07037 and 4.19 for the old #986A34; #916532 is the nearest point
+     on the same hue/saturation line that clears all three at once.
+
+     --gold-on-dark replaces the two values previously in use on navy
+     (#AE7A3C at 4.54, #C6A06C at 6.94) with one: #BF8C45, the design's
+     own gold-500 token, at 5.66 — comfortably past the 5.5:1 floor this
+     consolidation set (not just the 4.5:1 text minimum) rather than
+     sitting on a threshold the way #AE7A3C did. Chosen over #C6A06C
+     because #C6A06C reads washed-out/pastel against navy at this size,
+     confirmed side by side in the footer and both homepage quote panels
+     before choosing — #BF8C45 keeps the accent reading as gold rather
+     than beige, and already matches the warm tone of the quote panels'
+     own icon illustrations.
+
+     --text-accent/--text-accent-on-dark are kept as aliases, unchanged
+     in name, so the files already wired to them (lambruk-contact-form.
+     liquid, lambruk-wholesale-enquiry-form.liquid, lambruk-copyright.
+     liquid) pick up the new values with no edit needed. */
+  --gold-on-light: #916532;
+  --gold-on-dark: #BF8C45;
+  --text-accent: var(--gold-on-light);
+  --text-accent-on-dark: var(--gold-on-dark);
 
   /* Icon-accent (DESIGN-TOKENS.md §1) — resolved 2026-08-18, flagged in
      ARCHITECTURE.md §5 as needing this addition once a consumer existed.
@@ -1726,9 +1756,16 @@ h1, h2, h3, h4, h5, h6 {
    own stroke, tested side by side at 4x zoom before settling on it
    rather than picking a number and trusting it.
 
-   Colour matches the eyebrow's own gold, `#A07037` -- 4.13:1 against
-   the cream background (`rgb(251,250,247)`), clearing the 3:1 floor
-   for a non-text graphic.
+   Colour matches the eyebrow's own gold. Updated 2026-09-10 alongside
+   the sitewide gold consolidation (ARCHITECTURE.md) to `#916532`
+   (`--gold-on-light`) -- was `#A07037`. This is a CSS `::before`
+   background-image with the colour baked into the data URI itself, not
+   a `currentColor`/`var()` reference, so it does NOT inherit from the
+   eyebrow's own `color` and could not have picked up the consolidation
+   automatically -- had to be hand-updated and re-measured, not assumed
+   correct because the surrounding text moved. 4.89:1 against the cream
+   background (`rgb(251,250,247)`), clearing the 3:1 floor for a
+   non-text graphic with real headroom (was 4.13:1).
 
    Scoped to `[id$="__section_hero"] [class*="__eyebrow"] p::before`
    -- the section-id suffix narrows to this one homepage hero
@@ -1744,7 +1781,7 @@ h1, h2, h3, h4, h5, h6 {
   vertical-align: middle;
   margin-right: 0.65em;
   margin-top: -0.185em;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M4 10.5L8.3 15L16.5 5.5' fill='none' stroke='%23A07037' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M4 10.5L8.3 15L16.5 5.5' fill='none' stroke='%23916532' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: contain;
 }

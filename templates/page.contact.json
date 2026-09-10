@@ -15,7 +15,7 @@
           "type": "text",
           "settings": {
             "text": "<p>Contact</p>",
-            "text_color": "#986A34",
+            "text_color": "#916532",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",

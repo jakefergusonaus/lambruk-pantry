@@ -134,7 +134,7 @@
             "menu_heading_style": {
               "type": "custom-liquid",
               "settings": {
-                "custom_liquid": "<style>#shopify-section-{{ section.id }} .menu__heading{font-family:var(--font-body--family);font-size:var(--text-3-size);color:#AE7A3C;text-transform:uppercase;letter-spacing:var(--letter-spacing--body-eyebrow);}</style>"
+                "custom_liquid": "<style>#shopify-section-{{ section.id }} .menu__heading{font-family:var(--font-body--family);font-size:var(--text-3-size);color:var(--text-accent-on-dark);text-transform:uppercase;letter-spacing:var(--letter-spacing--body-eyebrow);}</style>"
               },
               "blocks": {}
             }
@@ -225,7 +225,7 @@
               "type": "text",
               "settings": {
                 "text": "<p>General</p>",
-                "text_color": "#AE7A3C",
+                "text_color": "#BF8C45",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",

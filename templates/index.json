@@ -49,7 +49,7 @@
                 "letter_spacing": "eyebrow",
                 "case": "uppercase",
                 "wrap": "pretty",
-                "text_color": "#a07037",
+                "text_color": "#916532",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -624,7 +624,7 @@
             "hide_break_on_mobile": false,
             "background_color": "#131a3e",
             "text_color": "#f7f5f2",
-            "accent_color": "#c6a06c",
+            "accent_color": "#BF8C45",
             "padding-block-start": 96,
             "padding-block-end": 96,
             "padding-inline-start": 40,
@@ -705,7 +705,7 @@
                 "letter_spacing": "eyebrow",
                 "case": "uppercase",
                 "wrap": "pretty",
-                "text_color": "#986a34",
+                "text_color": "#916532",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -851,7 +851,7 @@
                         "width": 18,
                         "link": "",
                         "open_in_new_tab": false,
-                        "icon_color": "#986a34"
+                        "icon_color": "#916532"
                       },
                       "blocks": {}
                     },
@@ -932,7 +932,7 @@
                         "width": 18,
                         "link": "",
                         "open_in_new_tab": false,
-                        "icon_color": "#986a34"
+                        "icon_color": "#916532"
                       },
                       "blocks": {}
                     },
@@ -995,7 +995,7 @@
                         "width": 18,
                         "link": "",
                         "open_in_new_tab": false,
-                        "icon_color": "#986a34"
+                        "icon_color": "#916532"
                       },
                       "blocks": {}
                     },
@@ -1154,7 +1154,7 @@
                     "letter_spacing": "eyebrow",
                     "case": "uppercase",
                     "wrap": "pretty",
-                    "text_color": "#a07037",
+                    "text_color": "#916532",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1481,7 +1481,7 @@
             "hide_break_on_mobile": true,
             "background_color": "#131a3e",
             "text_color": "#f7f5f2",
-            "accent_color": "#c6a06c",
+            "accent_color": "#BF8C45",
             "padding-block-start": 96,
             "padding-block-end": 96,
             "padding-inline-start": 40,
@@ -1579,7 +1579,7 @@
                 "letter_spacing": "eyebrow",
                 "case": "uppercase",
                 "wrap": "pretty",
-                "text_color": "#a07037",
+                "text_color": "#916532",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,

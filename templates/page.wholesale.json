@@ -26,7 +26,7 @@
             "letter_spacing": "eyebrow",
             "case": "uppercase",
             "wrap": "pretty",
-            "text_color": "#986A34",
+            "text_color": "#916532",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -171,7 +171,7 @@
                 "letter_spacing": "eyebrow",
                 "case": "uppercase",
                 "wrap": "pretty",
-                "text_color": "#986A34",
+                "text_color": "#916532",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -284,7 +284,7 @@
                       "settings": {
                         "icon": "check_box",
                         "width": 14,
-                        "icon_color": "#986A34"
+                        "icon_color": "#916532"
                       },
                       "blocks": {}
                     },
@@ -347,7 +347,7 @@
                       "settings": {
                         "icon": "check_box",
                         "width": 14,
-                        "icon_color": "#986A34"
+                        "icon_color": "#916532"
                       },
                       "blocks": {}
                     },
@@ -410,7 +410,7 @@
                       "settings": {
                         "icon": "check_box",
                         "width": 14,
-                        "icon_color": "#986A34"
+                        "icon_color": "#916532"
                       },
                       "blocks": {}
                     },
@@ -473,7 +473,7 @@
                       "settings": {
                         "icon": "check_box",
                         "width": 14,
-                        "icon_color": "#986A34"
+                        "icon_color": "#916532"
                       },
                       "blocks": {}
                     },
@@ -618,7 +618,7 @@
                   "settings": {
                     "icon": "leaf",
                     "width": 24,
-                    "icon_color": "#986A34"
+                    "icon_color": "#916532"
                   },
                   "blocks": {}
                 },
@@ -707,7 +707,7 @@
                   "settings": {
                     "icon": "box",
                     "width": 24,
-                    "icon_color": "#986A34"
+                    "icon_color": "#916532"
                   },
                   "blocks": {}
                 },
@@ -796,7 +796,7 @@
                   "settings": {
                     "icon": "serving_dish",
                     "width": 24,
-                    "icon_color": "#986A34"
+                    "icon_color": "#916532"
                   },
                   "blocks": {}
                 },
@@ -963,7 +963,7 @@
                     "letter_spacing": "eyebrow",
                     "case": "uppercase",
                     "wrap": "pretty",
-                    "text_color": "#986A34",
+                    "text_color": "#916532",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1061,7 +1061,7 @@
                             "letter_spacing": "loose",
                             "case": "none",
                             "wrap": "pretty",
-                            "text_color": "#986A34",
+                            "text_color": "#916532",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1141,7 +1141,7 @@
                             "letter_spacing": "loose",
                             "case": "none",
                             "wrap": "pretty",
-                            "text_color": "#986A34",
+                            "text_color": "#916532",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1221,7 +1221,7 @@
                             "letter_spacing": "loose",
                             "case": "none",
                             "wrap": "pretty",
-                            "text_color": "#986A34",
+                            "text_color": "#916532",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1301,7 +1301,7 @@
                             "letter_spacing": "loose",
                             "case": "none",
                             "wrap": "pretty",
-                            "text_color": "#986A34",
+                            "text_color": "#916532",
                             "background": false,
                             "background_color": "#00000026",
                             "corner_radius": 0,
@@ -1396,7 +1396,7 @@
                     "letter_spacing": "eyebrow",
                     "case": "uppercase",
                     "wrap": "pretty",
-                    "text_color": "#986A34",
+                    "text_color": "#916532",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -1882,7 +1882,7 @@
                     "letter_spacing": "eyebrow",
                     "case": "uppercase",
                     "wrap": "pretty",
-                    "text_color": "#986A34",
+                    "text_color": "#916532",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -2018,7 +2018,7 @@
                     "letter_spacing": "eyebrow",
                     "case": "uppercase",
                     "wrap": "pretty",
-                    "text_color": "#986A34",
+                    "text_color": "#916532",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -2068,7 +2068,7 @@
                     "letter_spacing": "eyebrow",
                     "case": "uppercase",
                     "wrap": "pretty",
-                    "text_color": "#986A34",
+                    "text_color": "#916532",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,

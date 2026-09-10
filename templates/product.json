@@ -602,7 +602,7 @@
           "name": "t:names.header",
           "settings": {
             "text": "<p>Goes well with</p>",
-            "text_color": "#986A34",
+            "text_color": "#916532",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",

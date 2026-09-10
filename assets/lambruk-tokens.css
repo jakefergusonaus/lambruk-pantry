@@ -1344,13 +1344,17 @@ h1, h2, h3, h4, h5, h6 {
    ========================================================================== */
 @media screen and (max-width: 749px) {
 
-  /* --- Branch 1 base: ordinary tier, 12px. Correctly covers 14 of the
-     19 branch-1 instances as-is: Top Sellers, Curated Occasions, Meet
+  /* --- Branch 1 base: ordinary tier, 12px. Correctly covers 13 of the
+     18 branch-1 instances as-is: Top Sellers, Curated Occasions, Meet
      Paige, How we make things, Traceable, Who We Supply, Packaging
      Formats, Partnership Enquiry, Cafe hero, Saturday & Sunday Rituals,
-     Pull Up a Chair, Catering, Shop For Your Pantry, cta_sample_box.
+     Pull Up a Chair, Catering, Shop For Your Pantry.
      Also matches the 5 page-heroes, which the exception rules below
      override by specificity.
+
+     (cta_sample_box, formerly one of these 18, was removed sitewide
+     2026-09-10 -- see ARCHITECTURE.md §81's amendment. Count and list
+     above already reflect the removal; don't go looking for it.)
 
      Catering has no design-audit entry at all (checked both
      Desktop.dc.html and Mobile.dc.html directly), but that's because
@@ -1358,9 +1362,9 @@ h1, h2, h3, h4, h5, h6 {
      excluded it -- it's an ordinary Cafe-page content module, structurally
      identical to Saturday & Sunday Rituals and Pull Up a Chair right
      next to it on the same page, both of which are 12px. Falls back to
-     the ordinary tier for the same reason How We Make Things and
-     cta_sample_box do. (Previously carried its own exception rule
-     restating 24px -- removed; that was overcautious, not correct.) */
+     the ordinary tier for the same reason How We Make Things does.
+     (Previously carried its own exception rule restating 24px --
+     removed; that was overcautious, not correct.) */
   .layout-panel-flex:has(> [class*="__eyebrow"]) {
     gap: 12px;
   }

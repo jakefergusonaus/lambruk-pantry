@@ -1531,6 +1531,103 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ==========================================================================
+   FOOTER: Shop/Explore headings realigned to match Brand/General
+   (four-column band, >=990px)
+
+   Shop and Explore's headings ("SHOP", "EXPLORE") are `menu` blocks --
+   `<summary class="menu__heading">` -- and every `<summary>` on this
+   theme inherits a sitewide native rule, `base.css:1000`:
+     summary { display: flex; align-items: center; padding-block: var(--padding-sm); }
+   `--padding-sm` is a flat 0.7rem (11.2px), not fluid, so this is the
+   same at every viewport. Brand's logo and General's eyebrow (a plain
+   `text` block, `padding-block-start/end: 0` explicit in the JSON)
+   carry none of this -- their box tops sit flush with the grid row.
+   Confirmed live: all four columns' outer boxes share one grid-row top,
+   but only the SUMMARY-based headings' box has this extra padding
+   pushing the actual glyph down inside it -- the box tops agreeing
+   while the text didn't is exactly what made this invisible to a
+   check that only measured elements, not their text (see the
+   "measure the child box" family in the House Rules section below).
+
+   Measured, not guessed: Shop/Explore's eyebrow TEXT (via a Range on
+   the text node, not the element) rendered 9.2px lower than General's
+   at 1280px (550.04 vs. 540.84) -- the reported "~13px" was the right
+   diagnosis, off in magnitude because it was eyeballed rather than
+   measured against the actual glyph box.
+
+   `padding-block`'s two sides do different jobs and can't be treated
+   as one number: the TOP half sets where the glyph sits (what's
+   broken); the BOTTOM half sets the summary's own box height, which
+   the menu's `margin-block-start: var(--spacing--size)` (12px, from
+   `menu_spacing`) measures FROM -- shrink the bottom and the whole
+   `<nav>` list rises with it, silently changing the vertical rhythm
+   below the heading, not just the heading itself. Solved by moving
+   the same 9.2px both ways at once: 11.2px - 9.2px = 2px top (lifts
+   the glyph to 540.84, matching General exactly -- confirmed live);
+   11.2px + 9.2px = 20.4px bottom (keeps the box's own total height,
+   35.59px, and therefore its bottom edge and the 12px gap to the
+   first menu item, completely unchanged -- confirmed live before and
+   after). Net: the heading moves, nothing below it does.
+
+   Scoped to `.footer-content summary.menu__heading` -- reaches only
+   the two menu instances inside this footer (nothing else on the
+   theme has a `.footer-content` ancestor), never the bare `summary`
+   selector, which also serves filters/cart/FAQ accordions sitewide.
+   `.footer-content summary.menu__heading` is two classes + a type
+   (0,2,1), safely ahead of base.css's own bare `summary` (0,0,1) --
+   wins on specificity, not by loading later. */
+@media screen and (min-width: 990px) {
+  .footer-content summary.menu__heading {
+    padding-top: 2px;
+    padding-bottom: 20.4px;
+  }
+}
+
+/* ==========================================================================
+   FOOTER: General column's item rhythm normalised to 12px, matching
+   Shop/Explore (four-column band, >=990px)
+
+   General's three link lines are plain stacked `<p>` tags inside a
+   `text` block rendered as `rte-formatter` (a flex column). Their
+   margin comes from a sitewide rule (`.text-block p, .text-block.p > *
+   { margin-block: var(--font-paragraph--spacing) }`, --font-paragraph
+   --spacing: 7px) -- used by ordinary paragraph content all over the
+   theme, not something to touch generally. A flex column doesn't
+   collapse adjacent margins, so consecutive items stack a full
+   7px + 7px = 14px, vs. Shop/Explore's single explicit
+   `margin-block-start: 12px` (from `menu_spacing: 12` -- one value,
+   nothing to double). First/last-child already get their outer
+   margin zeroed by a separate sitewide rule (base.css:148-158,
+   `:first-child`/`:last-child` on `p, h1-h6`) so the column doesn't
+   start or end with extra air -- that rule must stay untouched too.
+
+   Rather than override the shorthand `margin-block` (which would also
+   have to out-specificity the first/last-child zeroing rules to avoid
+   reopening that gap), each side is set only where it's wanted:
+   `:not(:first-child)` for the start, `:not(:last-child)` for the
+   end. This doesn't compete with the zeroing rules at all -- the two
+   are structurally mutually exclusive (an item is either the actual
+   first/last child, or it isn't), so there's no specificity contest
+   to win, only the sitewide `.text-block p` shorthand to beat, which
+   `.footer-content [class*="__text_general_links"] p` (three classes
+   + a type, comfortably ahead of `.text-block p`'s one class + a
+   type) does outright. Scoped to this one block by its own stable
+   generated class (tied to the block's id, not its position) so nothing
+   else sharing `.text-block p` sitewide is touched. 6px + 6px = 12px
+   between items, matching Shop/Explore exactly; the true first item's
+   top and the true last item's bottom are never assigned by this rule,
+   so the existing zero-margin edges are untouched. */
+@media screen and (min-width: 990px) {
+  .footer-content [class*="__text_general_links"] p:not(:first-child) {
+    margin-block-start: 6px;
+  }
+
+  .footer-content [class*="__text_general_links"] p:not(:last-child) {
+    margin-block-end: 6px;
+  }
+}
+
+/* ==========================================================================
    WHOLESALE "WHO WE SUPPLY": number-to-text gap, mobile only (<750px)
 
    Design (Mobile.dc.html:603-606 / Desktop.dc.html:790-793): each row is a

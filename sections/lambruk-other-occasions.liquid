@@ -30,6 +30,20 @@
   Collections → Add definition → namespace/key `custom.occasion_card_blurb`,
   type Single line text. Renders nothing if unset, same as image/count —
   not a guessed fallback.
+
+  `background_color` setting (added 2026-09-10, build-to-design fix —
+  Desktop.dc.html:341 and Mobile.dc.html:290 both specify
+  `background:#F4F1EA;border-top:1px solid #E3D6C5` for this exact
+  section, missing from the build until now). This section is bespoke
+  Liquid, not a native Horizon `type: "section"` instance, so it has no
+  `.section-background` sibling/`color-custom-*`/`contrast-override`
+  scaffold to hook into the way a native section's own `background_color`
+  setting would — applied directly as an inline style instead, same
+  pattern this section already uses for its own `padding-block` via the
+  `spacing-style` snippet. The border-top is coupled to the same
+  conditional (blank setting = blank background = no border either) since
+  the design pairs them as one visual treatment, not two independent
+  ones.
 {%- endcomment -%}
 
 {% liquid
@@ -37,7 +51,16 @@
   assign current_handle = closest.collection.handle
 %}
 
-<section class="lambruk-other-occasions spacing-style" style="{% render 'spacing-style', settings: section.settings %}">
+<section
+  class="lambruk-other-occasions spacing-style"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    {%- if section.settings.background_color != blank %}
+      background: {{ section.settings.background_color }};
+      border-top: 1px solid #E3D6C5;
+    {%- endif %}
+  "
+>
   <div class="lambruk-other-occasions__inner">
     <div class="lambruk-other-occasions__header">
       <div>
@@ -240,6 +263,12 @@
       "id": "heading",
       "label": "t:settings.heading",
       "default": "Set another table"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
     },
     {
       "type": "header",

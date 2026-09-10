@@ -181,10 +181,11 @@
       "type": "lambruk-other-occasions",
       "settings": {
         "heading": "Set another table",
+        "background_color": "#F4F1EA",
         "padding-block-start": 80,
         "padding-block-end": 80
       }
-    },
+    }
   },
   "order": [
     "occasion_hero",

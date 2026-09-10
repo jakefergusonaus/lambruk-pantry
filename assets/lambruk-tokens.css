@@ -1556,18 +1556,36 @@ h1, h2, h3, h4, h5, h6 {
    measured against the actual glyph box.
 
    `padding-block`'s two sides do different jobs and can't be treated
-   as one number: the TOP half sets where the glyph sits (what's
-   broken); the BOTTOM half sets the summary's own box height, which
-   the menu's `margin-block-start: var(--spacing--size)` (12px, from
-   `menu_spacing`) measures FROM -- shrink the bottom and the whole
-   `<nav>` list rises with it, silently changing the vertical rhythm
-   below the heading, not just the heading itself. Solved by moving
-   the same 9.2px both ways at once: 11.2px - 9.2px = 2px top (lifts
-   the glyph to 540.84, matching General exactly -- confirmed live);
-   11.2px + 9.2px = 20.4px bottom (keeps the box's own total height,
-   35.59px, and therefore its bottom edge and the 12px gap to the
-   first menu item, completely unchanged -- confirmed live before and
-   after). Net: the heading moves, nothing below it does.
+   as one number: the TOP half sets where the glyph sits; the BOTTOM
+   half sets the summary's own box height, which the menu's
+   `margin-block-start: var(--spacing--size)` (12px, from
+   `menu_spacing`) measures FROM. Top fixed by moving the 9.2px:
+   11.2px - 9.2px = 2px lifts the glyph to 540.84, matching General
+   exactly -- confirmed live, holds.
+
+   Bottom padding revised (2026-09-12) -- the original 20.4px value
+   (11.2 + 9.2, chosen to hold the box's own total height constant)
+   was verified against the wrong metric. Box-edge distance to the
+   first menu item (12px) held before and after, and was reported as
+   the fix being complete -- but that padding sits BELOW the glyph
+   and is invisible whitespace the reader never measures by box edge;
+   what a reader actually sees is glyph to glyph. General's own
+   heading carries only ~2.4px of natural half-leading below its
+   glyph before its first item starts; Shop/Explore's 20.4px box
+   padding put ~18.8px of dead air in the equivalent spot, on top of
+   General's own leading budget -- an 18.8px visible gap the box-edge
+   check could not see, because it never disagreed at the box edge.
+
+   `padding-bottom: 1.6px` closes that: reduces the invisible slice by
+   the same 18.8px (20.4 - 18.8 = 1.6), landing Shop/Explore's
+   heading-glyph-bottom-to-first-item-glyph-top distance at ~14.8px --
+   matching General's own measured value exactly, confirmed live at
+   990/1280/1600px. The box-edge gap is no longer held at a fixed
+   12px as a design goal in its own right (it was never the thing
+   that mattered) -- it now falls out at whatever the shorter box
+   produces, and Shop/Explore's own column height drops accordingly.
+   The top side is untouched: the glyph alignment this same rule
+   fixed is a separate, already-correct fact and does not move.
 
    Scoped to `.footer-content summary.menu__heading` -- reaches only
    the two menu instances inside this footer (nothing else on the
@@ -1579,7 +1597,7 @@ h1, h2, h3, h4, h5, h6 {
 @media screen and (min-width: 990px) {
   .footer-content summary.menu__heading {
     padding-top: 2px;
-    padding-bottom: 20.4px;
+    padding-bottom: 1.6px;
   }
 }
 

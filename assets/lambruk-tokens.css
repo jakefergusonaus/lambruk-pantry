@@ -1672,6 +1672,80 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ==========================================================================
+   HOMEPAGE HERO: decorative check before the "MULTI AWARD WINNING"
+   eyebrow
+
+   Deliberate addition, not in the design (Desktop.dc.html:48,
+   Mobile.dc.html:61 both render this eyebrow as a plain <p>, no icon
+   on either breakpoint) -- see DESIGN-TOKENS.md.
+
+   NOT delivered as literal inline SVG in the eyebrow's own text
+   content, despite that being the decided mechanism -- tried it
+   first (a real `<svg>`/`<path>` inside the block's `text` setting)
+   and Shopify's Admin API rejected the push outright: `"Setting
+   'text' is invalid. Tag '<path>' is not permitted and Tag '<svg>'
+   is not permitted"`. `blocks/text.liquid`'s `text` setting is
+   `type: "richtext"` -- a server-side-validated, allowlisted HTML
+   subset (paragraphs, headings, bold/italic, links, lists), enforced
+   on save, not a raw-HTML passthrough the way a `custom_liquid`
+   block's own setting is. No way to get a literal `<svg>` into this
+   specific field, confirmed by a real rejected push, not inferred
+   from reading the schema.
+
+   This CSS `::before` is the same visual result reached a different
+   way, preserving the actual thing the decided mechanism was
+   protecting: the eyebrow's `.text-block` wrapper is untouched --
+   still the exact same single `<p>`, still a direct child of its
+   flex container, so `:has(> [class*="__eyebrow"])` (ARCHITECTURE.md
+   §81) still matches and the mobile 16px gap is unaffected. A
+   sibling icon-block in a wrapping row was the one path this
+   couldn't be -- see §81's own amendment for why. Generated content
+   (`content: ""`, an image with no text) is also the most reliably
+   decorative accessibility option available: it carries no
+   accessible name and standard screen readers don't announce it at
+   all, which is a stronger guarantee than `aria-hidden="true"` on a
+   real DOM node (correct, but relies on the node being hidden
+   correctly rather than never entering the tree to begin with).
+
+   Sized in `em`, not px, so ONE rule covers both breakpoints without
+   a media query -- the eyebrow's own `font-size` is already fluid
+   (`var(--text-3-size)`, 12px desktop / 11px mobile), so `width: 1em`
+   tracks it automatically: 12px and 11px, confirmed live, matching
+   the two sizes tested separately before this was written. Values
+   measured against the actual glyph, not guessed: `margin-top:
+   -0.185em` centres the mark on the cap-height of "M" (measured via
+   a Range on the text node, both breakpoints) rather than the
+   line-box centre a bare `vertical-align: middle` would otherwise
+   use, which sits visibly low against all-caps type. `stroke-width:
+   2.2` (in the mark's own 20-unit viewBox) renders at ~1.3px actual
+   at 12px, ~1.2px at 11px -- close to this weight-500 12px type's
+   own stroke, tested side by side at 4x zoom before settling on it
+   rather than picking a number and trusting it.
+
+   Colour matches the eyebrow's own gold, `#A07037` -- 4.13:1 against
+   the cream background (`rgb(251,250,247)`), clearing the 3:1 floor
+   for a non-text graphic.
+
+   Scoped to `[id$="__section_hero"] [class*="__eyebrow"] p::before`
+   -- the section-id suffix narrows to this one homepage hero
+   specifically (the bare `__eyebrow` class suffix alone is shared by
+   many other instances sitewide, per §81's own inventory), the same
+   authored-key scoping pattern §81 already established rather than a
+   new one invented for this. */
+[id$="__section_hero"] [class*="__eyebrow"] p::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  margin-right: 0.65em;
+  margin-top: -0.185em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M4 10.5L8.3 15L16.5 5.5' fill='none' stroke='%23A07037' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* ==========================================================================
    WHOLESALE "WHO WE SUPPLY": number-to-text gap, mobile only (<750px)
 
    Design (Mobile.dc.html:603-606 / Desktop.dc.html:790-793): each row is a

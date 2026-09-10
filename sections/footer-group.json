@@ -48,6 +48,8 @@
               "type": "logo",
               "settings": {
                 "inverse": true,
+                "unit": "pixel",
+                "pixel_height": 72,
                 "custom_mobile_size": true,
                 "unit_mobile": "pixel",
                 "pixel_height_mobile": 64

@@ -1478,6 +1478,59 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ==========================================================================
+   FOOTER: asymmetric desktop column widths (four-column band, >=990px)
+
+   Horizon's own footer.liquid renders `grid-template-columns: repeat(4, 1fr)`
+   at this breakpoint -- four equal columns, regardless of what any one
+   column actually needs. Two of the four (Shop, Explore) had 100px+ of
+   unused slack at every width tested; the other two (brand/logo+tagline,
+   General) were the ones actually short of room -- General's address line
+   ("26 Towers Drive, Mullumbimby NSW") wrapped to two lines below ~1148px
+   under the equal-column layout. Redistributing width from the columns
+   with slack to the columns without it fixes that without touching gap
+   (already 48px, matching the design) or content.
+
+   Ratios derived from measured content, not chosen by eye: at 990px (the
+   narrowest four-column width -- if it holds here it holds at every wider
+   one, since each column's share only grows as the available track grows)
+   the content area is 990 - 2*40 (page-margin) - 3*48 (gap) = 766px.
+   Target widths, each the longest label's measured rendered width plus a
+   flat 20px headroom for cross-browser font-metric variance:
+     General: "26 Towers Drive, Mullumbimby NSW" 231px -> 251px
+     Shop:    "Sauces & Chutneys" 124px -> 144px
+     Explore: "Wholesale" 67px -> 87px
+     Brand:   766 - 251 - 144 - 87 = 284px (whatever remains)
+   Expressed as fr (px/100, so the ratio -- not the absolute px -- is what
+   carries to wider viewports): 2.84fr 1.44fr 0.87fr 2.51fr, in DOM/visual
+   order (brand, Shop, Explore, General). Verified live at 990px: columns
+   render at exactly 284/144/87/251px, address holds on one line with
+   20.02px to spare (by construction -- matches the headroom budgeted
+   above), email ("sales@lambrukpantry.com", 170px) never binds first at
+   any width, since 170 < 231 means General's own headroom always covers
+   it too. See DESIGN-TOKENS.md for why this departs from the design's own
+   `1.6fr 1fr 1fr 1fr` (Desktop.dc.html:1140).
+
+   Selector needs the `[style*='--grid-columns: 4']` attribute match, not
+   a bare `.footer-content` -- confirmed live this file loads BEFORE
+   compiled_assets/styles.css (which bundles footer.liquid's own
+   `{% stylesheet %}`), so a same-specificity bare-class rule here loses
+   the cascade to footer.liquid's own `.footer-content { grid-template-
+   columns: repeat(var(--grid-columns), 1fr) }` at equal specificity --
+   source order decided it, and footer.liquid's own rule comes later.
+   footer.liquid already reaches for this exact attribute-selector pattern
+   itself one breakpoint down (its own tablet rule, `.footer-content
+   [style*='--grid-columns: 4']`), for the same reason: it's the two-part
+   class+attribute selector already available on this element (the
+   section writes `--grid-columns` into its own inline `style`), so no
+   extra markup or `!important` is needed to win outright rather than by
+   source-order luck. */
+@media screen and (min-width: 990px) {
+  .footer-content[style*='--grid-columns: 4'] {
+    grid-template-columns: 2.84fr 1.44fr 0.87fr 2.51fr;
+  }
+}
+
+/* ==========================================================================
    WHOLESALE "WHO WE SUPPLY": number-to-text gap, mobile only (<750px)
 
    Design (Mobile.dc.html:603-606 / Desktop.dc.html:790-793): each row is a

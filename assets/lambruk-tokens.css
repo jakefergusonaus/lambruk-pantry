@@ -1816,3 +1816,32 @@ h1, h2, h3, h4, h5, h6 {
     gap: 16px;
   }
 }
+
+/* ==========================================
+   MOBILE: hide the three "shop all" section-header CTAs.
+
+   No native setting does this -- blocks/button.liquid and blocks/group.liquid
+   expose no mobile-visibility field, and lambruk-other-occasions.liquid's own
+   CTA isn't a block at all (hardcoded markup, schema is heading + padding
+   only). CSS is the correct fallback per the customisation hierarchy.
+
+   `display: none`, not an off-screen/visibility technique: the destination
+   (/collections/all) stays reachable through the header nav on every page
+   these appear on, so removing the CTA from the accessibility tree matches
+   what a sighted mobile user already gets.
+
+   `.button`/`.button-secondary` set `display: grid` at a single-class
+   specificity (0,1,0) (base.css:824-828). Each selector below pairs an
+   authored section-key attribute selector with a class-key attribute
+   selector -- (0,2,0) -- which beats that native rule on specificity alone,
+   independent of stylesheet load order. No per-block hashes: `__shop_all`
+   is the authored block key shared by both homepage instances; the Other
+   Occasions CTA is scoped by its section key since it has no block key to
+   match. */
+@media screen and (max-width: 749px) {
+  [id$="__section_explore_by_category"] [class*="__shop_all"],
+  [id$="__section_top_sellers_header"] [class*="__shop_all"],
+  [id$="__other_occasions"] .button-secondary {
+    display: none;
+  }
+}

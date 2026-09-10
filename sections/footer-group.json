@@ -249,7 +249,7 @@
             "text_general_links": {
               "type": "text",
               "settings": {
-                "text": "<p>02 6684 1066</p><p><a href=\"mailto:sales@lambrukpantry.com\">sales@lambrukpantry.com</a></p><p>26 Towers Drive, Mullumbimby NSW</p>",
+                "text": "<p>02 6684 1066</p><p><a href=\"mailto:sales@lambrukpantry.com\">sales@lambrukpantry.com</a></p><p>26 Towers Drive<br>Mullumbimby NSW</p>",
                 "text_color": "#F7F5F2C7",
                 "width": "100%",
                 "max_width": "normal",

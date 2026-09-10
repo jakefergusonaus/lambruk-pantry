@@ -1478,55 +1478,81 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ==========================================================================
-   FOOTER: asymmetric desktop column widths (four-column band, >=990px)
+   FOOTER: equal-width link columns, brand absorbs the remainder
+   (four-column band, >=990px)
 
-   Horizon's own footer.liquid renders `grid-template-columns: repeat(4, 1fr)`
-   at this breakpoint -- four equal columns, regardless of what any one
-   column actually needs. Two of the four (Shop, Explore) had 100px+ of
-   unused slack at every width tested; the other two (brand/logo+tagline,
-   General) were the ones actually short of room -- General's address line
-   ("26 Towers Drive, Mullumbimby NSW") wrapped to two lines below ~1148px
-   under the equal-column layout. Redistributing width from the columns
-   with slack to the columns without it fixes that without touching gap
-   (already 48px, matching the design) or content.
+   Superseded 2026-09-13 -- this rule previously gave the three link
+   columns three DIFFERENT widths (2.84fr 1.44fr 0.87fr 2.51fr,
+   General widest), derived when General's one-line address was the
+   tightest content in the footer. The address is now a deliberate
+   two-line break ("26 Towers Drive" / "Mullumbimby NSW" -- see
+   DESIGN-TOKENS.md for why that's a departure from the design's own
+   single line), which shortened General's own longest line and
+   changed the requirement entirely: Shop, Explore and General must
+   now be the SAME width as each other, so their left edges land at
+   even, predictable intervals -- an unequal-width layout can't do
+   that regardless of whether every column individually fits.
 
-   Ratios derived from measured content, not chosen by eye: at 990px (the
-   narrowest four-column width -- if it holds here it holds at every wider
-   one, since each column's share only grows as the available track grows)
-   the content area is 990 - 2*40 (page-margin) - 3*48 (gap) = 766px.
-   Target widths, each the longest label's measured rendered width plus a
-   flat 20px headroom for cross-browser font-metric variance:
-     General: "26 Towers Drive, Mullumbimby NSW" 231px -> 251px
-     Shop:    "Sauces & Chutneys" 124px -> 144px
-     Explore: "Wholesale" 67px -> 87px
-     Brand:   766 - 251 - 144 - 87 = 284px (whatever remains)
-   Expressed as fr (px/100, so the ratio -- not the absolute px -- is what
-   carries to wider viewports): 2.84fr 1.44fr 0.87fr 2.51fr, in DOM/visual
-   order (brand, Shop, Explore, General). Verified live at 990px: columns
-   render at exactly 284/144/87/251px, address holds on one line with
-   20.02px to spare (by construction -- matches the headroom budgeted
-   above), email ("sales@lambrukpantry.com", 170px) never binds first at
-   any width, since 170 < 231 means General's own headroom always covers
-   it too. See DESIGN-TOKENS.md for why this departs from the design's own
-   `1.6fr 1fr 1fr 1fr` (Desktop.dc.html:1140).
+   Floor re-derived from scratch, not carried over from the old
+   asymmetric values -- the old binding constraint (the one-line
+   address) no longer exists. Measured every candidate at 990px (the
+   narrowest four-column width -- content area 990 - 2*40 page-margin
+   - 3*48 gap = 766px):
+     General, longest address line ("Mullumbimby NSW"): 122px
+     Shop,    "Sauces & Chutneys":                       124px
+     Explore, "Wholesale":                                67px
+     General, "sales@lambrukpantry.com":                 170px  <- widest
+   The email is now the binding constraint, not the address -- a
+   direct consequence of shortening the address. A flat +20px
+   headroom (this project's established margin for cross-browser
+   font-metric variance -- see the earlier asymmetric-column entry
+   above) would set the floor at 190px, but three columns at 190px
+   leaves the brand column only 766 - 3*190 = 196px at 990px, and
+   the tagline wraps to 6 lines there -- a real regression from the
+   4 lines the previous (asymmetric) layout held at this same width.
+   Tested the full range live before choosing: 4 lines holds up to a
+   177px floor and breaks to 5 at 178px, so **176px** was chosen
+   deliberately -- 2px of margin under that break, ~6px of headroom
+   over the 170px email requirement. Smaller headroom than the 20px
+   convention used elsewhere, on purpose: at this specific width,
+   "equal columns" and "generous headroom" cannot both be satisfied
+   without visibly degrading the tagline, and preserving the existing
+   4-line rhythm won out over maximising margin on a requirement
+   (170px) with little real variance risk in the first place.
 
-   Selector needs the `[style*='--grid-columns: 4']` attribute match, not
-   a bare `.footer-content` -- confirmed live this file loads BEFORE
+   Fixed pixel widths, not `fr` or `minmax(floor, 1fr)`, for the three
+   link columns -- deliberately not "equal share of a growing pool."
+   Shop and Explore already carry 100px+ of slack over their own
+   actual content even at 176px, so there's no benefit to them
+   growing as the viewport widens; every pixel gained above 990px is
+   more useful to the brand column (more room for the tagline) than
+   split three ways among columns that don't need it. `minmax(0, 1fr)`
+   on the brand column absorbs 100% of the remainder at every width:
+   238px at 990px, 528px at 1280px, 768px at 1600px (content width
+   there is capped at `--page-content-width`'s own 1440px, per
+   `--page-width`'s 1520px viewport ceiling -- see the earlier entry
+   above -- so 1440 - 3*48 gap - 3*176 = 768, not a simple continuation
+   of the 990/1280 arithmetic). Verified live: all three link columns
+   render at exactly 176px at every width tested; left-edge-to-left-
+   edge spacing (Shop->Explore, Explore->General) is identical at each
+   width, which is the actual visible thing being fixed -- three
+   different widths could each individually "fit" while still reading
+   as uneven.
+
+   Selector still needs the `[style*='--grid-columns: 4']` attribute
+   match, not a bare `.footer-content` -- this file loads BEFORE
    compiled_assets/styles.css (which bundles footer.liquid's own
-   `{% stylesheet %}`), so a same-specificity bare-class rule here loses
-   the cascade to footer.liquid's own `.footer-content { grid-template-
-   columns: repeat(var(--grid-columns), 1fr) }` at equal specificity --
-   source order decided it, and footer.liquid's own rule comes later.
-   footer.liquid already reaches for this exact attribute-selector pattern
-   itself one breakpoint down (its own tablet rule, `.footer-content
-   [style*='--grid-columns: 4']`), for the same reason: it's the two-part
-   class+attribute selector already available on this element (the
-   section writes `--grid-columns` into its own inline `style`), so no
-   extra markup or `!important` is needed to win outright rather than by
-   source-order luck. */
+   `{% stylesheet %}`), so a same-specificity bare-class rule here
+   loses the cascade to footer.liquid's own `.footer-content {
+   grid-template-columns: repeat(var(--grid-columns), 1fr) }` at equal
+   specificity -- source order decided it, footer.liquid's own rule
+   comes later. footer.liquid already reaches for this exact
+   attribute-selector pattern itself one breakpoint down (its own
+   tablet rule), so no extra markup or `!important` is needed to win
+   outright rather than by source-order luck. */
 @media screen and (min-width: 990px) {
   .footer-content[style*='--grid-columns: 4'] {
-    grid-template-columns: 2.84fr 1.44fr 0.87fr 2.51fr;
+    grid-template-columns: minmax(0, 1fr) 176px 176px 176px;
   }
 }
 

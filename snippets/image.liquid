@@ -8,31 +8,53 @@
   @param {boolean} [unset_image_tag] - if true, ignores the image focal point
   @param {string} [style] - additional styles
   @param {string} [alt_text_fallback] - Optional text to display if image alt text is blank
+  @param {string} [widths] - Optional ascending, comma-space-separated width list (e.g.
+    "335, 670, 1440") for a standard width-based srcset. Only takes effect when `sizes` is
+    also passed. The largest entry is used as the base image_url anchor, matching this
+    theme's own convention elsewhere (product-media.liquid, resource-image.liquid, etc.).
+  @param {string} [sizes] - Optional sizes attribute. Passing this switches the snippet from
+    its default 1x/2x/3x density srcset (built off `height`, or `image.height` when `height`
+    is blank -- which silently requests the image's full native size when neither this nor
+    `height` is set) to a standard `image_tag: widths:, sizes:` srcset built from `widths`.
+    Existing callers that don't pass `sizes` take the original branch, byte-for-byte
+    unchanged -- this parameter exists so a caller can opt in, not so every caller must.
 
   @example
   {% render 'image', image: product.featured_image, height: 300, class: 'product-image' %}
+  @example
+  {% render 'image', image: section.settings.image, widths: '335, 670, 1440', sizes: '50vw', class: 'my-image' %}
 {%- enddoc -%}
 {% if image != blank %}
-  {% assign image_height = height | default: image.height %}
-  {% assign image_height_2x = height | default: image_height | times: 2 %}
-  {% assign image_height_3x = height | default: image_height | times: 3 %}
   {% assign image_alt_text = image.alt | default: alt_text_fallback | default: '' %}
-
-  {% capture image_srcset -%}
-    {{ image | image_url: height: image_height }} 1x, {{ image | image_url: height: image_height_2x }} 2x, {{ image | image_url: height: image_height_3x }} 3x
-  {%- endcapture %}
-
   {% assign style_value = style | default: '' %}
 
   {% if unset_image_tag %}
     {% assign style_value = style_value | append: 'object-position: inherit;' %}
   {% endif %}
 
-  {{
-    image
-    | image_url: height: image_height
-    | image_tag: class: class, srcset: image_srcset, style: style_value, alt: image_alt_text
-  }}
+  {% if sizes != blank %}
+    {% assign widths_list = widths | split: ', ' %}
+    {% assign anchor_width = widths_list.last | default: 1440 %}
+    {{
+      image
+      | image_url: width: anchor_width
+      | image_tag: widths: widths, sizes: sizes, class: class, style: style_value, alt: image_alt_text
+    }}
+  {% else %}
+    {% assign image_height = height | default: image.height %}
+    {% assign image_height_2x = height | default: image_height | times: 2 %}
+    {% assign image_height_3x = height | default: image_height | times: 3 %}
+
+    {% capture image_srcset -%}
+      {{ image | image_url: height: image_height }} 1x, {{ image | image_url: height: image_height_2x }} 2x, {{ image | image_url: height: image_height_3x }} 3x
+    {%- endcapture %}
+
+    {{
+      image
+      | image_url: height: image_height
+      | image_tag: class: class, srcset: image_srcset, style: style_value, alt: image_alt_text
+    }}
+  {% endif %}
 {% elsif text_fallback %}
   {{ text_fallback }}
 {% endif %}

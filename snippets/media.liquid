@@ -21,6 +21,33 @@
   if block_settings.media_type == 'video'
     assign show_video = true
   endif
+
+  # Responsive sizing for the real <img> path only (see snippets/image.liquid).
+  # media-with-content is the only current caller of this snippet, and every live
+  # instance uses media_width: "medium" -- a flat 50/50 split of the page's central
+  # column (sections/media-with-content.liquid's own .media-with-content--medium
+  # rule), not the 7:5 "wide" default. Confirmed live at 1280px before writing this
+  # (600px/600px either side, not 700/500) rather than assumed from the CSS alone.
+  # Desktop margin is 40px (assets/base.css default); mobile margin is this
+  # project's own 20px override (assets/lambruk-tokens.css, @media max-width:749px),
+  # not Horizon's native 16px -- also confirmed live before use.
+  #   desktop (>=750px): min(720px, calc(50vw - 40px))
+  #     -- 720px = half of the narrow page-content-width's 1440px cap, engaged
+  #     once viewport >= 1520px; 50vw - 40px below that (half of 100vw - 2*40px)
+  #   mobile (<750px): calc(100vw - 40px) -- full-bleed within the 20px gutter
+  # "medium" is the only media_width value any section actually uses today; a
+  # future narrow/wide instance falls through to this same formula rather than
+  # erroring, which is a safe-ish default (narrow's media column is never wider
+  # than half the central column, wide's is never much more) but not exact for
+  # either -- re-derive properly against sections/media-with-content.liquid's
+  # own narrow/wide grid rules if one is ever actually used with a real photo.
+  assign image_sizes = '(min-width: 750px) min(720px, calc(50vw - 40px)), calc(100vw - 40px)'
+
+  # Rungs near each real requirement (375px viewport @3x ~= 1005px; 1280px
+  # desktop box @2x = 1200px; the medium-split cap @2x = 1440px) rather than
+  # a sparse list that forces a big jump. No gap between consecutive rungs
+  # exceeds ~1.5x.
+  assign image_widths = '335, 500, 670, 800, 1000, 1200, 1440'
 %}
 
 <div
@@ -46,7 +73,9 @@
         {% render 'image',
           image: block_settings.image,
           class: 'media-block__media border-style',
-          unset_image_tag: unset_image_tag
+          unset_image_tag: unset_image_tag,
+          widths: image_widths,
+          sizes: image_sizes
         %}
       {% else %}
         <div class="media-block__media border-style">

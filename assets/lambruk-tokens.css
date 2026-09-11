@@ -1741,47 +1741,159 @@ h1, h2, h3, h4, h5, h6 {
    real DOM node (correct, but relies on the node being hidden
    correctly rather than never entering the tree to begin with).
 
-   Sized in `em`, not px, so ONE rule covers both breakpoints without
-   a media query -- the eyebrow's own `font-size` is already fluid
-   (`var(--text-3-size)`, 12px desktop / 11px mobile), so `width: 1em`
-   tracks it automatically: 12px and 11px, confirmed live, matching
-   the two sizes tested separately before this was written. Values
-   measured against the actual glyph, not guessed: `margin-top:
-   -0.185em` centres the mark on the cap-height of "M" (measured via
-   a Range on the text node, both breakpoints) rather than the
-   line-box centre a bare `vertical-align: middle` would otherwise
-   use, which sits visibly low against all-caps type. `stroke-width:
-   2.2` (in the mark's own 20-unit viewBox) renders at ~1.3px actual
-   at 12px, ~1.2px at 11px -- close to this weight-500 12px type's
-   own stroke, tested side by side at 4x zoom before settling on it
-   rather than picking a number and trusting it.
-
-   Colour matches the eyebrow's own gold. Updated 2026-09-10 alongside
-   the sitewide gold consolidation (ARCHITECTURE.md) to `#916532`
-   (`--gold-on-light`) -- was `#A07037`. This is a CSS `::before`
-   background-image with the colour baked into the data URI itself, not
-   a `currentColor`/`var()` reference, so it does NOT inherit from the
-   eyebrow's own `color` and could not have picked up the consolidation
-   automatically -- had to be hand-updated and re-measured, not assumed
-   correct because the surrounding text moved. 4.89:1 against the cream
-   background (`rgb(251,250,247)`), clearing the 3:1 floor for a
-   non-text graphic with real headroom (was 4.13:1).
-
    Scoped to `[id$="__section_hero"] [class*="__eyebrow"] p::before`
    -- the section-id suffix narrows to this one homepage hero
    specifically (the bare `__eyebrow` class suffix alone is shared by
    many other instances sitewide, per §81's own inventory), the same
    authored-key scoping pattern §81 already established rather than a
-   new one invented for this. */
+   new one invented for this.
+
+   REVISED 2026-09-11 -- bare checkmark replaced with a scalloped
+   badge (a 10-point rosette/seal outline containing the same
+   checkmark), on request, and resized 1em (12px/11px) to a fixed
+   20x20px. Everything above this note (richtext rejection, the
+   `::before`-not-a-sibling-block mechanism, the accessibility
+   reasoning) is unchanged and still the reason this is built this
+   way; only the mark's own shape, size and colours changed.
+
+   SHAPE: a 10-point scalloped circle, not a plain circle or a
+   many-point star. Built parametrically -- 10 valley points on a
+   14-unit radius, each pair joined by an 4-unit-radius arc bulging
+   outward to an apex of ~17.3 units (viewBox 0-40, centre 20,20) --
+   rather than hand-plotted, so the bulge depth could be tuned by one
+   number (`Ra`) instead of redrawing points. Checked at 8, 10 and 12
+   points before choosing 10: rasterized each candidate onto a canvas
+   at its own real pixel size (12/16/20px, not an upscaled vector
+   render, so anti-aliasing artefacts would actually show) and
+   inspected the pixels blown up 8x. All three read as scalloped, not
+   mush, even at 12px -- the concern in the brief didn't hold at this
+   shape/size combination -- but 10 was the clearest read at every
+   size tested and is the more conventional seal/rosette point count.
+   The badge is 10-fold rotationally symmetric, so its centre of mass
+   *is* its bounding-box centre (20,20) -- no offset needed for the
+   badge shape itself, unlike an asymmetric shield or ribbon mark.
+
+   CHECKMARK CENTRING: `M12 20.6L17.3 26L28.5 12.2`, stroke-width 2.3.
+   A checkmark's own visual weight isn't at its bounding-box centre
+   either -- the long upper stroke carries more of it. Computed the
+   stroke-length-weighted centroid of the two segments (7.53 and
+   17.79 units) rather than eyeballing it: (20.45, 20.35), within half
+   a unit of the badge's own (20,20) centre -- close enough that no
+   further offset was justified at this size.
+
+   COLOUR: fill `#916532` (`--gold-on-light`, ARCHITECTURE.md §86's
+   consolidated value) -- carried over unchanged from the bare
+   checkmark, not re-derived, since the eyebrow text beside it is the
+   same token and a second gold here would contradict the
+   consolidation this mark already survived once (see the baked-in-
+   colour note below). Checkmark stroke is `#FBFAF7` -- this theme's
+   cream page-background token (`settings.color_palette.background`,
+   the same value `section_hero`'s own `background_color` is set to)
+   -- not a new near-white invented for this mark. Contrast is the
+   same pair of colours as before, just swapped which one reads as
+   "foreground": **badge fill vs. the `#FBFAF7` page background,
+   4.89:1** (unchanged from the bare-checkmark version, since the
+   fill colour didn't move); **checkmark vs. badge fill, also
+   4.89:1** (identical two colours, contrast is symmetric regardless
+   of role) -- both comfortably clear the 3:1 non-text-graphic floor,
+   confirmed live at both breakpoints.
+
+   SIZE -- reported to Jake before building, built at his explicit
+   choice. A 20x20px fixed mark (not `1em`) was requested. Measured
+   before committing: the eyebrow's own line box is 16.8px desktop /
+   15.4px mobile (line-height, driven by the 12px/11px fluid
+   `--text-3-size`) -- the largest mark that fits inside it with zero
+   effect on row height or the heading gap is **~13.5px at both
+   breakpoints** (swept empirically in 0.2px steps with `margin-top:
+   0` held constant across the sweep, not each size's own centred
+   offset -- a fair simplification for finding the threshold, since
+   what matters there is the box's own extent, not its exact
+   placement within it; 13.6px still held exactly, 13.8px already
+   added 0.086px). At the requested 20px, the badge does not fit
+   inside that line box, and the effect was measured against the
+   final, correctly-centred rule below (`margin-top: -1px`), not a
+   rough estimate:
+
+     | | Row height | Glyph-to-glyph gap to heading |
+     |---|---|---|
+     | Desktop, before (1em/12px) | 16.8px | 19.8px |
+     | Desktop, at 20px (final rule) | 19.0px (+2.2px) | 21.82px (+2.02px) |
+     | Mobile, before (1em/11px) | 15.4px | 13.4px |
+     | Mobile, at 20px (final rule) | 19.0px (+3.6px) | 16.09px (+2.69px) |
+
+   This moves §81's own home-hero target (`gap: 16px` in this file's
+   mobile media query, just below) further from its design value, and
+   opens a smaller version of the same gap on desktop, where no §81
+   rule exists at all today because nothing had moved it before. To
+   hold §81's spacing exactly as-is with a 20px mark, the fix is a
+   compensating reduction on the flex container's own `gap` --
+   roughly 24px to ~21.8px on desktop (the group's native JSON
+   setting, not currently overridden anywhere) and the existing
+   mobile rule's `16px` to ~13.3px -- calculated from the same delta
+   the badge added, not yet applied. **Not implemented here per
+   instruction** -- built at 20px as asked, numbers reported so Jake
+   can choose between the larger badge and the original rhythm rather
+   than have the choice made silently.
+
+   VERTICAL CENTRING at the new fixed size: `margin-top: -1px`, not
+   `-0.185em` (that value was solving for a 1em box; a 20px fixed box
+   needs a different, non-proportional offset and em units would no
+   longer track it correctly at two different font-sizes anyway).
+   Derived the same way as the original -- centring on the cap-height
+   of "M", not the x-height-based centre `vertical-align: middle`
+   gives by default -- but via `canvas.measureText` this time rather
+   than a Range on the rendered glyph, since the box no longer scales
+   with the font: `capHeight - xHeight` gives the needed shift
+   directly, 12px font → -1.08px, 11px font → -0.99px. The two
+   breakpoints round to the same `-1px` (unlike the badge's own size,
+   this offset barely differs between them, since it comes from a
+   small metric delta rather than the box's own now-fixed height) --
+   one declaration still covers both, confirmed by rendering at both
+   and checking against the eyebrow's own cap-height band.
+
+   ICON-TO-TEXT GAP: `margin-right: 0.65em` kept unchanged (7.8px
+   desktop / 7.15px mobile) despite the much larger badge -- this
+   value is additive, not proportional to the mark's own size, so it
+   didn't need to move just because the badge got bigger. Checked
+   against this eyebrow's own letter-spacing (2.64px desktop / 2.42px
+   mobile, per `ARCHITECTURE.md`'s eyebrow-tracking work): the gap is
+   roughly 3x one letter-space at both breakpoints, comfortably read
+   as a deliberate icon gap rather than folding into the tracking
+   rhythm, confirmed live, not assumed from the ratio alone.
+
+   §81 DEPENDENCY, re-confirmed rather than assumed unaffected: this
+   revision only changes the pseudo-element's own declarations
+   (`background-image`, `width`, `height`, `margin-top`) -- the
+   eyebrow's `.text-block` wrapper is untouched, still a direct child
+   of its flex container. Measured live after the change, both
+   breakpoints: `getComputedStyle` on the flex parent still reports
+   `gap: 24px` desktop / `16px` mobile -- the `:has(> [class*=
+   "__eyebrow"])` selector is still matching and this rule is still
+   the one governing the gap, not silently replaced by an unstyled
+   fallback (see §81's own amendment for what that failure looks like
+   when it happens).
+
+   BAKED-IN-COLOUR CONSTRAINT, restated -- still true, more surface
+   area now. Both colours in this mark (`#916532` fill, `#FBFAF7`
+   stroke) are literal hex values inside a data URI, not `currentColor`
+   or `var()` references, so NEITHER inherits from anything and NEITHER
+   would move automatically if the gold consolidation or the cream
+   token it now also references ever changes again. The bare-checkmark
+   version only had one baked-in colour to remember; this version has
+   two. If `--gold-on-light` or the page-background token move again,
+   this mark needs a hand edit and a re-measured contrast check, same
+   as the last consolidation required -- it will not be caught by
+   grepping for the variable name, because the variable name doesn't
+   appear here. */
 [id$="__section_hero"] [class*="__eyebrow"] p::before {
   content: "";
   display: inline-block;
-  width: 1em;
-  height: 1em;
+  width: 20px;
+  height: 20px;
   vertical-align: middle;
   margin-right: 0.65em;
-  margin-top: -0.185em;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M4 10.5L8.3 15L16.5 5.5' fill='none' stroke='%23916532' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  margin-top: -1px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 6A4 4 0 0 1 28.23 8.67A4 4 0 0 1 33.31 15.67A4 4 0 0 1 33.31 24.33A4 4 0 0 1 28.23 31.33A4 4 0 0 1 20 34A4 4 0 0 1 11.77 31.33A4 4 0 0 1 6.69 24.33A4 4 0 0 1 6.69 15.67A4 4 0 0 1 11.77 8.67A4 4 0 0 1 20 6Z' fill='%23916532'/%3E%3Cpath d='M12 20.6L17.3 26L28.5 12.2' fill='none' stroke='%23FBFAF7' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: contain;
 }

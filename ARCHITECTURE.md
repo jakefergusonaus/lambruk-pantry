@@ -2742,3 +2742,29 @@ Homepage total: 937,802 → 210,765 bytes (matches the audit's ~211KB prediction
 **Blast radius, confirmed by tracing every caller, not assumed:** `image.liquid` has exactly four callers (`_header-logo.liquid` ×2, `_hotspot-product.liquid`, `sections/product-hotspots.liquid`, `snippets/media.liquid`); `media.liquid` has exactly one (`_media-without-appearance.liquid`); that block is used by exactly two section types (`media-with-content`, live; `featured-product`, unused in this build's templates). Product cards, category tiles, occasion cards, the Cafe gallery, and the Cafe/occasion heroes render through entirely different, already-correct snippets (`product-media.liquid`, `resource-image.liquid`, `lambruk-occasion-card.liquid`, `lambruk-cafe-gallery-image.liquid`, `sections/hero.liquid`, `sections/lambruk-occasion-hero.liquid`) and were not touched — confirmed unaffected live (one measurement each: product card 268×335 with its own `25vw/100vw` sizes, occasion card 282×376 with `25vw/50vw`, category tile 384×384 with `33vw/100vw`, Cafe hero and gallery both still placeholder-rendering without error).
 
 This repo already has a convention for tracking modified vendor files — §6 above, "Upgrade-tracked modifications," populated since the `layout/theme.liquid` edits. No second file or section was created; two rows were added there instead, keeping the sitewide index in one place.
+
+---
+
+## 88. Horizon distributes row width three different ways — all three have now surprised us (2026-09-11)
+
+Three separate, unrelated mechanisms have each independently taken more of a flex row's width than expected, at a sibling's expense:
+
+1. **`.layout-panel-flex--row > .group-block--width-fill { flex: 1 }`** (`base.css:1778`) governs the row's HEIGHT once Horizon flips the axis with `.mobile-column` — the rule never stops applying, only the layout direction does. §78: clipped the Wholesale enquiry form's submit button off-screen entirely.
+2. **`.layout-panel-flex--row:not(.mobile-column) > .text-block { flex: 1 1 var(--max-width--display-tight) }`** (`base.css:1207-1238`, mobile-only) splits width EVENLY BY FLEX-GROW WEIGHT, not by content, between text-block siblings sharing a non-stacking row. §83: a two-character "01" label ended up with the same claim on the row as a full sentence, rendering in a 150px box next to text that needed the room.
+3. **A block's own `width: "100%"` setting** makes it consume the row's free space ahead of a `fit-content` sibling, squeezing that sibling below its own content width — even though the greedy block's computed `flex-grow` is 0. Confirmed by direct DOM experiment (toggling `--width` alone snapped the sibling to its exact content width): the Our Story CTA band's heading starved both "Shop Now" and "Become a Stockist" into wrapping, while sitting on 278px of its own unused slack. See `REVIEW-NOTES.md`, 2026-09-11.
+
+These are different selectors, on different kinds of element (`group-block`, `text-block`, a plain content-based width setting), triggered by different conditions (an axis flip, a mobile breakpoint, an ordinary settings choice) — **a sweep built to catch one of these finds none of the other two.**
+
+**THE DIAGNOSTIC IS THE SAME IN ALL THREE CASES.** When something renders too small, measure what is CONSUMING the space — not the thing that's wrapping or clipped. In every one of these three, the victim element was fine on its own; a sibling or ancestor was taking more of the row than it needed. `getBoundingClientRect()` on the element that looks broken confirms it's broken; it does not say why. Measure the greedy neighbour instead.
+
+---
+
+## 89. An invisible custom-liquid style block is still a flex item (2026-09-11)
+
+This project injects scoped CSS via `custom-liquid` blocks (`#shopify-section-{{ section.id }} { ... }`, established for the Cafe hero's line-height fix — `DESIGN-TOKENS.md` #12 — and reused for the Our Story CTA fix in §88 above). The block itself renders nothing visible: its markup is just a `<style>` tag with no box of its own. But its WRAPPER — `blocks/custom-liquid.liquid`'s own `<div class="custom-liquid-block">` — is an entirely ordinary block-level div, and an entirely ordinary flex child of whatever row or group it's added to.
+
+A zero-content `<div>` still participates fully in its parent's flex layout, `gap` included. On the Our Story CTA row it consumed one full `gap` unit despite never rendering a visible pixel, pulling "Become a Stockist" 14px off the row's own right edge — a shift with no styling cause anywhere in either visible button's own CSS, and no visible element to blame it on. It read as a mysterious alignment bug.
+
+**Reordering the block does not fix this — the gap follows wherever the block sits.** Moved first in the group's block order, the missing 14px reappears on the group's *left* edge instead; moved last, it's back on the right. The block has to leave flex flow entirely: `display: none` on its own wrapper, scoped the same way as the rest of the injected style (`#shopify-section-{{ section.id }} .custom-liquid-block { display: none; }`), removes it from the layout algorithm altogether — while the `<style>` tag inside it keeps working, since a `<style>` element applies its rules regardless of its own ancestor's `display`, the same way a `<style>` sitting in a `display:none` `<head>` still styles the visible page.
+
+**Joins the established family of "an element you cannot see still occupies space"** — alongside the eyebrow-box and carousel-wrapper cases already on record. A measurement can be entirely correct about the element it measured and still wrong about what the reader sees, because the thing actually taking the space was never the thing being looked at.

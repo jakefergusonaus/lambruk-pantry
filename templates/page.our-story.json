@@ -684,7 +684,7 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
-            "text_color": "#F7F5F2",
+            "text_color": "#131A3E",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -725,10 +725,7 @@
                 "label": "Shop Now",
                 "link": "shopify://collections/all",
                 "open_in_new_tab": false,
-                "style_class": "button-custom",
-                "custom_button_background": "#F7F5F2",
-                "custom_button_text": "#131A3E",
-                "custom_button_border": "#F7F5F2",
+                "style_class": "button",
                 "width": "fit-content",
                 "custom_width": 100,
                 "width_mobile": "fill"
@@ -741,10 +738,7 @@
                 "label": "Become a Stockist",
                 "link": "shopify://pages/wholesale",
                 "open_in_new_tab": false,
-                "style_class": "button-custom",
-                "custom_button_background": "#FBFAF7",
-                "custom_button_text": "#131A3E",
-                "custom_button_border": "#FBFAF7",
+                "style_class": "button-secondary",
                 "width": "fit-content",
                 "custom_width": 100,
                 "width_mobile": "fill"
@@ -770,7 +764,7 @@
         "align_baseline": false,
         "gap": 48,
         "section_width": "page-width",
-        "background_color": "#131A3E",
+        "background_color": "#F4F1EA",
         "padding-block-start": 80,
         "padding-block-end": 80
       }

@@ -152,6 +152,7 @@
           "static": true,
           "settings": {
             "media_type": "image",
+            "image": "shopify://shop_images/Meet_Paige.jpg",
             "image_position": "cover"
           },
           "blocks": {}

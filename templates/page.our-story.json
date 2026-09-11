@@ -674,9 +674,8 @@
           "type": "text",
           "settings": {
             "text": "<p>Taste the range, or bring it into your own venue.</p>",
-            "width": "100%",
+            "width": "fit-content",
             "max_width": "narrow",
-            "alignment": "left",
             "type_preset": "custom",
             "font": "var(--font-heading--family)",
             "font_size": "var(--display-3-size)",
@@ -719,6 +718,12 @@
             "padding-inline-end": 0
           },
           "blocks": {
+            "row_wrap_fix": {
+              "type": "custom-liquid",
+              "settings": {
+                "custom_liquid": "<style>#shopify-section-{{ section.id }} .custom-liquid-block{display:none;}#shopify-section-{{ section.id }} .section-content-wrapper{flex-wrap:wrap;}#shopify-section-{{ section.id }} .button,#shopify-section-{{ section.id }} .button-secondary{white-space:nowrap;}</style>"
+              }
+            },
             "shop_now": {
               "type": "button",
               "settings": {
@@ -747,6 +752,7 @@
             }
           },
           "block_order": [
+            "row_wrap_fix",
             "shop_now",
             "become_a_stockist"
           ]

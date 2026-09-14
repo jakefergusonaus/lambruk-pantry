@@ -1151,7 +1151,7 @@
       }
     },
     "cafe_shop_pantry": {
-      "type": "collection-list",
+      "type": "section",
       "blocks": {
         "header": {
           "type": "group",
@@ -1295,80 +1295,112 @@
             "cta_group"
           ]
         },
-        "static-collection-card": {
-          "type": "_collection-card",
-          "static": true,
+        "row": {
+          "type": "group",
           "settings": {
-            "placement": "on_image",
+            "content_direction": "row",
+            "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
-            "vertical_alignment": "flex-end",
-            "collection_card_gap": 0,
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 24,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
-            "border_radius": 16
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {
-            "collection-card-image": {
-              "type": "_collection-card-image",
-              "static": true,
+            "tea": {
+              "type": "lambruk-occasion-card",
               "settings": {
-                "image_ratio": "square",
-                "toggle_overlay": true,
-                "overlay_color": "#000000db",
-                "overlay_style": "gradient",
-                "gradient_direction": "to top",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 16
+                "image": "shopify://shop_images/LambrukSep23-053.jpg",
+                "heading": "Tea Collection",
+                "caption": "",
+                "link": "/collections/all?view=all&filter.p.tag=tea"
               },
               "blocks": {}
             },
-            "collection-title": {
-              "type": "collection-title",
+            "condiments": {
+              "type": "lambruk-occasion-card",
               "settings": {
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "custom",
-                "font": "var(--font-heading--family)",
-                "font_size": "1.875rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "text_color": "#f7f5f2",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 24,
-                "padding-inline-end": 24
+                "image": "shopify://shop_images/LambrukSep23-117.webp",
+                "heading": "Sauces & Chutneys",
+                "caption": "",
+                "link": "/collections/all?view=all&filter.p.tag=Condiments"
+              },
+              "blocks": {}
+            },
+            "pantry": {
+              "type": "lambruk-occasion-card",
+              "settings": {
+                "image": "shopify://shop_images/LambrukSep-1_991a0f38-dc72-4f02-974c-a63a2f1d8e4a.jpg",
+                "heading": "Pantry & Gifts",
+                "caption": "",
+                "link": "/collections/all?view=all&filter.p.tag=pantry"
               },
               "blocks": {}
             }
           },
           "block_order": [
-            "collection-title"
+            "tea",
+            "condiments",
+            "pantry"
           ]
         }
       },
       "block_order": [
-        "header"
+        "header",
+        "row"
       ],
       "settings": {
-        "collection_list": [
-          "tea",
-          "condiments",
-          "pantry"
-        ],
-        "layout_type": "grid",
-        "columns": 3,
-        "mobile_columns": "1",
-        "columns_gap": 24,
-        "rows_gap": 24,
-        "section_width": "page-width",
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
         "gap": 32,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
         "background_color": "#F4F1EA",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
         "padding-block-start": 88,
         "padding-block-end": 88
       }

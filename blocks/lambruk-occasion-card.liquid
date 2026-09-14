@@ -1,28 +1,43 @@
 {%- doc -%}
-  One card in the homepage's "Curated for every occasion" row (Slow
-  Mornings / Entertaining / Sunday Roast / High Tea) — a portrait image
-  with a bottom gradient, an italic heading and a short caption in the
-  bottom-left corner.
+  A portrait photo card with a bottom gradient, an italic heading and an
+  optional short caption in the bottom-left corner, linking to an
+  arbitrary href. Originally built for the homepage's "Curated for every
+  occasion" row (Slow Mornings / Entertaining / Sunday Roast / High Tea);
+  reused since 2026-09-14 for the homepage "Explore by category" row and
+  the Cafe page's "Bring the Lambruk experience home" row, both of which
+  need to link to Shop All with a tag filter pre-applied
+  (`/collections/all?view=all&filter.p.tag=...`) rather than to a
+  collection's own page — something `sections/collection-list.liquid`'s
+  native card can't do, since its href is hardcoded to `collection.url`
+  with no per-card override (confirmed by reading
+  `snippets/collection-card.liquid` directly, not assumed from schema).
+  Caption is optional per instance — the category rows pass `""` and
+  render heading-only, matching their own source design.
 
-  Not bound to a collection. The four occasions in the design aren't real
-  Shopify collections yet — creating them is merchandising work the client
-  owns, not a theme decision (per instruction, 2026-08-21). So each card's
-  image/heading/caption/link are plain editable settings instead. `link`
-  has no default, and a card with no link set renders as a plain,
+  Not bound to a collection, deliberately, for all three rows now: the
+  four occasions still aren't real Shopify collections (2026-08-21), and
+  the three categories are real collections but their tile needs a href
+  a collection-list card can't produce — so all three rows carry their
+  heading as plain theme copy and their image via direct `image_picker`
+  rather than `closest.collection.title`/`.image`. `link` has no
+  default, and a card with no link set renders as a plain,
   non-interactive `<div>` instead of an `<a>` — not an `<a href="">`,
   which most browsers treat as a link to the current page and would
-  still be clickable, just wrong. The homepage's four cards were live
-  with all four silently defaulting to /collections/all for a full
+  still be clickable, just wrong. The homepage's four occasion cards were
+  live with all four silently defaulting to /collections/all for a full
   session before anyone noticed, precisely because a working-looking
   fallback made an unconfigured card indistinguishable from a
   configured one (fixed 2026-08-24). An unconfigured card should be
-  obviously unfinished — unclickable — not plausibly wrong. Revisit
-  once the client has
-  created real per-occasion collections: at that point this could
-  reasonably be replaced by sections/collection-list.liquid (which
-  already supports this exact gradient-overlay-on-image look via
-  _collection-card-image.liquid's `placement: "on_image"`), the same way
-  Explore by category was built.
+  obviously unfinished — unclickable — not plausibly wrong.
+
+  `alt` is passed explicitly as the card's own `heading` (2026-09-14) —
+  without it, `image_tag` renders no alt at all, a real regression from
+  the category tiles' previous mechanism (native `_collection-card-image`
+  inherited a meaningful alt from the bound collection's own image);
+  this default was missing before that reuse surfaced it, so it also
+  fixes the same pre-existing gap on the four occasion cards, which had
+  been open since the original build (flagged, not chased, in
+  `REVIEW-NOTES.md`).
 
   Sits inside a `group` block set to `content_direction: row` — this
   block's own outer div carries `flex: 1 1 0` so four cards share the row
@@ -53,7 +68,7 @@
     {{
       block_settings.image
       | image_url: width: 800
-      | image_tag: widths: '400, 600, 800', sizes: '(min-width: 750px) 25vw, 50vw', class: 'lambruk-occasion-card__image', loading: 'lazy'
+      | image_tag: widths: '400, 600, 800', sizes: '(min-width: 750px) 25vw, 50vw', class: 'lambruk-occasion-card__image', loading: 'lazy', alt: block_settings.heading
     }}
   {%- endif -%}
   <div class="lambruk-occasion-card__scrim"></div>

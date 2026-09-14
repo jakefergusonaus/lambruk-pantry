@@ -1663,7 +1663,7 @@
             "slow_mornings": {
               "type": "lambruk-occasion-card",
               "settings": {
-                "image": "shopify://shop_images/Slow_Mornings_Hero.png",
+                "image": "shopify://shop_images/Collection_Slow_Mornings.jpg",
                 "heading": "Slow Mornings",
                 "caption": "Everything you need for the perfect breakfast.",
                 "link": "/collections/slow-mornings"
@@ -1673,7 +1673,7 @@
             "entertaining": {
               "type": "lambruk-occasion-card",
               "settings": {
-                "image": "shopify://shop_images/Entertaining_Hero.png",
+                "image": "shopify://shop_images/Collection_Entertaining.jpg",
                 "heading": "Entertaining",
                 "caption": "The perfect companions for cheese boards and shared tables.",
                 "link": "/collections/entertaining"
@@ -1683,7 +1683,7 @@
             "sunday_roast": {
               "type": "lambruk-occasion-card",
               "settings": {
-                "image": "shopify://shop_images/Sunday_Roast_Hero.png",
+                "image": "shopify://shop_images/Collection_Sunday_Roasts.jpg",
                 "heading": "Sunday Roast",
                 "caption": "Bring richer flavour to every family gathering.",
                 "link": "/collections/sunday-roast"
@@ -1693,7 +1693,7 @@
             "high_tea": {
               "type": "lambruk-occasion-card",
               "settings": {
-                "image": "shopify://shop_images/High_Tea_Hero.png",
+                "image": "shopify://shop_images/Collection_High_Tea.jpg",
                 "heading": "High Tea",
                 "caption": "French-inspired elegance.",
                 "link": "/collections/high-tea"

@@ -74,26 +74,38 @@
      overshooting the 4.5:1 WCAG floor to a 6:1 target as headroom for
      whatever photo replaced that day's placeholders.
 
-     Top stop raised again, 2026-09-14, 0.27 -> 0.32 — the real
-     photography landed (2026-09-14) and spent that headroom: the
-     breadcrumb (a separate element, see its own colour note below)
-     failed 4.5:1 on five of eight collection/breakpoint combinations
-     against the real photos, and Entertaining/375px's eyebrow itself
-     had quietly slipped under the 6:1 target (5.81) even after the
-     breadcrumb fix. 0.29 was the minimum clearing every breadcrumb
-     reading; 0.32 costs nothing further (confirmed by screenshot,
-     both breakpoints, all four collections -- no photo reads darker
-     at 0.32 than at 0.29 or than the original 0.27) and additionally
-     lifts that eyebrow cell to 6.01. Don't lower this back toward
-     0.27 without re-measuring both the eyebrow AND the breadcrumb
-     against whatever image is actually in place -- the breadcrumb
-     specifically was never checked by the 10 Sep work at all, which
-     is exactly how it was still failing after that pass. See
-     DESIGN-TOKENS.md. */
+     Top stop raised again, 2026-09-14, 0.27 -> 0.32 -> 0.33 — the
+     real photography landed (2026-09-14) and spent that headroom:
+     the breadcrumb (a separate element, see its own colour note
+     below) failed 4.5:1 on five of eight collection/breakpoint
+     combinations against the real photos, and Entertaining/375px's
+     eyebrow itself had quietly slipped under the 6:1 target even
+     after the breadcrumb fix.
+
+     0.32 was pushed first but was itself measured wrong: the reading
+     was taken against the hero's own lazy-loading <img> before its
+     full-resolution srcset candidate had loaded, sampling a 360x239
+     placeholder in place of the real 1920x1275 photo. A corrected
+     sweep -- confirming naturalWidth/naturalHeight matched the real
+     asset before trusting any pixel read from it -- found 0.32 still
+     left Entertaining/375px short on both counts (4.447:1 breadcrumb,
+     5.998:1 eyebrow) and put the true minimum at 0.327. Set to 0.33
+     for margin: 4.534:1 / 6.068:1, worst case across all eight
+     collection/breakpoint combinations. Confirmed by screenshot, both
+     breakpoints, all four collections -- no photo reads darker at
+     0.33 than at 0.27.
+
+     Don't lower this back toward 0.27 (or trust any number produced
+     while landing on a new value for it) without re-measuring the
+     eyebrow AND the breadcrumb against a freshly-loaded full-
+     resolution copy of whatever image is actually in place -- reading
+     a page's own <img> element the moment it scrolls into view is not
+     sufficient; loading="lazy" can still be resolving to a smaller
+     candidate at that instant. See DESIGN-TOKENS.md. */
   .lambruk-occasion-hero__scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.74) 46%, rgba(0, 0, 0, 0.32) 76%);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.74) 46%, rgba(0, 0, 0, 0.33) 76%);
   }
 
   .lambruk-occasion-hero__content {

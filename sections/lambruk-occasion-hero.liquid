@@ -70,15 +70,30 @@
      neutral black. Client call: the photography should read warm and
      natural under the scrim, not colour-shifted toward navy.
 
-     Stops raised again, 2026-09-10 — was 0.88/0.48/0.12, deliberately
-     overshooting the 4.5:1 WCAG floor to a 6:1 target so headroom
-     survives whatever photo replaces today's placeholders. Don't
-     lower this back toward 4.5:1 without re-measuring against
-     whatever image is actually in place. See DESIGN-TOKENS.md. */
+     Stops raised, 2026-09-10 — was 0.88/0.48/0.12, deliberately
+     overshooting the 4.5:1 WCAG floor to a 6:1 target as headroom for
+     whatever photo replaced that day's placeholders.
+
+     Top stop raised again, 2026-09-14, 0.27 -> 0.32 — the real
+     photography landed (2026-09-14) and spent that headroom: the
+     breadcrumb (a separate element, see its own colour note below)
+     failed 4.5:1 on five of eight collection/breakpoint combinations
+     against the real photos, and Entertaining/375px's eyebrow itself
+     had quietly slipped under the 6:1 target (5.81) even after the
+     breadcrumb fix. 0.29 was the minimum clearing every breadcrumb
+     reading; 0.32 costs nothing further (confirmed by screenshot,
+     both breakpoints, all four collections -- no photo reads darker
+     at 0.32 than at 0.29 or than the original 0.27) and additionally
+     lifts that eyebrow cell to 6.01. Don't lower this back toward
+     0.27 without re-measuring both the eyebrow AND the breadcrumb
+     against whatever image is actually in place -- the breadcrumb
+     specifically was never checked by the 10 Sep work at all, which
+     is exactly how it was still failing after that pass. See
+     DESIGN-TOKENS.md. */
   .lambruk-occasion-hero__scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.74) 46%, rgba(0, 0, 0, 0.27) 76%);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.74) 46%, rgba(0, 0, 0, 0.32) 76%);
   }
 
   .lambruk-occasion-hero__content {
@@ -90,11 +105,21 @@
     padding-block-end: 48px;
   }
 
+  /* Deliberate departure from the design source, 2026-09-14 — both
+     breakpoints specify this at 72% opacity (Desktop.dc.html:311,
+     Mobile.dc.html:265, both rgba(247,245,242,.72), byte-for-byte),
+     not a build invention. Raised to full opacity, matching the
+     eyebrow/heading/body treatment below it, because at .72 over the
+     real photography it failed 4.5:1 on five of eight collection/
+     breakpoint combinations (see DESIGN-TOKENS.md and REVIEW-NOTES.md
+     for the full measurement). The breadcrumb's subordination to the
+     eyebrow is already carried by case, weight and tracking without
+     needing the opacity too. */
   .lambruk-occasion-hero__breadcrumb {
     display: inline-block;
     margin-bottom: 16px;
     font-size: 13px;
-    color: rgba(247, 245, 242, 0.72);
+    color: #F7F5F2;
     text-decoration: none;
   }
 

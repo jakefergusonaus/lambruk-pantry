@@ -1340,7 +1340,10 @@
                 "image": "shopify://shop_images/LambrukSep23-053.jpg",
                 "heading": "Tea Collection",
                 "caption": "",
-                "link": "/collections/all?view=all&filter.p.tag=tea"
+                "link": "/collections/all?view=all&filter.p.tag=tea",
+                "image_ratio": "square",
+                "scrim_depth": "compact",
+                "heading_style": "upright"
               },
               "blocks": {}
             },
@@ -1350,7 +1353,10 @@
                 "image": "shopify://shop_images/LambrukSep23-117.webp",
                 "heading": "Sauces & Chutneys",
                 "caption": "",
-                "link": "/collections/all?view=all&filter.p.tag=Condiments"
+                "link": "/collections/all?view=all&filter.p.tag=Condiments",
+                "image_ratio": "square",
+                "scrim_depth": "compact",
+                "heading_style": "upright"
               },
               "blocks": {}
             },
@@ -1360,7 +1366,10 @@
                 "image": "shopify://shop_images/LambrukSep-1_991a0f38-dc72-4f02-974c-a63a2f1d8e4a.jpg",
                 "heading": "Pantry & Gifts",
                 "caption": "",
-                "link": "/collections/all?view=all&filter.p.tag=pantry"
+                "link": "/collections/all?view=all&filter.p.tag=pantry",
+                "image_ratio": "square",
+                "scrim_depth": "compact",
+                "heading_style": "upright"
               },
               "blocks": {}
             }

@@ -888,47 +888,27 @@ h1, h2, h3, h4, h5, h6 {
   --product-grid-columns-desktop: repeat(auto-fill, minmax(325px, 1fr)) !important;
 }
 
-/* Homepage "Explore by category" cards — scrim confined to a bottom band,
-   not the whole photo (2026-09-01). Native _collection-card-image overlay
-   (snippets/overlay.liquid) only supports a flat 2-stop gradient — one
-   colour at full alpha, the same colour at 0 alpha, nothing in between —
-   driven by a single overlay_color setting. That produces a LINEAR fade
-   across the entire card height with no plateau: even near the top of the
-   image there was still measurable darkening, which read as "the whole
-   photo is darkened," matching the complaint exactly. Can't reach a
-   3-stop gradient through the native setting at all, so this replaces the
-   computed background directly — additive CSS, no Liquid fork.
-
-   Stops originally taken from the design source's own desktop card
-   (LambrukPantry Desktop.dc.html:86): 0% #000 @ .86, 44% @ .46, 72% @ 0.
-   Same shape used at both breakpoints — our build keeps a 1:1 square crop
-   at mobile too (the design's own mobile uses a 16:9 crop instead, a
-   pre-existing divergence unrelated to this fix, not touched here), and
-   the title sits at a near-identical fractional height from the card
-   bottom at both sizes (9.6% at 1280px, 10.8% at 375px), so one gradient
-   shape serves both.
-
-   Compressed 2026-09-01, Jake's call after seeing the 72% version against
-   the real photography: still too much of the photo darkened. Scaled the
-   SAME curve proportionally to reach 45% instead of 72% (0.46 stop moves
-   from 44% to 44×45/72≈27%) rather than inventing a new shape — bottom
-   stop (0% @ .86) unchanged, so density right behind the title is
-   identical; only the ramp is shorter. See DESIGN-TOKENS.md §2 for why
-   this diverges from the design source (mockup photos were shot/graded
-   darker than what actually shipped, so 72% read heavier in practice
-   than intended) and the contrast re-verification this required.
-
-   `.collection-card--image-bg` only occurs once on the homepage (the one
-   collection-list section here) — checked directly, not assumed — so
-   `[data-template="index"]` scoping doesn't need a section-id fallback. */
-[data-template="index"] .collection-card--image-bg .overlay {
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.86) 0%,
-    rgba(0, 0, 0, 0.46) 27%,
-    rgba(0, 0, 0, 0) 45%
-  ) !important;
-}
+/* Homepage "Explore by category" cards' scrim compression (2026-09-01,
+   `[data-template="index"] .collection-card--image-bg .overlay` targeting
+   Horizon's native _collection-card-image overlay) removed 2026-09-14 —
+   dead code, not a revert. Both "Explore by category" and the Cafe
+   page's matching row moved from that native collection-list mechanism
+   to blocks/lambruk-occasion-card.liquid (needed per-card arbitrary
+   hrefs a collection-list card can't produce), so nothing renders
+   `.collection-card--image-bg` on this theme any more — confirmed
+   sitewide, the only other _collection-card-image consumer
+   (templates/list-collections.json) doesn't use on_image placement.
+   The exact same compressed curve (0% @ .86, 27% @ .46, 45% @ 0) is now
+   set directly on the block via its own `scrim_depth: "compact"` setting
+   (see that block's own doc comment) — worth knowing this rule's numbers
+   also exposed a real, previously-unnoticed bug: `[data-template="index"]`
+   only ever matched the homepage, so the Cafe page's otherwise-identical
+   category tiles never actually got this compression and stayed on the
+   taller, darker 72% curve the whole time. The new block-level setting
+   isn't template-scoped, so applying `compact` to both rows fixes that
+   too, not just replicates the homepage's own history. Design-source and
+   contrast-verification context for these numbers is unchanged and still
+   lives in DESIGN-TOKENS.md's scrim entry and ARCHITECTURE.md §53/54. */
 
 /* Two-up card images ("Wholesale partnerships" / "A high tea worth
    travelling for") rendering square (1:1), far taller than intended

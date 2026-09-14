@@ -30,14 +30,41 @@
   configured one (fixed 2026-08-24). An unconfigured card should be
   obviously unfinished — unclickable — not plausibly wrong.
 
-  `alt` is passed explicitly as the card's own `heading` (2026-09-14) —
-  without it, `image_tag` renders no alt at all, a real regression from
-  the category tiles' previous mechanism (native `_collection-card-image`
-  inherited a meaningful alt from the bound collection's own image);
-  this default was missing before that reuse surfaced it, so it also
-  fixes the same pre-existing gap on the four occasion cards, which had
-  been open since the original build (flagged, not chased, in
-  `REVIEW-NOTES.md`).
+  `alt` is passed as an explicit empty string on every instance
+  (2026-09-14) — the card's own `heading` always renders as visible text
+  in the same `<a>`, immediately under the image, so the image's meaning
+  is already carried by adjacent text; a screen reader announcing the
+  category name twice (once as alt, once as the heading) is worse than
+  announcing it once. Briefly set to `block_settings.heading` earlier the
+  same day, which was itself a fix for a real gap (this block emitted no
+  alt at all, unlike the category tiles' previous native mechanism,
+  which inherited alt from the bound collection) — corrected once the
+  double-announcement was pointed out; see `REVIEW-NOTES.md`.
+
+  Three settings make one block cover two visually distinct rows without
+  a near-duplicate file: `image_ratio` (portrait 3:4, the occasion row's
+  own original crop, vs square 1:1, the category row's original crop —
+  the category source photos are landscape and lose real content at
+  3:4), `scrim_depth` (tall, the occasion row's original 0/44/72% curve,
+  vs compact, the category row's original 0/27/45% curve — see
+  `design/DESIGN-TOKENS.md`'s scrim entry for why it was compressed) and
+  `heading_style` (italic 26px, the occasion row's own type, vs upright
+  30px, matching the category row's original `collection-title` block).
+  Set per instance via inline CSS custom properties on the card's own
+  root element, the same pattern Horizon's native blocks already use for
+  per-instance values (`_collection-card`'s `--horizontal-alignment`,
+  etc.) — avoids the fragility of a template- or section-id-scoped CSS
+  override (the category row's original compact-scrim value lived in
+  exactly that fragile shape, `[data-template="index"] .collection-card
+  --image-bg .overlay { ... !important }` in `assets/lambruk-tokens.css`,
+  now dead code and removed since nothing renders that markup anymore).
+  That scoping is also why the Cafe page's own category tiles were never
+  actually compressed to begin with — `[data-template="index"]` only
+  ever matched the homepage, so Cafe's tiles carried the taller, darker
+  curve the whole time despite otherwise identical settings to the
+  homepage's. Both rows now use `compact` deliberately, restoring the
+  homepage's intended look exactly and correcting Cafe's to match it,
+  flagged rather than silently perpetuated.
 
   Sits inside a `group` block set to `content_direction: row` — this
   block's own outer div carries `flex: 1 1 0` so four cards share the row
@@ -61,6 +88,33 @@
 
 {% liquid
   assign block_settings = block.settings
+
+  case block_settings.image_ratio
+    when 'square'
+      assign card_aspect_ratio = '1 / 1'
+    else
+      assign card_aspect_ratio = '3 / 4'
+  endcase
+
+  case block_settings.scrim_depth
+    when 'compact'
+      assign scrim_mid_pct = '27%'
+      assign scrim_top_pct = '45%'
+    else
+      assign scrim_mid_pct = '44%'
+      assign scrim_top_pct = '72%'
+  endcase
+
+  case block_settings.heading_style
+    when 'upright'
+      assign heading_font_style = 'normal'
+      assign heading_font_size = '30px'
+    else
+      assign heading_font_style = 'italic'
+      assign heading_font_size = '26px'
+  endcase
+
+  assign card_style = '--occasion-card-ratio: ' | append: card_aspect_ratio | append: '; --occasion-card-scrim-mid: ' | append: scrim_mid_pct | append: '; --occasion-card-scrim-top: ' | append: scrim_top_pct | append: '; --occasion-card-heading-style: ' | append: heading_font_style | append: '; --occasion-card-heading-size: ' | append: heading_font_size | append: ';'
 %}
 
 {% capture card_body %}
@@ -68,7 +122,7 @@
     {{
       block_settings.image
       | image_url: width: 800
-      | image_tag: widths: '400, 600, 800', sizes: '(min-width: 750px) 25vw, 50vw', class: 'lambruk-occasion-card__image', loading: 'lazy', alt: block_settings.heading
+      | image_tag: widths: '400, 600, 800', sizes: '(min-width: 750px) 25vw, 50vw', class: 'lambruk-occasion-card__image', loading: 'lazy', alt: ''
     }}
   {%- endif -%}
   <div class="lambruk-occasion-card__scrim"></div>
@@ -86,11 +140,13 @@
   <a
     href="{{ block_settings.link }}"
     class="lambruk-occasion-card spacing-style"
+    style="{{ card_style }}"
     {{ block.shopify_attributes }}
   >{{ card_body }}</a>
 {%- else -%}
   <div
     class="lambruk-occasion-card spacing-style"
+    style="{{ card_style }}"
     {{ block.shopify_attributes }}
   >{{ card_body }}</div>
 {%- endif -%}
@@ -100,7 +156,7 @@
     position: relative;
     display: block;
     width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: var(--occasion-card-ratio, 3 / 4);
     border-radius: var(--radius-lg);
     overflow: hidden;
     color: inherit;
@@ -127,7 +183,12 @@
   .lambruk-occasion-card__scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.46) 44%, rgba(0, 0, 0, 0) 72%);
+    background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.86) 0%,
+      rgba(0, 0, 0, 0.46) var(--occasion-card-scrim-mid, 44%),
+      rgba(0, 0, 0, 0) var(--occasion-card-scrim-top, 72%)
+    );
   }
 
   .lambruk-occasion-card__text {
@@ -140,9 +201,9 @@
   .lambruk-occasion-card__heading {
     margin: 0 0 6px;
     font-family: var(--font-heading--family);
-    font-style: italic;
+    font-style: var(--occasion-card-heading-style, italic);
     font-weight: 400;
-    font-size: 26px;
+    font-size: var(--occasion-card-heading-size, 26px);
     color: #F7F5F2;
   }
 
@@ -180,6 +241,36 @@
       "type": "url",
       "id": "link",
       "label": "t:settings.link"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "t:settings.image_ratio",
+      "options": [
+        { "value": "portrait", "label": "t:options.portrait" },
+        { "value": "square", "label": "t:options.square" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "select",
+      "id": "scrim_depth",
+      "label": "t:settings.lambruk_occasion_card_scrim_depth",
+      "options": [
+        { "value": "tall", "label": "t:options.tall" },
+        { "value": "compact", "label": "t:options.compact" }
+      ],
+      "default": "tall"
+    },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "t:settings.lambruk_occasion_card_heading_style",
+      "options": [
+        { "value": "italic", "label": "t:options.italic" },
+        { "value": "upright", "label": "t:options.upright" }
+      ],
+      "default": "italic"
     }
   ]
 }

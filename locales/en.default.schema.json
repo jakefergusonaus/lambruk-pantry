@@ -575,6 +575,7 @@
     "input_field": "Input field",
     "inside_carousel": "Inside carousel",
     "instagram": "Instagram",
+    "italic": "Italic",
     // Menu typography style with large child items
     "inverse_large": "Inverse large",
     "inverse": "Inverse",
@@ -720,6 +721,7 @@
     "subheading": "Subheading",
     "subtle_zoom": "Zoom",
     "swatches": "Swatches",
+    "tall": "Tall",
     // Third-level option in font/typography hierarchy
     "tertiary": "Tertiary",
     "text": "Text",
@@ -743,6 +745,7 @@
     // Gradient direction option, upward flow
     "up": "Up",
     "uppercase": "Uppercase",
+    "upright": "Upright",
     "vertical": "Vertical",
     "video": "Video",
     "video_external_url": "External URL",
@@ -1130,6 +1133,8 @@
     "lambruk_tag_filter_tea_label": "\"Tea\" tag — pill label",
     "lambruk_tag_filter_condiments_label": "\"condiments\" tag — pill label",
     "lambruk_tag_filter_pantry_label": "\"pantry\" tag — pill label",
+    "lambruk_occasion_card_scrim_depth": "Scrim depth",
+    "lambruk_occasion_card_heading_style": "Heading style",
     "lambruk_cafe_phone": "Cafe phone number",
     "lambruk_cafe_hours": "Cafe opening hours",
     "lambruk_cafe_closure": "Cafe closure notice",

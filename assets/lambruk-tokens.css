@@ -464,6 +464,52 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Occasion collections — same 40px desktop-only padding-block-start as
+   Shop All above, same unscaled mechanism, but a DIFFERENT mobile fix —
+   found 2026-09-14 during a sitewide sweep for template-scoped rules
+   that should have been wider (the sweep that also found the Cafe
+   category-tile scrim, see that entry's own comment history). Whoever
+   wrote the Shop All rule above scoped it to `collection.all` alone;
+   `collection.occasion` carries the identical `padding-block-start: 40`
+   (`templates/collection.occasion.json`) and was never given the same
+   treatment, leaving a live 40px gap between the occasion hero and the
+   first product card at every mobile width, on all four collections —
+   confirmed via `getBoundingClientRect()` on `.lambruk-occasion-hero`
+   and `.product-grid__item` directly (not `.resource-list`/`#ResultsList`,
+   which sits flush with the hero here and would have read a false 0px
+   gap, masking the real one sitting entirely inside the card container's
+   own padding).
+
+   NOT simply widened into the rule above — the target value differs.
+   Checked `LambrukPantry Mobile.dc.html`'s own markup rather than assume
+   Shop All's 0 also applies here: the product-grid section wrapping both
+   the `occasionPlain` (Shop All) and `occasionActive` (occasion) hero
+   states is the same shared element, `<section style="padding:24px 20px
+   44px">` — the design's own mobile spec calls for 24px under an
+   occasion hero, not 0, despite the very different hero above it (full-
+   bleed scrimmed image vs. a plain eyebrow+paragraph). Confirmed this
+   really is what the design intends and not a copy-paste artefact in
+   the mockup: desktop's own equivalent section (`LambrukPantry
+   Desktop.dc.html`) is `padding:40px 0 96px` — matching our current,
+   unscoped, correct desktop value exactly — so the mockup's mobile/
+   desktop values for this exact section are a deliberate, differently-
+   sized pair, not one value duplicated by mistake.
+
+   Verified live, all four collections, 375px, before and after:
+   `.lambruk-occasion-hero` bottom edge to `.product-grid__item` (first
+   card) top edge measured 40px on Slow Mornings/Entertaining/Sunday
+   Roast/High Tea alike (all four share this one section, so one
+   measurement generalises, but checked all four rather than assumed
+   it) — entirely accounted for by `.product-grid-container`'s own
+   `padding-top: 40px` (`.collection-wrapper` itself sits flush against
+   the hero, confirmed 0px there). Reset to 24px below: verify this reads
+   24px on all four post-push, not just the value taking effect. */
+@media screen and (max-width: 749px) {
+  [data-template="collection.occasion"] .product-grid-container {
+    padding-top: 24px;
+  }
+}
+
 /* Collection page, mobile: two separate fixes for what looked like one
    flush block (2026-09-04). #ResultsList (the product grid), .facets-
    toggle (the "Filter" button/view-toggle row) and .lambruk-tag-filter

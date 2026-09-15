@@ -558,7 +558,7 @@
             "tea": {
               "type": "lambruk-occasion-card",
               "settings": {
-                "image": "shopify://shop_images/LambrukSep23-053.jpg",
+                "image": "shopify://shop_images/LambrukFeb26-20.jpg",
                 "heading": "Tea Collection",
                 "caption": "",
                 "link": "/collections/all?view=all&filter.p.tag=tea",
@@ -584,7 +584,7 @@
             "pantry": {
               "type": "lambruk-occasion-card",
               "settings": {
-                "image": "shopify://shop_images/LambrukSep-1_991a0f38-dc72-4f02-974c-a63a2f1d8e4a.jpg",
+                "image": "shopify://shop_images/LambrukSep23-242.jpg",
                 "heading": "Pantry & Gifts",
                 "caption": "",
                 "link": "/collections/all?view=all&filter.p.tag=pantry",
@@ -1695,7 +1695,10 @@
                 "image": "shopify://shop_images/Collection_Slow_Mornings.jpg",
                 "heading": "Slow Mornings",
                 "caption": "Everything you need for the perfect breakfast.",
-                "link": "/collections/slow-mornings"
+                "link": "/collections/slow-mornings",
+                "image_ratio": "portrait",
+                "scrim_depth": "tall",
+                "heading_style": "italic"
               },
               "blocks": {}
             },
@@ -1705,7 +1708,10 @@
                 "image": "shopify://shop_images/Collection_Entertaining.jpg",
                 "heading": "Entertaining",
                 "caption": "The perfect companions for cheese boards and shared tables.",
-                "link": "/collections/entertaining"
+                "link": "/collections/entertaining",
+                "image_ratio": "portrait",
+                "scrim_depth": "tall",
+                "heading_style": "italic"
               },
               "blocks": {}
             },
@@ -1715,7 +1721,10 @@
                 "image": "shopify://shop_images/Collection_Sunday_Roasts.jpg",
                 "heading": "Sunday Roast",
                 "caption": "Bring richer flavour to every family gathering.",
-                "link": "/collections/sunday-roast"
+                "link": "/collections/sunday-roast",
+                "image_ratio": "portrait",
+                "scrim_depth": "tall",
+                "heading_style": "italic"
               },
               "blocks": {}
             },
@@ -1725,7 +1734,10 @@
                 "image": "shopify://shop_images/Collection_High_Tea.jpg",
                 "heading": "High Tea",
                 "caption": "French-inspired elegance.",
-                "link": "/collections/high-tea"
+                "link": "/collections/high-tea",
+                "image_ratio": "portrait",
+                "scrim_depth": "tall",
+                "heading_style": "italic"
               },
               "blocks": {}
             }

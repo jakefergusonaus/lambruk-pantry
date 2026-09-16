@@ -847,17 +847,30 @@
             "item_supply",
             "item_formats"
           ]
+        },
+        "divider": {
+          "type": "_divider",
+          "settings": {
+            "thickness": 1,
+            "corner_radius": "square",
+            "divider_color": "#E3D6C5",
+            "width_percent": 100,
+            "padding-block-start": 43,
+            "padding-block-end": 0
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "heading",
-        "row"
+        "row",
+        "divider"
       ],
       "settings": {
         "section_width": "page-width",
         "background_color": "#F4F1EA",
         "padding-block-start": 64,
-        "padding-block-end": 43
+        "padding-block-end": 0
       }
     },
     "who_we_supply": {

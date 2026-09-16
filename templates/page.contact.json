@@ -39,7 +39,7 @@
         "heading": {
           "type": "text",
           "settings": {
-            "text": "<p>Talk to us about orders, the cafe or wholesale</p>",
+            "text": "<p>Get in touch</p>",
             "text_color": "#131A3E",
             "width": "100%",
             "max_width": "normal",

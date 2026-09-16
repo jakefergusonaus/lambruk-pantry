@@ -785,8 +785,40 @@ h1, h2, h3, h4, h5, h6 {
    instruction. Recorded in DESIGN-TOKENS.md (2026-08-31) as an intentional
    departure, so the mockup's gold isn't read as the build having drifted
    and "corrected" back later. Scoped to this row only — Wholesale's own
-   check_box icons keep the design's gold, untouched. */
+   check_box icons keep the design's gold, untouched.
+
+   Update, 2026-09-17: "untouched" above described the colour only, and
+   even that's now moot — the gold consolidation (§86) already moved
+   Wholesale's own check_box icons off the `#986A34` this comment
+   originally meant, onto the same `#916532` this row uses. The box
+   itself is still a separate question, handled separately below: Jake
+   asked for Wholesale's "Traceable to the grower" checklist specifically
+   to lose its box too, so a second, near-identical rule exists for it,
+   scoped to that one section rather than folded in here — the two rows
+   have never shared a size (14px→20px here, 14px→20px there but chosen
+   independently) or a reason, so one rule covering both would be
+   coincidence dressed as a pattern. */
 [data-template="index"] svg.icon-default path[d^="M18.5 1.5H1.5L1.5 18.5H18.5V1.5Z"] {
+  display: none;
+}
+
+/* Wholesale page, "Traceable to the grower" checklist
+   (media_with_content_traceable) — same box-removal technique as the
+   homepage trust-badge row above, same icon, same reasoning (no boxless
+   check_box variant exists; the box is one evenodd path drawn before
+   the tick, hidden by its own distinctive `d` prefix, not by
+   `:first-child`). Requested and scoped separately, 2026-09-17 — this
+   is the only other check_box usage on the Wholesale page (confirmed:
+   `grep -c '"icon": "check_box"' templates/page.wholesale.json` returns
+   exactly 4, all four rows of this one checklist), so `[data-template=
+   "page.wholesale"]` doesn't reach anything else that would need this
+   left alone the way the homepage rule above had to avoid Wholesale's
+   own icons back when they were a different colour. Size 14px→20px is
+   set on each row's own `width` setting in templates/page.wholesale.json,
+   not here, matching the same split (CSS for the box, settings for the
+   size) as the homepage rule. Colour (#916532) untouched — only asked
+   to remove the box and enlarge the tick, not recolour it. */
+[data-template="page.wholesale"] svg.icon-default path[d^="M18.5 1.5H1.5L1.5 18.5H18.5V1.5Z"] {
   display: none;
 }
 

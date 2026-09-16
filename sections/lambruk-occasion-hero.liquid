@@ -34,7 +34,14 @@
   {%- endif -%}
   <div class="lambruk-occasion-hero__scrim"></div>
   <div class="lambruk-occasion-hero__content">
-    <a href="{{ routes.all_products_collection_url }}" class="lambruk-occasion-hero__breadcrumb">
+    {%- comment -%}
+      ?view=all is a preview-only addition (2026-09-16, go-live checklist) —
+      Shop All's own template isn't assignable in Admin until Horizon
+      publishes, so without this the breadcrumb lands on the generic
+      default collection template. Strip once Shop All's Theme template is
+      set to `all` at publish.
+    {%- endcomment -%}
+    <a href="{{ routes.all_products_collection_url }}?view=all" class="lambruk-occasion-hero__breadcrumb">
       {{ 'content.shop_all_products_breadcrumb' | t: occasion: occasion_collection.title }}
     </a>
     <p class="lambruk-occasion-hero__eyebrow">{{ 'content.curated_occasion' | t }}</p>

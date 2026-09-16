@@ -124,7 +124,7 @@
               "name": "t:names.button",
               "settings": {
                 "label": "Browse the Shop",
-                "link": "shopify://collections/all",
+                "link": "/collections/all?view=all",
                 "open_in_new_tab": false,
                 "style_class": "button-secondary",
                 "width": "fit-content",

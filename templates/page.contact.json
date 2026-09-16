@@ -335,7 +335,7 @@
                       "type": "button",
                       "settings": {
                         "label": "Cafe Details",
-                        "link": "shopify://pages/cafe",
+                        "link": "/pages/cafe?view=cafe",
                         "open_in_new_tab": false,
                         "style_class": "button-secondary",
                         "width": "fit-content",

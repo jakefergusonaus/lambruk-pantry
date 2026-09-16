@@ -67,7 +67,15 @@
         <p class="lambruk-other-occasions__eyebrow">{{ 'content.other_occasions_eyebrow' | t }}</p>
         <h2 class="lambruk-other-occasions__heading">{{ section.settings.heading }}</h2>
       </div>
-      <a href="{{ routes.all_products_collection_url }}" class="button button-secondary">
+      {%- comment -%}
+        ?view=all / ?view=occasion below are preview-only additions
+        (2026-09-16, go-live checklist) — neither Shop All nor any occasion
+        collection has its real Theme template assignable in Admin until
+        Horizon publishes, so without these the links land on the generic
+        default collection template. Strip both once the five collection
+        template assignments are done at publish.
+      {%- endcomment -%}
+      <a href="{{ routes.all_products_collection_url }}?view=all" class="button button-secondary">
         {{ 'content.shop_all_products_button' | t }}
       </a>
     </div>
@@ -77,7 +85,7 @@
         {%- if handle != current_handle -%}
           {%- assign other_occasion = collections[handle] -%}
           {%- if other_occasion != blank -%}
-            <a href="{{ other_occasion.url }}" class="lambruk-other-occasions__card">
+            <a href="{{ other_occasion.url }}?view=occasion" class="lambruk-other-occasions__card">
               <div class="lambruk-other-occasions__card-image">
                 {%- if other_occasion.image != blank -%}
                   {{

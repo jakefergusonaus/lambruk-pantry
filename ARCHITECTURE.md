@@ -2730,6 +2730,42 @@ Actions that are deliberately deferred during the build and must happen at (or j
 
   **Handle/label mismatch, noted not acted on per instruction:** the header nav's "Our Story" label points at `/pages/lambruk-pantry-about-us` — a handle that reads as a different name than the nav label it's attached to. Not touched; changing a handle needs a redirect and is Jake's call, not something to fix as a side effect of a template-assignment pass.
 
+- [ ] **Strip every `?view=<suffix>` added for preview purposes, once its target's Theme template is assigned — the single most important line in this checklist.** Every one of these exists for exactly one reason: to make the Horizon preview fully clickable for Jake to demo to the client *before* the five template assignments above are possible or safe. Miss a strip and a customer gets a URL with a stray, harmless-but-sloppy query parameter; miss one of the assignments above instead and a customer gets a blank page — the two failure modes are opposite in severity, which is why the assignments come first in this checklist and this cleanup comes right after them, in the same sitting, not a followup task. Full inventory, built and verified 2026-09-16 (extends the six category-tile links first added 2026-09-14/15):
+
+  **Theme-side — strip these by editing the file, then push:**
+
+  | Target | `?view=` | File : line (post-edit) | What it is |
+  |---|---|---|---|
+  | `/collections/all` | `?view=all` | `templates/index.json` (hero "Shop Now", Explore-by-category "Shop all", Top Sellers "Shop all") | 3 homepage CTAs |
+  | `/collections/all` | `?view=all` | `templates/page.cafe.json` ("Browse Pantry Shop") | 1 |
+  | `/collections/all` | `?view=all` | `templates/page.our-story.json` ("Shop Now" — converted from a `shopify://collections/all` resource reference to a literal string to carry the param; consider converting back to the resource-reference form once stripped, though a literal `/collections/all` works identically once the suffix issue is gone) | 1 |
+  | `/collections/all` | `?view=all` | `templates/404.json` ("Browse the Shop" — same `shopify://` conversion note as above) | 1 |
+  | `/collections/all` | `?view=all` | `sections/lambruk-occasion-hero.liquid` (breadcrumb, `routes.all_products_collection_url`) and `sections/lambruk-other-occasions.liquid` ("Shop All Products" button, same route) — both have their own inline comment marking this, remove the comment along with the param | 2 (each renders on all 4 occasion collections) |
+  | `/collections/all` | `?view=all` | `config/settings_data.json` (`empty_cart_button_link` — this key didn't exist before this change; remove the key entirely to fall back to the schema default `/collections/all`, don't just strip the param) | 1 (empty-cart "Continue shopping") |
+  | `/pages/cafe` | `?view=cafe` | `templates/index.json` (hero "Visit Our Cafe", Cafe-intro "Reserve a table", two-up "View High Tea") | 3 |
+  | `/pages/cafe` | `?view=cafe` | `templates/page.contact.json` ("Cafe Details" — same `shopify://pages/cafe` conversion note) | 1 |
+  | `/collections/slow-mornings` / `entertaining` / `sunday-roast` / `high-tea` | `?view=occasion` | `templates/index.json` (4 Curated Occasions cards) | 4 |
+  | same 4 collections | `?view=occasion` | `sections/lambruk-other-occasions.liquid` (`other_occasion.url`, the "Other Occasions" sibling cards — one shared instance, renders on all 4 occasion collections, each excluding itself) | 1 source, 4 render sites |
+
+  Not in this table, already tracked separately below with their own go-live handling: the six category-tile links and the Footer Shop menu items, which carry `?view=all` *inside* a `filter.p.tag=...` URL rather than bare.
+
+  **Known gap, not fixed, flagged instead of silently patched:** the cart page's "You may also like" rail (`_product-list-button.liquid`, a pristine Horizon block bound to `closest.collection.url` with no link-override setting) renders its own "View all" button pointing at `/collections/all`, bare, because its section instance (`templates/cart.json`) is bound to the `all` collection. No settings-level fix exists — fixing it would mean forking a pristine native block for one query string. Left as the one known-blank-landing corner case in the whole preview (cart page → empty-cart-adjacent recommendation rail only, not primary nav or any card), rather than expanding scope with a core-file fork. Resolves itself automatically once Shop All's template is assigned, same as everything else in this list.
+
+  **Admin-side — Jake's own edit, not a theme file, report values only:**
+
+  | Menu | Item | Current (needs `?view=`) | Target once template assigned |
+  |---|---|---|---|
+  | `lambruk-2026-main-menu` (header nav — **confirmed not shared with Flux**, which uses `main-menu-2`; safe to edit without affecting the live site, but still Admin data, not ours to touch) | Shop | `/collections/all` | `/collections/all?view=all` now, `/collections/all` after |
+  | same | Cafe | `/pages/cafe` | `/pages/cafe?view=cafe` now, `/pages/cafe` after |
+  | same | Our Story | `/pages/lambruk-pantry-about-us` | `/pages/lambruk-pantry-about-us?view=our-story` now, bare after |
+  | same | Wholesale, Contact | already correct | no change — both already assigned, see the corrected table above |
+  | `footer-explore` (Footer column, confirmed not shared with Flux the same way `footer-shop` was confirmed earlier) | Cafe | `/pages/cafe` | `/pages/cafe?view=cafe` now, bare after |
+  | same | Our Story | `/pages/lambruk-pantry-about-us` | `/pages/lambruk-pantry-about-us?view=our-story` now, bare after |
+  | same | Wholesale, Contact | already correct | no change |
+
+  Header nav confirmed blank on click, live, 2026-09-16 (`/pages/cafe` → `data-template="page"`, body text just "Cafe") — this is not a theoretical risk, it's the exact failure a client would hit clicking "Cafe" from the nav today, before Jake makes the two Admin edits above.
+
+  Existing items, unaffected by this entry, already covering their own six-URL family: the category-tile `?view=all&filter.p.tag=...` links (below) and the Footer Shop menu repoint (below) — both already correctly scoped to go-live-only and already tracked.
 - [ ] **Strip `?view=all` from the six category-tile links once Shop All's Theme template is set to `all` (2026-09-14).** The homepage "Explore by category" row (`templates/index.json`, `section_explore_by_category`'s `row` block) and the Cafe page's "Bring the Lambruk experience home" row (`templates/page.cafe.json`, `cafe_shop_pantry`'s `row` block) each carry three `lambruk-occasion-card` blocks linking to `/collections/all?view=all&filter.p.tag=<tea|Condiments|pantry>`. The `?view=all` is only there because Shop All's real template can't be assigned yet (same gap as the row above, same fix) — without it these links land on the generic default collection template, the exact undesigned page this change exists to get away from. Once Shop All's Theme template is set to `all`, the bare `/collections/all?filter.p.tag=...` URL renders `collection.all.json` on its own and the `?view=all` becomes dead weight (harmless if left, but should go). Six links total: three homepage, three Cafe. Do in the same pass as the row below — both are the same six-URL family, one theme-side and one Admin-side.
 - [ ] **Repoint the Footer Shop menu's three category items to `/collections/all?filter.p.tag=<tea|Condiments|pantry>` — at go-live, not before (2026-09-15).** They currently point at the three category collections' own pages (`/collections/tea`, `/collections/condiments`, `/collections/pantry`), the same mismatch the six tile links above already had fixed. **This one is Jake's own edit, in Admin, not a theme file** — `Footer Shop` is a real Shopify navigation menu, store data shared with whichever theme is currently published, the same "shared property" caution already on record for `template_suffix` and `main-menu` elsewhere in this checklist. Repointing it now would change what a live Flux customer's footer links do today, before Horizon publishes — wait until publish, same sitting as the `?view=all` strip above (once Shop All's template is assigned, the target URL doesn't need `?view=all` either, so there's only one correct final URL to set, not an interim one now and a cleanup later).
 

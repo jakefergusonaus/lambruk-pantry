@@ -105,45 +105,6 @@
         "padding-block-end": 64
       }
     },
-    "story_image": {
-      "type": "section",
-      "blocks": {
-        "image": {
-          "type": "image",
-          "settings": {
-            "image_ratio": "landscape",
-            "width": "fill",
-            "height": "fit",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 16,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "mobile_ratio_override": {
-          "type": "custom-liquid",
-          "settings": {
-            "custom_liquid": "<style>@media (max-width: 749px){#shopify-section-{{ section.id }} .placeholder-image,#shopify-section-{{ section.id }} .image-block__image{aspect-ratio:4/3;}}</style>"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "image",
-        "mobile_ratio_override"
-      ],
-      "settings": {
-        "section_width": "page-width",
-        "background_color": "{{ settings.color_palette.background }}",
-        "padding-block-start": 0,
-        "padding-block-end": 96
-      }
-    },
     "media_with_content_meet_paige": {
       "type": "media-with-content",
       "blocks": {
@@ -778,7 +739,6 @@
   },
   "order": [
     "hero_our_story",
-    "story_image",
     "media_with_content_meet_paige",
     "how_we_make_things",
     "cta_taste_the_range"

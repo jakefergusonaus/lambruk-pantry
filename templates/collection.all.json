@@ -41,7 +41,7 @@
           "type": "text",
           "name": "t:names.title",
           "settings": {
-            "text": "<h1>Our Pantry</h1>",
+            "text": "<h1>Shop Our Pantry</h1>",
             "text_color": "#131A3E",
             "width": "100%",
             "max_width": "none",

@@ -792,13 +792,6 @@
               },
               "blocks": {}
             },
-            "meta_hours": {
-              "type": "custom-liquid",
-              "settings": {
-                "custom_liquid": "<p style=\"margin:16px 0 0;font-family:var(--font-body--family);font-size:0.875rem;\">{{ settings.lambruk_cafe_hours | newline_to_br }}</p>{% if settings.lambruk_cafe_closure != blank %}<p style=\"margin:4px 0 0;font-family:var(--font-body--family);font-size:0.75rem;color:#686D84;\">{{ settings.lambruk_cafe_closure }}</p>{% endif %}"
-              },
-              "blocks": {}
-            },
             "meta_walkins": {
               "type": "text",
               "settings": {
@@ -817,7 +810,7 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 4,
+                "padding-block-start": 16,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
@@ -887,7 +880,6 @@
             "eyebrow",
             "heading",
             "body",
-            "meta_hours",
             "meta_walkins",
             "cta_group"
           ]

@@ -1063,6 +1063,7 @@
     },
     "cafe_gallery": {
       "type": "lambruk-cafe-gallery",
+      "disabled": true,
       "blocks": {
         "eyebrow": {
           "type": "text",

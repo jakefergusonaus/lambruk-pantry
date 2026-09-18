@@ -133,7 +133,16 @@
           </div>
         </div>
 
-        <div class="lambruk-contact-form__field lambruk-contact-form__field--full lambruk-contact-form__wholesale-fields" data-wholesale-fields hidden>
+        {%- comment -%}
+          No static `hidden` here on purpose — it's applied by JS on load
+          (see the script below), not baked into the markup. If JS fails
+          or hasn't run yet, this group must default to visible: a hidden
+          group whose fields are still `required` blocks Submit with no
+          visible error, since the browser can't focus a hidden control to
+          show its validation bubble. Visible-by-default is safe (an extra
+          optional-looking section); hidden-by-default is not.
+        {%- endcomment -%}
+        <div class="lambruk-contact-form__field lambruk-contact-form__field--full lambruk-contact-form__wholesale-fields" data-wholesale-fields>
           <div class="lambruk-contact-form__wholesale-intro">
             <p class="lambruk-contact-form__wholesale-eyebrow">Wholesale Details</p>
             <p class="lambruk-contact-form__wholesale-copy">So we can send pricing, formats and lead times with our first reply.</p>
@@ -195,7 +204,19 @@
 
       function updateWholesaleVisibility() {
         if (!wholesaleFields) return;
-        wholesaleFields.hidden = checkedTopic() !== 'Wholesale';
+        var isWholesale = checkedTopic() === 'Wholesale';
+        wholesaleFields.hidden = !isWholesale;
+        // Disabled (not just hidden) so these fields are excluded from both
+        // constraint validation and form submission — a hidden-but-required
+        // field blocks Submit with no visible error (the browser can't focus
+        // a hidden control to show its validation bubble), and a hidden-but-
+        // enabled field still gets submitted, leaking stale wholesale values
+        // into a non-wholesale enquiry if the visitor switches topics after
+        // filling them in.
+        var controls = wholesaleFields.querySelectorAll('input, textarea, select');
+        controls.forEach(function (el) {
+          el.disabled = !isWholesale;
+        });
       }
 
       topicRadios.forEach(function (radio) {
@@ -230,8 +251,14 @@
             }
           }
         } catch (e) {}
-        updateWholesaleVisibility();
       }
+
+      // Runs on every load (error round-trip or fresh), not just when
+      // hasErrors — a plain first visit has no checked topic yet, and
+      // without this the wholesale fields would sit visible (see the
+      // markup: no longer hidden by default, see below), enabled and
+      // required until the visitor's first radio click.
+      updateWholesaleVisibility();
 
       if (postedSuccessfully) {
         try {

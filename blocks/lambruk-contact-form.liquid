@@ -134,22 +134,28 @@
         </div>
 
         {%- comment -%}
-          No static `hidden` here on purpose — it's applied by JS on load
-          (see the script below), not baked into the markup. If JS fails
-          or hasn't run yet, this group must default to visible: a hidden
-          group whose fields are still `required` blocks Submit with no
-          visible error, since the browser can't focus a hidden control to
-          show its validation bubble. Visible-by-default is safe (an extra
-          optional-looking section); hidden-by-default is not.
+          Static `hidden` here — kept out of view by default so there's no
+          flash-then-collapse on first paint while JS decides whether to
+          show it. Paired with a static `disabled` on this group's own
+          required fields (snippets/lambruk-wholesale-fields.liquid), not
+          just `hidden` alone: a hidden-but-still-required field blocks
+          Submit with no visible error, since the browser can't focus a
+          hidden control to show its validation bubble. With both
+          attributes static, a visitor with no JS gets a clean, submittable
+          general-enquiry form — they just can't reach the wholesale
+          fields, which is the correct degraded behaviour, not "hidden
+          group, active requirement, dead end." JS clears both `hidden` and
+          `disabled` together when Wholesale is selected, and reapplies
+          both otherwise (see updateWholesaleVisibility below).
         {%- endcomment -%}
-        <div class="lambruk-contact-form__field lambruk-contact-form__field--full lambruk-contact-form__wholesale-fields" data-wholesale-fields>
+        <div class="lambruk-contact-form__field lambruk-contact-form__field--full lambruk-contact-form__wholesale-fields" data-wholesale-fields hidden>
           <div class="lambruk-contact-form__wholesale-intro">
             <p class="lambruk-contact-form__wholesale-eyebrow">Wholesale Details</p>
             <p class="lambruk-contact-form__wholesale-copy">So we can send pricing, formats and lead times with our first reply.</p>
           </div>
           <div class="lambruk-contact-form__wholesale-grid">
             {%- comment -%} Shared with blocks/lambruk-wholesale-enquiry-form.liquid — see snippets/lambruk-wholesale-fields.liquid. Edit there, not here. {%- endcomment -%}
-            {%- render 'lambruk-wholesale-fields', form_id: form_id, form: form, form_matches: form_matches -%}
+            {%- render 'lambruk-wholesale-fields', form_id: form_id, form: form, form_matches: form_matches, initially_disabled: true -%}
           </div>
         </div>
 
@@ -254,10 +260,10 @@
       }
 
       // Runs on every load (error round-trip or fresh), not just when
-      // hasErrors — a plain first visit has no checked topic yet, and
-      // without this the wholesale fields would sit visible (see the
-      // markup: no longer hidden by default, see below), enabled and
-      // required until the visitor's first radio click.
+      // hasErrors — needed even though the markup already starts hidden
+      // and disabled, so that restoring a cached "Wholesale" topic after
+      // a validation error correctly reveals and re-enables the group
+      // again, not just on a later radio change.
       updateWholesaleVisibility();
 
       if (postedSuccessfully) {

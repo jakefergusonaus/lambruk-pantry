@@ -34,11 +34,20 @@
     "venue text" vs "message text" after an error round-trip, so it
     restores this field from its own sessionStorage cache instead,
     the same way it restores Business name/type/Location.
+  @param {boolean} [initially_disabled] - statically render this group's
+    five required fields (all but the checkboxes) as `disabled`. Contact's
+    form passes `true`: its own JS starts this whole group `hidden` too
+    (see blocks/lambruk-contact-form.liquid) and clears/reapplies both
+    attributes together when the enquiry topic changes — paired so a
+    visitor with no JS gets a clean, submittable general-enquiry form
+    rather than a hidden-but-still-required dead end. Wholesale's own
+    form omits this — its fields are always visible and must always be
+    enabled, no topic gate exists there.
 {%- enddoc -%}
 
 <div class="wholesale-enquiry-form__field">
   <label class="wholesale-enquiry-form__label" for="{{ form_id }}-business-name">Business name *</label>
-  <input type="text" id="{{ form_id }}-business-name" class="wholesale-enquiry-form__input" name="contact[Business name]" placeholder="Venue or store" required data-preserve-field>
+  <input type="text" id="{{ form_id }}-business-name" class="wholesale-enquiry-form__input" name="contact[Business name]" placeholder="Venue or store" required data-preserve-field {% if initially_disabled %}disabled{% endif %}>
 </div>
 
 <div class="wholesale-enquiry-form__field">
@@ -52,6 +61,7 @@
     value="{{ form.phone }}"
     placeholder="Best number"
     required
+    {% if initially_disabled %}disabled{% endif %}
     {% if form.errors contains 'phone' and form_matches %}
       aria-invalid="true"
       aria-describedby="{{ form_id }}-phone-error"
@@ -61,12 +71,12 @@
 
 <div class="wholesale-enquiry-form__field">
   <label class="wholesale-enquiry-form__label" for="{{ form_id }}-business-type">Business type *</label>
-  <input type="text" id="{{ form_id }}-business-type" class="wholesale-enquiry-form__input" name="contact[Business type]" placeholder="Hotel, cafe, retail" required data-preserve-field>
+  <input type="text" id="{{ form_id }}-business-type" class="wholesale-enquiry-form__input" name="contact[Business type]" placeholder="Hotel, cafe, retail" required data-preserve-field {% if initially_disabled %}disabled{% endif %}>
 </div>
 
 <div class="wholesale-enquiry-form__field">
   <label class="wholesale-enquiry-form__label" for="{{ form_id }}-location">Location *</label>
-  <input type="text" id="{{ form_id }}-location" class="wholesale-enquiry-form__input" name="contact[Location]" placeholder="Suburb and state" required data-preserve-field>
+  <input type="text" id="{{ form_id }}-location" class="wholesale-enquiry-form__input" name="contact[Location]" placeholder="Suburb and state" required data-preserve-field {% if initially_disabled %}disabled{% endif %}>
 </div>
 
 <div class="wholesale-enquiry-form__field wholesale-enquiry-form__field--full">
@@ -92,6 +102,7 @@
     data-body-input
     placeholder="Rooms, covers, current range, what you are looking for"
     required
+    {% if initially_disabled %}disabled{% endif %}
     {% if form.errors contains 'body' and form_matches %}
       aria-invalid="true"
       aria-describedby="{{ form_id }}-body-error"

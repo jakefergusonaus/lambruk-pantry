@@ -2155,3 +2155,50 @@ slideshow-arrows .slideshow-control.slideshow-control--next[aria-label][disabled
   box-shadow: none;
   cursor: not-allowed;
 }
+
+/* ==========================================
+   CART (drawer + page): price weight and numeral figure, on top of the
+   body-font switch already made via config/settings_data.json's
+   cart_price_font (2026-09-23).
+
+   Scoped to the cart's own classes (snippets/cart-typography-styles.liquid,
+   cart-products.liquid, cart-summary.liquid) -- not [data-template], since
+   the drawer renders on every page, and this is the component-scoping
+   the task asked for regardless.
+
+   Weight: reuses --font-accent--weight (Geist, 500/medium -- already
+   loaded and used sitewide, e.g. eyebrows) for every cart price, and a
+   genuinely-loaded Geist Bold (700, confirmed via document.fonts, not a
+   browser-synthesised fake-bold) for the grand total specifically, so it
+   reads as the number that matters. Line items and subtotal/discount
+   stay at the shared medium weight -- one step below the total, not
+   equal to it.
+
+   Numerals: font-variant-numeric requested as specified, on the same
+   selector -- but checked live, not assumed: Geist as loaded by this
+   theme's font picker has no tabular-figures (tnum) table at all --
+   confirmed both via the CSS shorthand and the raw font-feature-settings
+   tag, "1" measures 12.29px and "8" measures 19.33px at 32px regardless
+   of which is requested, zero difference across all three variants
+   tested. The property is left in (harmless, correct to state the
+   intent, takes effect automatically if the loaded font ever changes)
+   but it is not achieving column alignment today -- prices align via
+   the existing right-aligned layout, not tabular digit widths.
+
+   Specificity: each selector below pairs the element's own existing
+   class with .cart-secondary-typography -- (0,2,0) -- to beat that
+   class's own font-weight declared in cart-typography-styles.liquid
+   ((0,1,0), compiled bundle, loads after this file) without !important,
+   per the cascade rule. */
+.cart-items__price.cart-secondary-typography,
+.cart-items__price-unit.cart-secondary-typography,
+.cart-totals__original-value.cart-secondary-typography,
+.cart-discounts__value.cart-secondary-typography,
+.cart-totals__total-value.cart-secondary-typography {
+  font-weight: var(--font-accent--weight);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.cart-totals__total-value.cart-secondary-typography {
+  font-weight: 700;
+}

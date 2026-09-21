@@ -19,6 +19,7 @@ Baseline of the original URLs: `url-baseline.md`.
 | `/products/lemon-ginger-tea-60g-losse-leaf` | `/products/lemon-ginger-tea-60g-loose-leaf` | typo fix + sibling naming consistency | 2026-08-25 | ✅ |
 | `/products/tomato-capsicum-relish-260g` | `/products/tomato-capsicum-relish-100g` | mislabeled — this is the 100g product | 2026-08-25 | ✅ |
 | `/products/tomato-capsicum-relish-260g-1` | `/products/tomato-capsicum-relish-260g` | mislabeled — this is the 260g product | 2026-08-25 | ✅ |
+| `/pages/lambruk-pantry-about-us` | `/pages/our-story` | page renamed (Title → "Our Story"), changed by Jake directly in Admin | 2026-09-21 | ✅ |
 
 **Note on the "at go-live" timing above (2026-08-25):** these seven were client-approved and changed directly in Admin ahead of go-live, not batched — product handles are store-wide and take effect immediately through whichever theme is currently *published* (Flux, not this rebuild's Horizon), so a typo'd product URL couldn't wait for this project's own go-live. Redirects were created in Admin at the same time as the handle changes, not deferred. The "batch at go-live" workflow below still applies to handle changes that are *only* relevant to this rebuild (e.g. would have no live impact until Horizon is published) — this row shows what to do when a change needs to go live sooner than that.
 

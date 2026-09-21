@@ -1150,6 +1150,24 @@ h1, h2, h3, h4, h5, h6 {
   aspect-ratio: 4 / 3;
 }
 
+/* PDP description (text_aEtTtq) to the design's 17px (2026-09-21) --
+   Desktop.dc.html:416. Deliberately NOT switching type_preset to
+   "custom": that also flips snippets/text.liquid's is_rte check, which
+   drops the .rte class (list/table/blockquote spacing) independent of
+   the typography-gating fix -- 2 of 52 live product descriptions (Just
+   For You, Lambruk Pantry Sample Bag) have real <ul> lists that depend
+   on it. Staying on "rte" means typography-style.liquid never emits any
+   font-size variable for this element at all (its {% if preset ==
+   'custom' %} gate is the same one that made the 16px JSON value inert
+   in the first place) -- font-size here was only ever the inherited
+   body default (14px), a plain cascade value, not a custom property to
+   fight. This rule beats it on ordinary specificity, no !important
+   needed. Scoped to the block's own key, not the product template --
+   text_aEtTtq exists in exactly one place. */
+[class*="__text_aEtTtq"] {
+  font-size: 17px;
+}
+
 /* Full-width hero text inset, mobile only (2026-09-04). Design wants the
    Cafe hero's photo full-bleed but its text (eyebrow/heading/body/CTA)
    inset -- Mobile.dc.html:439, `padding:0 20px 32px` on the text wrapper,

@@ -2056,3 +2056,102 @@ h1, h2, h3, h4, h5, h6 {
     display: none;
   }
 }
+
+/* ==========================================
+   SITEWIDE: carousel arrow controls -- solid, visible circular buttons,
+   not Horizon's default near-invisible treatment (2026-09-22).
+
+   Component: snippets/slideshow-arrow.liquid + slideshow-arrows.liquid.
+   Two live instances share this exact file, both fixed by one unscoped
+   rule rather than two separate ones -- the Top Sellers rail's own
+   prev/next (templates/index.json, icon_shape:"none", no background),
+   and every individual product card's own multi-photo gallery arrows
+   (snippets/card-gallery.liquid never passes icon_shape at all, same
+   "none" default) -- live wherever a product has 3+ images: Shop All,
+   category pages, occasion pages, this rail, search, PDP
+   recommendations. layout_type:"carousel" itself is used exactly once
+   sitewide (the rail) -- PDP recommendations and the cart rail are both
+   configured as plain grids and never render arrows -- but the
+   per-product-card gallery arrows are everywhere, via this same file.
+
+   Horizon's own default for icon_shape:"none": opacity:0 at rest,
+   revealed only via mix-blend-mode:difference on :hover/:focus-within of
+   the whole carousel (assets/base.css's arrowsSlideIn animation) -- with
+   no hover equivalent on touch, arrows were effectively invisible on
+   mobile too, confirmed live before writing this. Neither design file
+   specifies an arrow treatment at all -- both mockups render this rail
+   as a plain swipe strip with no arrows -- recorded as a departure in
+   design/DESIGN-TOKENS.md, not a hidden one.
+
+   NOT scoped by [data-template] -- deliberately unscoped so a future
+   carousel instance inherits this automatically; a template-scoped
+   version of this exact shape of rule has already caused two latent
+   bugs on this project (ARCHITECTURE.md's house rules).
+
+   Specificity: [aria-label] (always present, native to every arrow)
+   stacked onto the action class -- (0,3,1) -- beats the base opacity:0
+   rule (0,1,1), card-gallery.liquid's own padding-inline rule (0,2,1,
+   would otherwise push the icon off-centre in a flex-centred circle),
+   and resource-list-carousel.liquid's disabled-hiding rule (0,2,1) --
+   all without !important, per the cascade rule: this file loads before
+   the compiled section bundle, so source order alone never wins a tie. */
+slideshow-arrows[position] {
+  /* Beats the native plain-type-selector rule (0,0,1) on lambruk-tokens.css's own load order alone */
+  mix-blend-mode: normal;
+}
+
+slideshow-arrows .slideshow-control.slideshow-control--previous[aria-label],
+slideshow-arrows .slideshow-control.slideshow-control--next[aria-label] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  width: var(--minimum-touch-target);
+  height: var(--minimum-touch-target);
+  padding: 0;
+  background-color: #FBFAF7;
+  border: 1px solid #E3D6C5;
+  border-radius: 50%;
+  box-shadow: 0 1px 6px rgb(19 26 62 / 0.25);
+  color: #131A3E;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+slideshow-arrows .slideshow-control.slideshow-control--previous[aria-label]:hover:not([disabled]),
+slideshow-arrows .slideshow-control.slideshow-control--next[aria-label]:hover:not([disabled]) {
+  background-color: #F4F1EA;
+  border-color: #916532;
+}
+
+slideshow-arrows .slideshow-control.slideshow-control--previous[aria-label]:focus-visible,
+slideshow-arrows .slideshow-control.slideshow-control--next[aria-label]:focus-visible {
+  outline: none;
+  /* Cream inner ring + navy outer ring: one of the two always reads against
+     any photo behind the button, light or dark -- a single-colour ring can
+     disappear against a same-toned background. */
+  box-shadow: 0 0 0 2px #FBFAF7, 0 0 0 4px #131A3E;
+}
+
+/* Visible-but-inactive, not Horizon's own display:none (resource-list-carousel.liquid)
+   -- a disabled arrow should read as "nothing more this way", not vanish.
+
+   opacity/animation need !important here specifically, not just the higher
+   specificity used everywhere else above: assets/base.css's arrowsSlideIn
+   keyframe (fill-mode: forwards) sets this same element's opacity from the
+   separate, higher-priority "CSS animations" cascade origin once a visitor
+   has hovered/focused the carousel at least once -- confirmed live, this
+   element reads opacity:1 (fully active-looking) after a real hover
+   interaction and a scroll to the rail's end, despite this rule's own
+   (0,3,1) specificity correctly beating every *normal*-origin rule it's
+   meant to. No selector specificity, however high, reaches into a
+   higher cascade origin -- only !important does. */
+slideshow-arrows .slideshow-control.slideshow-control--previous[aria-label][disabled],
+slideshow-arrows .slideshow-control.slideshow-control--next[aria-label][disabled] {
+  display: flex;
+  opacity: 0.45 !important;
+  animation: none !important;
+  background-color: #FBFAF7;
+  border-color: #E3D6C5;
+  box-shadow: none;
+  cursor: not-allowed;
+}

@@ -1,6 +1,6 @@
 {%- doc -%}
   Contact page's form: Name, Email, a single-select "enquiry topic"
-  (Online order / Cafe booking / Wholesale / Something else), a
+  (Online order / Cafe booking / Catering / Wholesale / Something else), a
   conditional wholesale sub-form revealed when the topic is
   "Wholesale", and a Message field.
 
@@ -31,7 +31,7 @@
 
 {% liquid
   assign form_id = block.id | prepend: 'LambrukContactForm-'
-  assign topics = 'Online order,Cafe booking,Wholesale,Something else' | split: ','
+  assign topics = 'Online order,Cafe booking,Catering,Wholesale,Something else' | split: ','
   assign wholesale_marker = 'WHOLESALE ENQUIRY (VIA CONTACT PAGE)'
 %}
 

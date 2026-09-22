@@ -35,7 +35,7 @@
   assign wholesale_marker = 'WHOLESALE ENQUIRY (VIA CONTACT PAGE)'
 %}
 
-<div class="lambruk-contact-form spacing-style" style="width: 100%;" {{ block.shopify_attributes }}>
+<div id="contact-form" class="lambruk-contact-form spacing-style" style="width: 100%;" {{ block.shopify_attributes }}>
   {%- form 'contact', id: form_id, class: 'lambruk-contact-form__form' -%}
     <input name="contact[id]" type="hidden" value="{{ form_id }}">
     <input name="contact[tags]" type="hidden" value="contact-page-enquiry">
@@ -255,6 +255,25 @@
             if (state.message && messageInput && !messageInput.value) {
               messageInput.value = state.message;
             }
+          }
+        } catch (e) {}
+      }
+
+      // Pre-select a topic from a `?topic=` query param (e.g. the "Book
+      // Catering" CTA on the Cafe page), matched case-sensitively against
+      // the real topic values above. Only applies when nothing already
+      // picked a topic — a topic restored from a validation-error round
+      // trip (above) takes precedence over the URL. No match: leave the
+      // form at its default state, no error, no console noise.
+      if (!checkedTopic()) {
+        try {
+          var urlTopic = new URLSearchParams(window.location.search).get('topic');
+          if (urlTopic) {
+            topicRadios.forEach(function (radio) {
+              if (radio.value === urlTopic) {
+                radio.checked = true;
+              }
+            });
           }
         } catch (e) {}
       }

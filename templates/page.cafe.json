@@ -994,7 +994,7 @@
             "cta_group": {
               "type": "group",
               "settings": {
-                "content_direction": "column",
+                "content_direction": "row",
                 "vertical_on_mobile": true,
                 "horizontal_alignment": "flex-start",
                 "vertical_alignment": "center",
@@ -1015,6 +1015,20 @@
                 "padding-inline-end": 0
               },
               "blocks": {
+                "book_catering": {
+                  "type": "button",
+                  "settings": {
+                    "label": "Book Catering",
+                    "link": "/pages/contact?topic=Catering#contact-form",
+                    "open_in_new_tab": false,
+                    "style_class": "button",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
+                },
                 "view_catering_menu": {
                   "type": "_lambruk-link-button",
                   "settings": {
@@ -1031,6 +1045,7 @@
                 }
               },
               "block_order": [
+                "book_catering",
                 "view_catering_menu"
               ]
             }

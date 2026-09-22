@@ -609,7 +609,7 @@
             "eyebrow": {
               "type": "text",
               "settings": {
-                "text": "<p>Saturday &amp; Sunday Rituals</p>",
+                "text": "<p>A little indulgence, any day</p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -634,7 +634,7 @@
             "heading": {
               "type": "text",
               "settings": {
-                "text": "<p>High Tea worth lingering over</p>",
+                "text": "<p>High tea for beautiful moments</p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",

@@ -1168,32 +1168,6 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 17px;
 }
 
-/* Full-width hero text inset, mobile only (2026-09-04). Design wants the
-   Cafe hero's photo full-bleed but its text (eyebrow/heading/body/CTA)
-   inset -- Mobile.dc.html:439, `padding:0 20px 32px` on the text wrapper,
-   the photo itself is a separate position:absolute layer. Confirmed
-   sitewide via templates/*.json + sections/*.json: the Cafe hero is
-   currently the only `"type": "hero"` instance, but this is scoped to
-   the section's own emitted class combination, not this instance's id --
-   sections/hero.liquid:506 ties the content wrapper's class directly to
-   the section_width setting ("hero__content-wrapper applies
-   section_width"), so *any* hero.liquid section configured full-width
-   hits the identical gap, present or future, and the fix should reach it
-   the same way. Confirmed the only two section_width options are
-   page-width/full-width (:1093-1104) with no third "full-width but
-   margined" choice -- .hero__content-wrapper.page-width gets
-   `grid-column: 2/3` (:586), the margin-respecting column; plain
-   .hero__content-wrapper (what full-width emits) gets none, so choosing
-   full-width for the photo takes the text down with it by construction,
-   not by omission. Desktop untouched -- not reported broken there, and
-   the design's own 20px/32px values are this breakpoint's own numbers,
-   not a value that also happens to be right above 750px. */
-@media screen and (max-width: 749px) {
-  .hero__content-wrapper.full-width {
-    padding: 0 var(--page-margin) 32px;
-  }
-}
-
 /* Homepage hero (section_hero): reduce mobile top padding (2026-09-04).
    JSON padding-block-start stays 72 -- correct at desktop, matches the
    design exactly (Desktop.dc.html:45) -- this is only about what
@@ -1487,13 +1461,14 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   /* --- Sum-problem fixes: zero the heading's own padding so branch 1/2's
-     gap rule is the only contributor, in the 3 sections where both
+     gap rule is the only contributor, in the sections where both
      currently stack. Scoped by each section's own JSON key, not a
-     per-block hash. */
+     per-block hash. (Cafe hero's own instance of this fix removed
+     2026-09-22 when it stopped being a `hero.liquid` section -- its
+     `.layout-panel-flex` branch-1 gap rule no longer matches
+     `section.liquid`'s markup, so the override had nothing left to
+     coordinate with; confirmed dead live before removing, not assumed.) */
   [id$="__how_we_make_things"] [class*="__heading"] {
-    padding-block-start: 0;
-  }
-  [id$="__cafe_hero"] [class*="__heading"] {
     padding-block-start: 0;
   }
   [id$="__product_recommendations_qggXJq"] [class*="__text_cbcgyb"] {

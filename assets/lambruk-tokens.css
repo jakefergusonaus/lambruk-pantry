@@ -2149,6 +2149,23 @@ slideshow-arrows .slideshow-control.slideshow-control--next[aria-label][disabled
   cursor: not-allowed;
 }
 
+/* Shop All exception: hide the per-card gallery arrows (2026-09-23).
+   Every product's own image gallery renders these arrows only when that
+   product has 3+ images -- on a 52-item grid with a mixed catalogue
+   (single-photo products next to multi-photo ones), that reads as visibly
+   inconsistent from card to card, on request. layout_type here is "grid",
+   not "carousel" (confirmed in templates/collection.all.json), so this
+   page has no rail-level slideshow-arrows instance to accidentally catch
+   -- every match is a per-card gallery. Scoped to [data-template="collection.all"]
+   specifically, not the sitewide rule above: the Top Sellers rail and
+   every other page's own per-card galleries (category/occasion/search/PDP
+   recommendations) keep the visible-arrow treatment; this is Shop All's
+   own exception, not a reversal of that decision. */
+[data-template="collection.all"] slideshow-arrows .slideshow-control.slideshow-control--previous[aria-label],
+[data-template="collection.all"] slideshow-arrows .slideshow-control.slideshow-control--next[aria-label] {
+  display: none;
+}
+
 /* ==========================================
    CART (drawer + page): price weight and numeral figure, on top of the
    body-font switch already made via config/settings_data.json's

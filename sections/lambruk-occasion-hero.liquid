@@ -22,6 +22,7 @@
 
 {% liquid
   assign occasion_collection = closest.collection
+  assign occasion_image_alt = occasion_collection.image.alt | default: occasion_collection.title
 %}
 
 <section class="lambruk-occasion-hero">
@@ -29,7 +30,7 @@
     {{
       occasion_collection.image
       | image_url: width: 2000
-      | image_tag: widths: '750, 1100, 1500, 2000', sizes: '100vw', class: 'lambruk-occasion-hero__image', loading: 'eager', fetchpriority: 'high'
+      | image_tag: widths: '750, 1100, 1500, 2000', sizes: '100vw', class: 'lambruk-occasion-hero__image', loading: 'eager', fetchpriority: 'high', alt: occasion_image_alt
     }}
   {%- endif -%}
   <div class="lambruk-occasion-hero__scrim"></div>

@@ -170,6 +170,8 @@
                       elsif block_settings.image_ratio == 'adapt'
                         assign ratio = item.image.aspect_ratio
                       endif
+
+                      assign item_image_alt = item.image.alt | default: item.title
                     %}
                     <a
                       href="{{ item.url }}"
@@ -177,7 +179,7 @@
                       style="--ratio:{{ ratio }};"
                     >
                       {%- liquid
-                        echo item.image | image_url: width: 250 | image_tag: class: 'cart-items__media-image border-style', style: border_override
+                        echo item.image | image_url: width: 250 | image_tag: class: 'cart-items__media-image border-style', style: border_override, alt: item_image_alt
                       -%}
                     </a>
                   {%- endif %}

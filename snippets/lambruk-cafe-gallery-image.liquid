@@ -7,12 +7,15 @@
   only needs to emit the tag itself.
 
   @param {image} image - the image_picker value for this tile, possibly blank
+  @param {string} [alt_text_fallback] - text to use when the image's own Admin
+    alt is blank, same param name/precedence as snippets/image.liquid
 
   @example
-  {% render 'lambruk-cafe-gallery-image', image: section.settings.tile_1 %}
+  {% render 'lambruk-cafe-gallery-image', image: section.settings.tile_1, alt_text_fallback: 'Inside Lambruk Kitchen & Tearoom' %}
 {%- enddoc -%}
 
 {%- if image != blank -%}
+  {%- assign gallery_image_alt = image.alt | default: alt_text_fallback | default: '' -%}
   {{
     image
     | image_url: width: 1600
@@ -21,7 +24,8 @@
       height: image.height,
       widths: '240, 352, 550, 800, 1200, 1600',
       sizes: '(min-width: 750px) 33vw, 50vw',
-      loading: 'lazy'
+      loading: 'lazy',
+      alt: gallery_image_alt
   }}
 {%- else -%}
   <div class="placeholder-image">

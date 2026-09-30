@@ -243,6 +243,7 @@
     "edit_variants_in_theme_settings": "Edit variant styling in [theme settings](/editor?context=theme&category=variant%20pickers)",
     "enable_filtering_info": "Customize filters with the [Search & Discovery app](https://help.shopify.com/manual/online-store/search-and-discovery/filters)",
     "grid_layout_on_mobile": "Grid layout is used for mobile",
+    "image_alt_text": "Describe the image for assistive tech users. Uses the uploaded file's own alt text if set there instead.",
     "hide_logo_on_home_page_help": "Logo will remain visible when sticky header is active",
     "hover_effects": "Applies to product and collection cards",
     "logo_font": "Applies only when a logo is not selected",
@@ -933,6 +934,7 @@
     "image": "Image",
     "image_1": "Image 1",
     "image_2": "Image 2",
+    "image_alt_text": "Alt text",
     "image_border_radius": "Image corner radius",
     "image_gap": "Image gap",
     // Image picker setting to upload custom image as icon

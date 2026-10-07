@@ -74,7 +74,7 @@
         "id": "lambruk_cafe_hours",
         "label": "t:settings.lambruk_cafe_hours",
         "info": "t:info.lambruk_cafe_hours",
-        "default": "Monday – Tuesday 8:30 AM – 4:00 PM\nWednesday – Sunday 8:30 AM – 5:00 PM"
+        "default": "Sunday – Friday 8:30 AM – 4:00 PM\nClosed Saturdays"
       },
       {
         "type": "text",

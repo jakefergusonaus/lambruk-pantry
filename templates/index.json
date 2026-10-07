@@ -17,7 +17,8 @@
           "static": true,
           "settings": {
             "media_type": "image",
-            "image": "shopify://shop_images/DSC_2479.jpg",
+            "image": "shopify://shop_images/Lambruk_hero_image.jpg",
+            "alt": "",
             "link": "",
             "video_loop": true,
             "video_autoplay": false,
@@ -703,6 +704,7 @@
           "settings": {
             "media_type": "image",
             "image": "shopify://shop_images/Ballina_Cafe_1.jpg",
+            "alt": "",
             "link": "",
             "video_loop": true,
             "video_autoplay": false,
@@ -1367,6 +1369,9 @@
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": false,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 4,
@@ -1689,7 +1694,7 @@
             "slow_mornings": {
               "type": "lambruk-occasion-card",
               "settings": {
-                "image": "shopify://shop_images/Collection_Slow_Mornings.jpg",
+                "image": "shopify://shop_images/Collection_Slow_Morning_1.jpg",
                 "heading": "Slow Mornings",
                 "caption": "Everything you need for the perfect breakfast.",
                 "link": "/collections/slow-mornings?view=occasion",
@@ -1702,7 +1707,7 @@
             "entertaining": {
               "type": "lambruk-occasion-card",
               "settings": {
-                "image": "shopify://shop_images/Collection_Entertaining.jpg",
+                "image": "shopify://shop_images/Collection_Entertaining_1.jpg",
                 "heading": "Entertaining",
                 "caption": "Made for sharing around the table.",
                 "link": "/collections/entertaining?view=occasion",
@@ -1728,7 +1733,7 @@
             "high_tea": {
               "type": "lambruk-occasion-card",
               "settings": {
-                "image": "shopify://shop_images/Collection_High_Tea.jpg",
+                "image": "shopify://shop_images/Collection_High_Tea_1.jpg",
                 "heading": "High Tea",
                 "caption": "French-inspired elegance.",
                 "link": "/collections/high-tea?view=occasion",

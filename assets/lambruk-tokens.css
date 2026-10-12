@@ -2212,3 +2212,42 @@ slideshow-arrows .slideshow-control.slideshow-control--next[aria-label][disabled
 .cart-totals__total-value.cart-secondary-typography {
   font-weight: 700;
 }
+
+/* ==========================================
+   POLICY PAGES (Shipping / Refunds / Terms): breathing room (2026-10-12).
+
+   These pages are rendered by Shopify's own policy markup
+   (.shopify-policy__container > .shopify-policy__title + .shopify-policy__body),
+   not a theme template, so there's no JSON/section setting to turn --
+   this is the only layer that reaches them. Horizon's native values were
+   20px above the title (header -> title), 12px title -> body, and 20px
+   below the last paragraph, i.e. prose butting against both the header
+   and the footer.
+
+   Values follow the design's own rhythm (DESIGN-TOKENS.md section 3): 64px
+   above the title (the page-hero 64-80px range), 96px below the body
+   (--section-y), 32px between title and body. Mobile steps down to 40 / 64
+   / 24 -- below the 750px breakpoint used throughout this file.
+
+   Scoped to the policy classes themselves rather than [data-template],
+   which isn't emitted for policy pages. Prefixed with the wrapping
+   .content-for-layout (0,2,0 / 0,2,1) to beat base.css's own
+   (0,1,0 / 0,1,1) rules without !important -- this file doesn't win a
+   tie on load order. */
+.content-for-layout .shopify-policy__container {
+  padding-block: 64px 96px;
+}
+
+.content-for-layout .shopify-policy__title :is(h1, h2, h3, h4, h5, h6) {
+  margin-block-end: 32px;
+}
+
+@media screen and (max-width: 749px) {
+  .content-for-layout .shopify-policy__container {
+    padding-block: 40px 64px;
+  }
+
+  .content-for-layout .shopify-policy__title :is(h1, h2, h3, h4, h5, h6) {
+    margin-block-end: 24px;
+  }
+}
